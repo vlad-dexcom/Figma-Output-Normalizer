@@ -105,6 +105,27 @@ describe("handleUIMessage: extract", () => {
     expect(message.ir.nodes).toHaveLength(0);
   });
 
+  it("falls back to an empty fileKey and surfaces a missing-file-key warning when figma.fileKey is unavailable", async () => {
+    // `figma.fileKey` requires `enablePrivatePluginApi` in manifest.json and
+    // is only ever populated for private/org plugins — it can legitimately
+    // resolve to `undefined`/`""` (see code.ts's `resolveFileKey`). This must
+    // surface as an explicit UnresolvedEntry, not a silently empty
+    // Provenance.fileKey with no trace of why.
+    const selected = mockFrame({ name: "Screen", children: [] });
+    const mockFigma = createMockFigma({ selection: [selected], fileKey: "" });
+
+    await handleUIMessage(mockFigma, { type: "extract" });
+
+    const [message] = (mockFigma.ui.postMessage as unknown as { mock: { calls: unknown[][] } }).mock
+      .calls[0] as [
+      { ir: { unresolved: { nodeId: string; reason: string }[] }; source: { fileKey: string } },
+    ];
+    expect(message.source.fileKey).toBe("");
+    expect(message.ir.unresolved).toContainEqual(
+      expect.objectContaining({ nodeId: selected.id, reason: "missing-file-key" }),
+    );
+  });
+
   it("posts a visible budget-exceeded error instead of throwing when the node budget is hit", async () => {
     // DEFAULT_NODE_BUDGET counts every node visited, including pruned empty
     // frames — build enough flat siblings under an Auto Layout root to
@@ -133,6 +154,7 @@ describe("handleUIMessage: extract", () => {
     // real browser's opaque "Cannot unwrap symbol" structured-clone error.
     const extractorModule = await import("../extractor/index.js");
     const spy = vi.spyOn(extractorModule, "extractSelection").mockResolvedValue({
+      schemaVersion: 1,
       nodes: [
         {
           kind: "layout",

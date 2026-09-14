@@ -88,6 +88,21 @@ entry or value into the IR's `unresolved[]` channel, carrying the
 This keeps the gap visible all the way through to whatever consumes the
 IR (e.g. codegen), instead of it disappearing at extraction time.
 
+## Component set name lookup
+
+`findComponentMapEntry` (`src/index.ts`) matches a Figma component set name
+against `entries[].figmaComponentSet` exactly first. If that fails, it
+retries with both sides normalized (trimmed, whitespace-collapsed,
+lowercased, and a single trailing "s" stripped for naive singular/plural
+folding) — this only tolerates case/whitespace/plural drift between the
+Figma file and this YAML (both typed independently by humans and prone to
+drift, e.g. `Badge` vs. `Badges`), never fuzzy/substring matching. A
+genuinely absent component set (e.g. `Section Header`, `Container` — real
+components used on real screens with no entry here at all) still resolves
+to `null` either way; adding those requires a human with access to the
+target design system to author the `compose`/`variants`/`routing` blocks,
+not something this lookup can paper over.
+
 ## Known gaps as of this file's authoring
 
 These are called out in detail inline, but for a quick human-readable
@@ -108,3 +123,10 @@ summary, the current known design-system gaps are:
    they only appear embedded inside `Cards`/`Lists`.
 6. **Accordions** - Figma component and Compose design tokens both exist,
    but no Compose composable has been built yet.
+7. **Missing entries entirely** - real screens use component sets this
+   file has no entry for at all (confirmed on a real export: `Section
+Header`, `Container`, `Segmented Controls`, `Slider`, `Tab Bars`,
+   `Insights Card`, `🔒 Assets / *`). This isn't a lookup bug (see
+   "Component set name lookup" above) — these component sets need their
+   own entries authored by someone with access to the target design
+   system, same as any other gap in this list.

@@ -9,5 +9,6 @@
   "documentAccess": "dynamic-page",
   "networkAccess": {
     "allowedDomains": ["none"]
-  }
+  },
+  "enablePrivatePluginApi": true
 }

@@ -3,7 +3,7 @@ import { buildAssetNode, inferAssetType, isAssetNode } from "../asset.js";
 import { mockFrame, mockGroup, mockInstance, mockVector } from "../../test/nodeBuilders.js";
 import { slugify } from "../slug.js";
 
-const ctx = { fileKey: "fk", version: "1", ancestorPath: [] };
+const ctx = { fileKey: "fk", version: "1", ancestorPath: [], exportRefRegistry: new Map() };
 
 describe("isAssetNode", () => {
   it("treats a bare VECTOR as an asset", () => {
@@ -55,19 +55,54 @@ describe("inferAssetType", () => {
   });
 
   it("classifies everything else as an image", () => {
-    expect(inferAssetType(mockVector({ name: "Photo", width: 40, height: 40 }), false)).toBe(
+    expect(inferAssetType(mockVector({ name: "Photo", width: 300, height: 200 }), false)).toBe(
       "image",
     );
+  });
+
+  it("classifies a small (<=48x48) graphic as an icon by size, even without 'icon' in the name (G3)", () => {
+    expect(
+      inferAssetType(mockVector({ name: "misc_lightbulb", width: 32, height: 32 }), false),
+    ).toBe("icon");
   });
 });
 
 describe("buildAssetNode", () => {
   it("derives a deterministic exportRef slug and rounds bounds", () => {
     const node = mockVector({ name: "Icon / Chevron-Right!!", width: 23.6, height: 24.4 });
-    const asset = buildAssetNode(node, ctx, false);
-    expect(asset.exportRef).toBe(slugify("Icon / Chevron-Right!!"));
-    expect(asset.exportRef).toBe("icon_chevron_right");
-    expect(asset.width).toBe(24);
-    expect(asset.height).toBe(24);
+    const result = buildAssetNode(node, ctx, false);
+    expect(result.node.exportRef).toBe(slugify("Icon / Chevron-Right!!"));
+    expect(result.node.exportRef).toBe("icon_chevron_right");
+    expect(result.node.width).toBe(24);
+    expect(result.node.height).toBe(24);
+    expect(result.unresolved).toEqual([]);
+  });
+
+  it("disambiguates a collision between two different nodes sharing a slug (backlog G2)", () => {
+    const registry = new Map<string, string>();
+    const localCtx = { ...ctx, exportRefRegistry: registry };
+    const first = mockVector({ id: "1:1", name: "icon" });
+    const second = mockVector({ id: "1:2", name: "icon" });
+
+    const firstResult = buildAssetNode(first, localCtx, false);
+    expect(firstResult.node.exportRef).toBe("icon");
+    expect(firstResult.unresolved).toEqual([]);
+
+    const secondResult = buildAssetNode(second, localCtx, false);
+    expect(secondResult.node.exportRef).toBe("icon_1_2");
+    expect(secondResult.unresolved).toEqual([
+      { nodeId: "1:2", reason: "duplicate-export-ref", detail: expect.stringContaining("icon") },
+    ]);
+  });
+
+  it("does not flag the same node re-processed twice as a collision", () => {
+    const registry = new Map<string, string>();
+    const localCtx = { ...ctx, exportRefRegistry: registry };
+    const node = mockVector({ id: "1:1", name: "icon" });
+
+    buildAssetNode(node, localCtx, false);
+    const secondPass = buildAssetNode(node, localCtx, false);
+    expect(secondPass.node.exportRef).toBe("icon");
+    expect(secondPass.unresolved).toEqual([]);
   });
 });

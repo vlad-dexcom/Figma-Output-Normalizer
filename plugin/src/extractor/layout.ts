@@ -6,6 +6,7 @@ import type {
   LayoutDirection,
   MainAxisAlign,
   Padding,
+  SizeDimensions,
   Sizing,
   SizingMode,
 } from "@figma-normalizator/schema";
@@ -90,10 +91,30 @@ function resolveAxisSizing(
   return "fixed";
 }
 
+/**
+ * Builds the `Sizing.dimensions` numeric fallback from `node.width`/
+ * `node.height` (rounded to whole px, matching the same convention
+ * `asset.ts` already uses for its own `width`/`height` fields). Always
+ * attempted regardless of resolved sizing mode — a "fill"/"hug" node's
+ * current rendered size is still a useful hint for a codegen consumer,
+ * even though the authoritative size there comes from the layout engine,
+ * not this fixed value. Returns `undefined` (not an empty object) when
+ * neither dimension is readable, keeping the IR free of empty-object
+ * noise (same convention as `buildTypographyLiteral` in `tokens.ts`).
+ */
+function buildSizeDimensions(node: FigmaNode): SizeDimensions | undefined {
+  const dimensions: SizeDimensions = {};
+  if (typeof node.width === "number") dimensions.width = Math.round(node.width);
+  if (typeof node.height === "number") dimensions.height = Math.round(node.height);
+  return Object.keys(dimensions).length > 0 ? dimensions : undefined;
+}
+
 export function resolveSizing(node: FigmaNode, parent: FigmaNode | undefined): Sizing {
+  const dimensions = buildSizeDimensions(node);
   return {
     width: resolveAxisSizing(node, parent, "horizontal"),
     height: resolveAxisSizing(node, parent, "vertical"),
+    ...(dimensions ? { dimensions } : {}),
   };
 }
 

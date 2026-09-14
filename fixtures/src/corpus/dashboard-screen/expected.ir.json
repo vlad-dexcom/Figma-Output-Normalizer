@@ -1,4 +1,5 @@
 {
+  "schemaVersion": 1,
   "nodes": [
     {
       "kind": "layout",
@@ -25,8 +26,20 @@
             {
               "kind": "text",
               "text": [
-                { "text": "Good morning, ", "typography": { "token": null } },
-                { "text": "Alex", "typography": { "token": null } }
+                {
+                  "text": "Good morning, ",
+                  "typography": {
+                    "token": null,
+                    "literal": { "fontFamily": "Inter", "fontStyle": "Regular", "fontSize": 20 }
+                  }
+                },
+                {
+                  "text": "Alex",
+                  "typography": {
+                    "token": null,
+                    "literal": { "fontFamily": "Inter", "fontStyle": "Bold", "fontSize": 20 }
+                  }
+                }
               ],
               "typography": null,
               "color": null,
@@ -72,7 +85,10 @@
             {
               "kind": "text",
               "text": "Reminders",
-              "typography": { "token": null },
+              "typography": {
+                "token": null,
+                "literal": { "fontFamily": "Inter", "fontStyle": "Bold", "fontSize": 16 }
+              },
               "color": null,
               "source": {
                 "nodeId": "test:5",
@@ -110,7 +126,10 @@
                   {
                     "kind": "text",
                     "text": "Check glucose at 8:00 AM",
-                    "typography": { "token": null },
+                    "typography": {
+                      "token": null,
+                      "literal": { "fontFamily": "Inter", "fontStyle": "Regular", "fontSize": 14 }
+                    },
                     "color": null,
                     "source": {
                       "nodeId": "test:8",
@@ -170,7 +189,8 @@
                 {
                   "nodeId": "test:25",
                   "reason": "unmapped-variant",
-                  "detail": "Figma has an 'Elevated Action' Style variant. AppButtonType has no PascalCase-normalized equivalent ('ElevatedAction' does not exist in Compose). Needs design system team follow-up before this variant value can be code-generated."
+                  "detail": "Figma has an 'Elevated Action' Style variant. AppButtonType has no PascalCase-normalized equivalent ('ElevatedAction' does not exist in Compose). Needs design system team follow-up before this variant value can be code-generated.",
+                  "severity": "error"
                 }
               ],
               "source": {
@@ -201,122 +221,164 @@
     {
       "nodeId": "test:27",
       "reason": "unbound-literal",
-      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value."
+      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:27",
       "reason": "unbound-literal",
-      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value."
+      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:4",
       "reason": "unbound-literal",
-      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value."
+      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:4",
       "reason": "unbound-literal",
-      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value."
+      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:1",
       "reason": "unbound-literal",
-      "detail": "Text style has no bound typography variable; using raw literal font."
+      "detail": "Text style has no bound typography variable; using raw literal font.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:1",
       "reason": "unbound-literal",
-      "detail": "Text style has no bound typography variable; using raw literal font."
+      "detail": "Text style has no bound typography variable; using raw literal font.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:22",
       "reason": "unbound-literal",
-      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value."
+      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:22",
       "reason": "unbound-literal",
-      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value."
+      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:5",
       "reason": "unbound-literal",
-      "detail": "Text style has no bound typography variable; using raw literal font."
+      "detail": "Text style has no bound typography variable; using raw literal font.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:9",
       "reason": "unbound-literal",
-      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value."
+      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:9",
       "reason": "unbound-literal",
-      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value."
+      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:8",
       "reason": "unbound-literal",
-      "detail": "Text style has no bound typography variable; using raw literal font."
+      "detail": "Text style has no bound typography variable; using raw literal font.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:13",
       "reason": "unbound-literal",
-      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value."
+      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:13",
       "reason": "unbound-literal",
-      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value."
+      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value.",
+      "severity": "warning"
+    },
+    {
+      "nodeId": "test:11",
+      "reason": "duplicate-export-ref",
+      "detail": "exportRef \"icon_alarm\" was already assigned to another node; disambiguated to \"icon_alarm_test_11\" so the two graphics don't overwrite each other's exported file.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:12",
       "reason": "unbound-literal",
-      "detail": "Text style has no bound typography variable; using raw literal font."
+      "detail": "Text style has no bound typography variable; using raw literal font.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:17",
       "reason": "unbound-literal",
-      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value."
+      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:17",
       "reason": "unbound-literal",
-      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value."
+      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value.",
+      "severity": "warning"
+    },
+    {
+      "nodeId": "test:15",
+      "reason": "duplicate-export-ref",
+      "detail": "exportRef \"icon_alarm\" was already assigned to another node; disambiguated to \"icon_alarm_test_15\" so the two graphics don't overwrite each other's exported file.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:16",
       "reason": "unbound-literal",
-      "detail": "Text style has no bound typography variable; using raw literal font."
+      "detail": "Text style has no bound typography variable; using raw literal font.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:21",
       "reason": "unbound-literal",
-      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value."
+      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:21",
       "reason": "unbound-literal",
-      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value."
+      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value.",
+      "severity": "warning"
+    },
+    {
+      "nodeId": "test:19",
+      "reason": "duplicate-export-ref",
+      "detail": "exportRef \"icon_alarm\" was already assigned to another node; disambiguated to \"icon_alarm_test_19\" so the two graphics don't overwrite each other's exported file.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:20",
       "reason": "unbound-literal",
-      "detail": "Text style has no bound typography variable; using raw literal font."
+      "detail": "Text style has no bound typography variable; using raw literal font.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:26",
       "reason": "unbound-literal",
-      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value."
+      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:26",
       "reason": "unbound-literal",
-      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value."
+      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:25",
       "reason": "unmapped-variant",
-      "detail": "Figma has an 'Elevated Action' Style variant. AppButtonType has no PascalCase-normalized equivalent ('ElevatedAction' does not exist in Compose). Needs design system team follow-up before this variant value can be code-generated."
+      "detail": "Figma has an 'Elevated Action' Style variant. AppButtonType has no PascalCase-normalized equivalent ('ElevatedAction' does not exist in Compose). Needs design system team follow-up before this variant value can be code-generated.",
+      "severity": "error"
     }
   ],
   "version": "1"

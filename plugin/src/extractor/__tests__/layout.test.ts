@@ -89,6 +89,18 @@ describe("resolveSizing", () => {
     const sizing = resolveSizing(mockFrame({ name: "plain" }), undefined);
     expect(sizing).toEqual({ width: "fixed", height: "fixed" });
   });
+
+  it("populates numeric dimensions from node.width/node.height, rounded to whole px", () => {
+    const node = mockFrame({ name: "sized", width: 123.6, height: 40.2 });
+    const sizing = resolveSizing(node, undefined);
+    expect(sizing.dimensions).toEqual({ width: 124, height: 40 });
+  });
+
+  it("omits dimensions entirely (not an empty object) when the node reports no width/height", () => {
+    const sizing = resolveSizing(mockFrame({ name: "plain" }), undefined);
+    expect(sizing.dimensions).toBeUndefined();
+    expect(sizing).not.toHaveProperty("dimensions");
+  });
 });
 
 describe("padding helpers", () => {

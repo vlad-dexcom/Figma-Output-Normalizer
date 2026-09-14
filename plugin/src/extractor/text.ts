@@ -14,6 +14,9 @@ import { buildProvenance, type ProvenanceContext } from "./provenance.js";
 export const STYLED_TEXT_SEGMENT_FIELDS = [
   "fontSize",
   "fontName",
+  "fontWeight",
+  "lineHeight",
+  "letterSpacing",
   "fills",
   "boundVariables",
 ] as const;
@@ -43,7 +46,12 @@ export async function buildTextNode(
   const unresolved: UnresolvedEntry[] = [];
 
   const resolveSegment = async (segment: FigmaStyledTextSegment): Promise<StyledSegment> => {
-    const typography = await resolveTypographyToken(figma, node.id, segment.boundVariables);
+    const typography = await resolveTypographyToken(
+      figma,
+      node.id,
+      segment.boundVariables,
+      segment,
+    );
     const color = await resolveFillColor(figma, node.id, segment.fills, segment.boundVariables);
     unresolved.push(...typography.unresolved, ...color.unresolved);
     return {
@@ -57,7 +65,7 @@ export async function buildTextNode(
     const first = segments[0];
     const characters = first?.characters ?? node.characters ?? "";
     const typography = first
-      ? await resolveTypographyToken(figma, node.id, first.boundVariables)
+      ? await resolveTypographyToken(figma, node.id, first.boundVariables, first)
       : { token: { token: null }, unresolved: [] };
     const color = first
       ? await resolveFillColor(figma, node.id, first.fills, first.boundVariables)

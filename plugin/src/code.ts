@@ -14,6 +14,7 @@ import {
 } from "./extractor/index.js";
 import { findSymbolPath } from "./extractor/mixed.js";
 import type { PluginToUIMessage, SelectionSummary, UIToPluginMessage } from "./messages.js";
+import type { UnresolvedEntry } from "@figma-normalizator/schema";
 
 /** The minimal slice of the real Figma plugin API this entry point depends on. */
 export interface ExtractFigmaAPI {
@@ -49,6 +50,41 @@ function postSelectionChanged(api: ExtractFigmaAPI, selection: readonly FigmaNod
 }
 
 /**
+ * `figma.fileKey` requires `enablePrivatePluginApi` in manifest.json (see
+ * manifest.json's own comment) **and** only resolves for private/org
+ * plugins or Figma-owned resources — it can legitimately be `undefined` in
+ * any other context (a public/dev-mode install, or before the org grants
+ * that capability). Rather than silently degrading every `Provenance.fileKey`
+ * to `""` (which made two different Figma files' exports indistinguishable
+ * and broke the export filename's `{fileKey}` segment), surface the gap as
+ * an explicit `UnresolvedEntry` — same "never substitute silently"
+ * philosophy the rest of the extractor already follows for tokens/variants.
+ */
+function resolveFileKey(
+  api: ExtractFigmaAPI,
+  selectionRootId: string,
+): { fileKey: string; unresolved: UnresolvedEntry[] } {
+  const fileKey = api.fileKey;
+  if (fileKey) {
+    return { fileKey, unresolved: [] };
+  }
+  return {
+    fileKey: "",
+    unresolved: [
+      {
+        nodeId: selectionRootId,
+        reason: "missing-file-key",
+        detail:
+          "figma.fileKey is unavailable (requires enablePrivatePluginApi in manifest.json, " +
+          "and is only ever populated for private/org plugins or Figma-owned resources). " +
+          "Provenance.fileKey and the exported filename's {fileKey} segment fall back to an " +
+          "empty/placeholder value; exports from different Figma files may be indistinguishable.",
+      },
+    ],
+  };
+}
+
+/**
  * Runs the extractor against the current selection and posts either an
  * `ir-result` or a descriptive `error` back to the UI. Never throws:
  * `extractSelection`'s only expected failure mode (`NodeBudgetExceededError`,
@@ -76,13 +112,18 @@ async function handleExtract(api: ExtractFigmaAPI): Promise<void> {
     // No `version` is passed here: extractSelection derives a deterministic
     // content-hash version from the extracted IR itself (see
     // extractor/versioning.ts) rather than us inventing one up front.
+    const rootId = selection[0]?.id ?? "";
+    const { fileKey, unresolved: fileKeyUnresolved } = resolveFileKey(api, rootId);
     const result: ExtractionResult = await extractSelection(
       {
         variables: api.variables as unknown as Parameters<typeof extractSelection>[0]["variables"],
       },
       selection,
-      { fileKey: api.fileKey ?? "" },
+      { fileKey },
     );
+    if (fileKeyUnresolved.length > 0) {
+      result.unresolved.push(...fileKeyUnresolved);
+    }
 
     // Defense-in-depth: even with every currently-known read site guarded
     // against `figma.mixed` (see extractor/mixed.ts's `isMixed`), a
@@ -111,8 +152,8 @@ async function handleExtract(api: ExtractFigmaAPI): Promise<void> {
       type: "ir-result",
       ir: result,
       source: {
-        fileKey: api.fileKey ?? "",
-        nodeId: selection[0]?.id ?? "",
+        fileKey,
+        nodeId: rootId,
         version: result.version,
       },
     });

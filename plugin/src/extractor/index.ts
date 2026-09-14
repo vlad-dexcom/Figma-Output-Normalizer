@@ -16,6 +16,7 @@ import type {
   TokenValue,
   UnresolvedEntry,
 } from "@figma-normalizator/schema";
+import { IR_SCHEMA_VERSION } from "@figma-normalizator/schema";
 import { DEFAULT_NODE_BUDGET, NodeBudget } from "./budget.js";
 import { isAssetNode, buildAssetNode } from "./asset.js";
 import { buildInstanceNode } from "./instance.js";
@@ -29,11 +30,14 @@ import {
   isUniformPadding,
 } from "./layout.js";
 import { resolveFillColor, resolveTokenValue, mixedValueResult } from "./tokens.js";
+import { resolveBorder, resolveEffects, resolveOpacity } from "./effects.js";
 import { buildProvenance, withDescendant, type ProvenanceContext } from "./provenance.js";
 import { collapseLists, type OrderedChild } from "./list.js";
 import { groupOverlayChildren } from "./overlay.js";
 import { computeContentVersion, withVersion } from "./versioning.js";
 import { isMixed } from "./mixed.js";
+import { createCachingVariablesAPI } from "./variableCache.js";
+import { withSeverity } from "./severity.js";
 import type { ExtractionSource, FigmaAPI, FigmaNode } from "./types.js";
 
 export { DEFAULT_NODE_BUDGET, NodeBudgetExceededError } from "./budget.js";
@@ -42,6 +46,14 @@ export { canonicalize, canonicalStringify } from "./canonical.js";
 export { computeContentVersion } from "./versioning.js";
 
 export interface ExtractionResult {
+  /**
+   * The IR schema version this document conforms to (schema/ir/v1/schema.json
+   * `$defs.irDocument.schemaVersion`, backlog G6/G7). Present so a consumer
+   * of an exported `*.ir.json` can tell which schema version produced it,
+   * instead of guessing from shape — previously absent from every exported
+   * artifact entirely.
+   */
+  schemaVersion: typeof IR_SCHEMA_VERSION;
   nodes: IRNode[];
   /**
    * Every UnresolvedEntry produced anywhere in the tree, flattened. Instance
@@ -168,6 +180,14 @@ async function buildLayoutNode(
 
   const sizing = resolveSizing(node, parent);
 
+  const { border, unresolved: borderUnresolved } = await resolveBorder(figma, node);
+  unresolved.push(...borderUnresolved);
+
+  const { effects, unresolved: effectsUnresolved } = resolveEffects(node);
+  unresolved.push(...effectsUnresolved);
+
+  const opacity = resolveOpacity(node);
+
   const childCtx = withDescendant(ctx, node);
   const childItems: OrderedChild[] = [];
   for (const child of node.children ?? []) {
@@ -191,6 +211,9 @@ async function buildLayoutNode(
     sizing,
     background: background.token,
     cornerRadius: cornerRadius.token,
+    ...(border ? { border } : {}),
+    ...(effects ? { effects } : {}),
+    ...(opacity !== undefined ? { opacity } : {}),
     children,
     source: buildProvenance(node, ctx),
   };
@@ -267,7 +290,8 @@ async function extractNode(
   }
 
   if (isAssetNode(node)) {
-    return { ir: buildAssetNode(node, ctx, isTopLevel), unresolved: [] };
+    const result = buildAssetNode(node, ctx, isTopLevel);
+    return { ir: result.node, unresolved: result.unresolved };
   }
 
   if (node.type === "INSTANCE") {
@@ -317,30 +341,42 @@ export async function extractSelection(
   source: ExtractionSource,
   nodeBudget = DEFAULT_NODE_BUDGET,
 ): Promise<ExtractionResult> {
+  // Wrap `figma.variables` in a per-call memoization cache (see
+  // `variableCache.ts`) so the same variable/collection id looked up from
+  // many different nodes/fields hits the Plugin API once, not once per
+  // reference.
+  const cachedFigma: FigmaAPI = { variables: createCachingVariablesAPI(figma.variables) };
   const budget = new NodeBudget(nodeBudget);
   const ctx: ProvenanceContext = {
     fileKey: source.fileKey,
     version: source.version ?? PENDING_VERSION,
     ancestorPath: [],
+    exportRefRegistry: new Map(),
   };
 
   const nodes: IRNode[] = [];
   const unresolved: UnresolvedEntry[] = [];
 
   for (const node of selection) {
-    const result = await extractNode(figma, node, undefined, ctx, budget, source, true);
+    const result = await extractNode(cachedFigma, node, undefined, ctx, budget, source, true);
     unresolved.push(...result.unresolved);
     if (result.ir) nodes.push(result.ir);
   }
+  withSeverity(unresolved);
 
   // Explicit override (tests, fixtures): use it verbatim, no hashing.
   if (source.version !== undefined) {
-    return { nodes, unresolved, version: source.version };
+    return { schemaVersion: IR_SCHEMA_VERSION, nodes, unresolved, version: source.version };
   }
 
   // Production path: derive the version from the IR we just built, then
   // stamp every Provenance.version in the tree with it (see
   // versioning.ts for why a content hash rather than a literal).
   const version = computeContentVersion(nodes);
-  return { nodes: withVersion(nodes, version), unresolved, version };
+  return {
+    schemaVersion: IR_SCHEMA_VERSION,
+    nodes: withVersion(nodes, version),
+    unresolved,
+    version,
+  };
 }

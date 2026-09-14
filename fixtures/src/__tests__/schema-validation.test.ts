@@ -12,9 +12,35 @@ import { expectedIrPath } from "../scenario.js";
 
 describe("fixture corpus schema validation", () => {
   const ajv = new Ajv2020({ strict: true, allowUnionTypes: true });
-  const validate = ajv.compile(irSchemaV1);
+  const validateNode = ajv.compile(irSchemaV1);
+  // `irSchemaV1`'s root `$ref` is `#/$defs/irNode` (validates one node, not
+  // the export envelope — see backlog G6). Compile a second validator
+  // against `$defs/irDocument` (same `$defs`, different root `$ref`) to
+  // also cover the envelope shape (`schemaVersion`/`nodes`/`unresolved`/
+  // `version`) each fixture is frozen as. `$id` is dropped on this copy —
+  // otherwise ajv rejects it as a duplicate of the schema already
+  // registered via `validateNode` above (same `$id`, different `$ref`).
+  const validateDocument = ajv.compile({
+    ...irSchemaV1,
+    $id: undefined,
+    $ref: "#/$defs/irDocument",
+  });
 
   for (const scenario of scenarios) {
+    it(`${scenario.name}: the whole export envelope validates against ir/v1/schema.json's irDocument`, async () => {
+      const expected: unknown = JSON.parse(await readFile(expectedIrPath(scenario), "utf8"));
+      const valid = validateDocument(expected);
+      if (!valid) {
+        throw new Error(
+          `${scenario.name}/expected.ir.json failed irDocument schema validation: ${JSON.stringify(
+            validateDocument.errors,
+            null,
+            2,
+          )}`,
+        );
+      }
+    });
+
     it(`${scenario.name}: every root IR node validates against ir/v1/schema.json`, async () => {
       const expected = JSON.parse(await readFile(expectedIrPath(scenario), "utf8")) as {
         nodes: unknown[];
@@ -22,11 +48,11 @@ describe("fixture corpus schema validation", () => {
       expect(expected.nodes.length).toBeGreaterThan(0);
 
       for (const node of expected.nodes) {
-        const valid = validate(node);
+        const valid = validateNode(node);
         if (!valid) {
           throw new Error(
             `${scenario.name}/expected.ir.json failed schema validation: ${JSON.stringify(
-              validate.errors,
+              validateNode.errors,
               null,
               2,
             )}`,

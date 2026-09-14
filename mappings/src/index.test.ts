@@ -54,6 +54,26 @@ describe("findComponentMapEntry", () => {
     expect(findComponentMapEntry("Nonexistent Set")).toBeNull();
   });
 
+  it("falls back to a normalized match for case drift", () => {
+    const entry = findComponentMapEntry("buttons");
+    expect(entry?.compose?.component).toBe("AppButton");
+  });
+
+  it("falls back to a normalized match for extra whitespace", () => {
+    const entry = findComponentMapEntry("  Buttons  ");
+    expect(entry?.compose?.component).toBe("AppButton");
+  });
+
+  it("falls back to a normalized match for singular/plural drift (Badge vs. Badges, B2)", () => {
+    const entry = findComponentMapEntry("Badge");
+    expect(entry?.figmaComponentSet).toBe("Badges");
+  });
+
+  it("still returns null for a genuinely unmapped component set name (no fuzzy/substring matching)", () => {
+    expect(findComponentMapEntry("Section Header")).toBeNull();
+    expect(findComponentMapEntry("Container")).toBeNull();
+  });
+
   it("has a null compose mapping for a fully unmapped component set (Accordions)", () => {
     const entry = findComponentMapEntry("Accordions");
     expect(entry?.status).toBe("unmapped");

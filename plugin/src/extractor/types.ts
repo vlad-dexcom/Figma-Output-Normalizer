@@ -53,6 +53,16 @@ export interface FigmaPaint {
   opacity?: number;
 }
 
+/** Subset of a Figma `Effect` (shadow/blur) this extractor reads. */
+export interface FigmaEffect {
+  type: "DROP_SHADOW" | "INNER_SHADOW" | "LAYER_BLUR" | "BACKGROUND_BLUR";
+  visible?: boolean;
+  color?: { r: number; g: number; b: number; a?: number };
+  offset?: { x: number; y: number };
+  radius?: number;
+  spread?: number;
+}
+
 /** Subset of a component property definition value on an instance. */
 export interface FigmaComponentPropertyValue {
   type: "BOOLEAN" | "TEXT" | "INSTANCE_SWAP" | "VARIANT";
@@ -64,6 +74,9 @@ export interface FigmaStyledTextSegment {
   characters: string;
   fontSize: number;
   fontName: { family: string; style: string };
+  fontWeight?: number;
+  lineHeight?: { value: number; unit: "PIXELS" | "PERCENT" } | { unit: "AUTO" };
+  letterSpacing?: { value: number; unit: "PIXELS" | "PERCENT" };
   fills: FigmaPaint[];
   boundVariables?: Record<string, VariableAliasBinding | VariableAliasBinding[] | undefined>;
 }
@@ -118,6 +131,19 @@ export interface FigmaNode {
   // `resolveFillColor` (tokens.ts), the single choke point every raw
   // `fills` read goes through.
   readonly fills?: readonly FigmaPaint[] | symbol;
+
+  // Strokes (border color/weight/alignment) — same `figma.mixed`-symbol
+  // possibility as `fills`, guarded via `isMixed` at the read site
+  // (`resolveStrokeColor` in tokens.ts).
+  readonly strokes?: readonly FigmaPaint[] | symbol;
+  readonly strokeWeight?: number | symbol;
+  readonly strokeAlign?: "INSIDE" | "OUTSIDE" | "CENTER";
+
+  // Effects (shadows/blur).
+  readonly effects?: readonly FigmaEffect[];
+
+  // Opacity: 0-1, defaults to 1 (fully opaque) when absent.
+  readonly opacity?: number;
 
   // Bound variables (token resolution). See VariableBindableNodeField.
   readonly boundVariables?: Record<

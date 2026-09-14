@@ -7,7 +7,7 @@ import {
   mockInstanceWithUnreadableComponentProperties,
 } from "../../test/nodeBuilders.js";
 
-const ctx = { fileKey: "fk", version: "1", ancestorPath: [] };
+const ctx = { fileKey: "fk", version: "1", ancestorPath: [], exportRefRegistry: new Map() };
 
 function buttonsInstance(overrides: Omit<Parameters<typeof mockInstance>[0], "mainComponent">) {
   const componentSet = mockComponentSet({ name: "Buttons" });

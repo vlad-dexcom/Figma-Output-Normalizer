@@ -17,6 +17,34 @@
       ]
     },
 
+    "irDocument": {
+      "title": "IRDocument",
+      "description": "The top-level export envelope written to a `*.ir.json` file / posted from the plugin sandbox / copied to the clipboard: `{ schemaVersion, nodes, unresolved, version }`. `irNode` (above) only describes one node in `nodes[]`, not this envelope — validate a whole exported artifact against `irDocument`, not `irNode`, to catch envelope-shape drift (e.g. a missing `schemaVersion`).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "nodes", "unresolved", "version"],
+      "properties": {
+        "schemaVersion": {
+          "const": 1,
+          "description": "The IR schema version this document conforms to (the `v1` path segment in this schema's `$id`). Present in every exported artifact so a future v2 consumer/tool can tell old and new exports apart without guessing from shape alone."
+        },
+        "nodes": {
+          "type": "array",
+          "description": "The extracted root IR nodes, one per top-level selected Figma layer.",
+          "items": { "$ref": "#/$defs/irNode" }
+        },
+        "unresolved": {
+          "type": "array",
+          "description": "Every UnresolvedEntry produced anywhere in the extraction, flattened into one list.",
+          "items": { "$ref": "#/$defs/unresolvedEntry" }
+        },
+        "version": {
+          "type": "string",
+          "description": "The `Provenance.version` shared by every node in `nodes` for this export (see `provenance.version` below)."
+        }
+      }
+    },
+
     "provenance": {
       "title": "Provenance",
       "description": "Origin metadata for a node, used to diff IR across re-exports of the same Figma file.",
@@ -82,6 +110,50 @@
         "symbol": {
           "type": "string",
           "description": "Reserved for a later stage: the generated design-system symbol name for this token. Optional and unused in v1."
+        },
+        "literal": {
+          "$ref": "#/$defs/typographyLiteral",
+          "description": "Populated only when `token` is null: the raw font values read directly off the text segment (getStyledTextSegments), so a codegen consumer can still render the text instead of losing the style entirely. Never populated alongside a non-null `token` (the token path is the source of truth there)."
+        }
+      }
+    },
+
+    "typographyLiteral": {
+      "title": "TypographyLiteral",
+      "description": "Raw literal typography values for a text run with no bound typography variable/style. Every field is optional because Figma's getStyledTextSegments may not always report all of them (e.g. lineHeight can be \"AUTO\").",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fontFamily": { "type": "string" },
+        "fontStyle": {
+          "type": "string",
+          "description": "Figma's fontName.style, e.g. \"Regular\", \"Bold\", \"Semi Bold Italic\"."
+        },
+        "fontSize": { "type": "number" },
+        "fontWeight": { "type": "number" },
+        "lineHeight": {
+          "description": "Either a concrete value+unit pair, or the literal string \"AUTO\" when Figma computes line height automatically from the font.",
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["value", "unit"],
+              "properties": {
+                "value": { "type": "number" },
+                "unit": { "type": "string", "enum": ["PIXELS", "PERCENT"] }
+              }
+            },
+            { "const": "AUTO" }
+          ]
+        },
+        "letterSpacing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "unit"],
+          "properties": {
+            "value": { "type": "number" },
+            "unit": { "type": "string", "enum": ["PIXELS", "PERCENT"] }
+          }
         }
       }
     },
@@ -104,6 +176,11 @@
         "detail": {
           "type": "string",
           "description": "Optional free-form human-readable detail for debugging."
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "description": "How much this entry should stand out to a human reviewing the warnings list (backlog Q9: a flat list of hundreds of entries buries real problems in routine noise). Assigned centrally from `reason` by `plugin/src/extractor/severity.ts` at the end of extraction (extractors themselves never set this), not authored per call site, so the mapping stays in one place. \"error\": the exported value is actually missing/wrong for a design-system-mapped concept (e.g. \"unmapped-component\", \"unresolvable-alias-chain\"). \"warning\": a literal was used instead of a token — usually fine, but worth eventually binding a variable (e.g. \"unbound-literal\", \"unsupported-paint\"). \"info\": expected/structural, not actionable (e.g. \"absolute-positioning\"). Optional for backward compatibility with older `*.ir.json` artifacts that predate this field; absence does not imply any particular severity."
         }
       }
     },
@@ -143,10 +220,23 @@
       "required": ["width", "height"],
       "properties": {
         "width": { "$ref": "#/$defs/sizingMode" },
-        "height": { "$ref": "#/$defs/sizingMode" }
+        "height": { "$ref": "#/$defs/sizingMode" },
+        "dimensions": {
+          "$ref": "#/$defs/sizeDimensions",
+          "description": "Numeric px dimensions for this node's own bounding box, read directly off Figma's node.width/node.height. Always populated when the node reports a size (independent of width/height mode) so a codegen consumer isn't stuck with an unusable \"fixed\" mode and no value to size a \"fixed\" axis with; for \"fill\"/\"hug\" axes the value is still the node's current rendered size, useful as a hint but not authoritative (the real size there is computed by the layout engine, not fixed)."
+        }
       }
     },
     "sizingMode": { "type": "string", "enum": ["fixed", "fill", "hug"] },
+    "sizeDimensions": {
+      "title": "SizeDimensions",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "width": { "type": "number" },
+        "height": { "type": "number" }
+      }
+    },
 
     "sizingPartial": {
       "title": "SizingPartial",
@@ -155,7 +245,8 @@
       "additionalProperties": false,
       "properties": {
         "width": { "$ref": "#/$defs/sizingMode" },
-        "height": { "$ref": "#/$defs/sizingMode" }
+        "height": { "$ref": "#/$defs/sizingMode" },
+        "dimensions": { "$ref": "#/$defs/sizeDimensions" }
       }
     },
 
@@ -242,8 +333,53 @@
         "sizing": { "$ref": "#/$defs/sizing" },
         "background": { "$ref": "#/$defs/nullableTokenValue" },
         "cornerRadius": { "$ref": "#/$defs/nullableTokenValue" },
+        "border": {
+          "$ref": "#/$defs/nullableBorder",
+          "description": "Present only when the node reports at least one visible stroke; `null` otherwise. See docs/BACKLOG.md B5."
+        },
+        "effects": {
+          "type": "array",
+          "description": "DROP_SHADOW/INNER_SHADOW effects, resolved in order. LAYER_BLUR/BACKGROUND_BLUR are not modeled and instead produce an UnresolvedEntry with reason \"unsupported-effect\" (see docs/BACKLOG.md B5); omitted (not an empty array) when the node has no modeled effects.",
+          "items": { "$ref": "#/$defs/shadowEffect" }
+        },
+        "opacity": {
+          "type": "number",
+          "description": "Node opacity, 0-1. Omitted when 1 (fully opaque, the default) to avoid noise on the overwhelming majority of nodes."
+        },
         "children": { "type": "array", "items": { "$ref": "#/$defs/irNode" } },
         "source": { "$ref": "#/$defs/provenance" }
+      }
+    },
+
+    "border": {
+      "title": "Border",
+      "description": "A resolved stroke (border): color + weight tokens plus the raw Figma alignment.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["color", "width", "align"],
+      "properties": {
+        "color": { "$ref": "#/$defs/nullableTokenValue" },
+        "width": { "$ref": "#/$defs/nullableTokenValue" },
+        "align": { "type": "string", "enum": ["inside", "outside", "center"] }
+      }
+    },
+    "nullableBorder": {
+      "oneOf": [{ "$ref": "#/$defs/border" }, { "type": "null" }]
+    },
+
+    "shadowEffect": {
+      "title": "ShadowEffect",
+      "description": "A single resolved DROP_SHADOW/INNER_SHADOW effect. Offset/blur/spread are raw px numbers (Figma effects have no bindable-variable concept for these sub-fields, unlike fills/strokes/spacing), color is resolved the same way as a fill/stroke color.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "color", "offsetX", "offsetY", "blur", "spread"],
+      "properties": {
+        "type": { "type": "string", "enum": ["dropShadow", "innerShadow"] },
+        "color": { "$ref": "#/$defs/nullableTokenValue" },
+        "offsetX": { "type": "number" },
+        "offsetY": { "type": "number" },
+        "blur": { "type": "number" },
+        "spread": { "type": "number" }
       }
     },
 

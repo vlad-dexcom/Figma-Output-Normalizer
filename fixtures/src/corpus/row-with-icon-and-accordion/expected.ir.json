@@ -1,4 +1,5 @@
 {
+  "schemaVersion": 1,
   "nodes": [
     {
       "kind": "layout",
@@ -14,7 +15,10 @@
         {
           "kind": "text",
           "text": "Help",
-          "typography": { "token": null },
+          "typography": {
+            "token": null,
+            "literal": { "fontFamily": "Inter", "fontStyle": "Bold", "fontSize": 18 }
+          },
           "color": null,
           "source": {
             "nodeId": "test:9",
@@ -50,7 +54,10 @@
             {
               "kind": "text",
               "text": "Frequently asked questions",
-              "typography": { "token": null },
+              "typography": {
+                "token": null,
+                "literal": { "fontFamily": "Inter", "fontStyle": "Regular", "fontSize": 16 }
+              },
               "color": null,
               "source": {
                 "nodeId": "test:4",
@@ -80,37 +87,44 @@
     {
       "nodeId": "test:10",
       "reason": "unbound-literal",
-      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value."
+      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:10",
       "reason": "unbound-literal",
-      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value."
+      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:9",
       "reason": "unbound-literal",
-      "detail": "Text style has no bound typography variable; using raw literal font."
+      "detail": "Text style has no bound typography variable; using raw literal font.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:8",
       "reason": "unbound-literal",
-      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value."
+      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:8",
       "reason": "unbound-literal",
-      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value."
+      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:4",
       "reason": "unbound-literal",
-      "detail": "Text style has no bound typography variable; using raw literal font."
+      "detail": "Text style has no bound typography variable; using raw literal font.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:7",
       "reason": "unmapped-component",
-      "detail": "Figma component and its variants (Type: Primary/Secondary; Expanded: Yes/No) are fully specified and tokens are already generated on the Compose side (platform/design/foundation/token/components/accordions/ Accordions.kt and AccordionsFactory.kt), but no Compose composable exists yet. This is a real gap in the design system, not a mapping problem - flag to the design system owner as a candidate for a new component."
+      "detail": "Figma component and its variants (Type: Primary/Secondary; Expanded: Yes/No) are fully specified and tokens are already generated on the Compose side (platform/design/foundation/token/components/accordions/ Accordions.kt and AccordionsFactory.kt), but no Compose composable exists yet. This is a real gap in the design system, not a mapping problem - flag to the design system owner as a candidate for a new component.",
+      "severity": "error"
     }
   ],
   "version": "1"

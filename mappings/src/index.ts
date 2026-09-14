@@ -24,10 +24,40 @@ export * from "./types.js";
 /** The parsed component-map.yaml, pre-generated to JSON at build time. */
 export const componentMap = componentMapJson as unknown as ComponentMap;
 
-/** Looks up a component-map entry by its exact Figma component set name. */
+/**
+ * Normalizes a component-set name for fuzzy (but still conservative)
+ * matching: trims whitespace, collapses repeated internal whitespace,
+ * lowercases, and strips a single trailing "s" (naive singular/plural
+ * folding — e.g. "Badge" vs. "Badges" in component-map.yaml, backlog B2).
+ * This is deliberately narrow: it only tolerates case/whitespace/plural
+ * drift, never fuzzy/substring matching, so it can't silently pair up two
+ * genuinely different component sets.
+ */
+function normalizeComponentSetName(name: string): string {
+  const collapsed = name.trim().replace(/\s+/g, " ").toLowerCase();
+  return collapsed.endsWith("s") ? collapsed.slice(0, -1) : collapsed;
+}
+
+/**
+ * Looks up a component-map entry by Figma component set name. Tries an
+ * exact match first, then falls back to a normalized (case/whitespace/
+ * singular-plural insensitive) match — see `normalizeComponentSetName`.
+ * The fallback exists because Figma component set names and
+ * component-map.yaml entries are typed independently by humans and can
+ * drift (e.g. "Badge" vs. "Badges"); it does not paper over genuinely
+ * unmapped component sets, which still return `null`.
+ */
 export function findComponentMapEntry(figmaComponentSetName: string): ComponentMapEntry | null {
+  const exact = componentMap.entries.find(
+    (entry) => entry.figmaComponentSet === figmaComponentSetName,
+  );
+  if (exact) return exact;
+
+  const normalizedTarget = normalizeComponentSetName(figmaComponentSetName);
   return (
-    componentMap.entries.find((entry) => entry.figmaComponentSet === figmaComponentSetName) ?? null
+    componentMap.entries.find(
+      (entry) => normalizeComponentSetName(entry.figmaComponentSet) === normalizedTarget,
+    ) ?? null
   );
 }
 

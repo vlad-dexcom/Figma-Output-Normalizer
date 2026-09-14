@@ -51,6 +51,40 @@ describe("groupWarningsByReason", () => {
     const groups = groupWarningsByReason(entries);
     expect(groups[0]?.entries.map((e) => e.nodeId)).toEqual(["a", "b", "c"]);
   });
+
+  it("sorts groups by severity (error, then warning, then info), regardless of first-appearance order", () => {
+    const entries = [
+      { nodeId: "1", reason: "absolute-positioning", severity: "info" as const },
+      { nodeId: "2", reason: "unbound-literal", severity: "warning" as const },
+      { nodeId: "3", reason: "unmapped-component", severity: "error" as const },
+    ];
+
+    const groups = groupWarningsByReason(entries);
+
+    expect(groups.map((g) => g.reason)).toEqual([
+      "unmapped-component",
+      "unbound-literal",
+      "absolute-positioning",
+    ]);
+    expect(groups.map((g) => g.severity)).toEqual(["error", "warning", "info"]);
+  });
+
+  it("preserves first-appearance order among groups sharing the same severity", () => {
+    const entries = [
+      { nodeId: "1", reason: "b-reason", severity: "warning" as const },
+      { nodeId: "2", reason: "a-reason", severity: "warning" as const },
+    ];
+
+    const groups = groupWarningsByReason(entries);
+
+    expect(groups.map((g) => g.reason)).toEqual(["b-reason", "a-reason"]);
+  });
+
+  it("defaults an entry with no explicit severity to warning-rank ordering", () => {
+    const entries = [{ nodeId: "1", reason: "some-legacy-reason" }];
+    const groups = groupWarningsByReason(entries);
+    expect(groups[0]?.severity).toBe("warning");
+  });
 });
 
 describe("buildWarningsViewModel", () => {

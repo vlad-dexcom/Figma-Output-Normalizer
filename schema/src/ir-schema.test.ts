@@ -67,4 +67,38 @@ describe("schema package", () => {
   it("schema/ir/v1/schema.json exists at the expected versioned path", async () => {
     await expect(readFile(schemaPath, "utf8")).resolves.toBeTruthy();
   });
+
+  it("validates the top-level export envelope (irDocument) — backlog G6/G7", async () => {
+    const ajv = new Ajv2020({ strict: true, allowUnionTypes: true });
+    const validate = ajv.compile({ ...irSchemaV1, $id: undefined, $ref: "#/$defs/irDocument" });
+
+    const validDocument = {
+      schemaVersion: 1,
+      nodes: [
+        {
+          kind: "asset",
+          assetType: "icon",
+          exportRef: "ic_test",
+          width: 24,
+          height: 24,
+          source: { nodeId: "1:1", fileKey: "abc", version: "1", path: [] },
+        },
+      ],
+      unresolved: [],
+      version: "1",
+    };
+    expect(validate(validDocument)).toBe(true);
+
+    // Missing schemaVersion (the exact gap backlog G6/G7 describes: a
+    // `*.ir.json` artifact with no way to tell which schema version
+    // produced it) must be rejected.
+    const missingSchemaVersion: Record<string, unknown> = { ...validDocument };
+    delete missingSchemaVersion.schemaVersion;
+    expect(validate(missingSchemaVersion)).toBe(false);
+
+    // A schemaVersion other than this schema's own version (2, for a
+    // hypothetical future v2 document) must also be rejected — `const: 1`
+    // is what makes this schema self-describing rather than just present.
+    expect(validate({ ...validDocument, schemaVersion: 2 })).toBe(false);
+  });
 });

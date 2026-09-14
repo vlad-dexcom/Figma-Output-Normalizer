@@ -32,6 +32,18 @@ export interface LayoutNode {
   sizing: Sizing;
   background: NullableTokenValue;
   cornerRadius: NullableTokenValue;
+  /**
+   * Present only when the node reports at least one visible stroke; `null` otherwise. See docs/BACKLOG.md B5.
+   */
+  border?: Border | null;
+  /**
+   * DROP_SHADOW/INNER_SHADOW effects, resolved in order. LAYER_BLUR/BACKGROUND_BLUR are not modeled and instead produce an UnresolvedEntry with reason "unsupported-effect" (see docs/BACKLOG.md B5); omitted (not an empty array) when the node has no modeled effects.
+   */
+  effects?: ShadowEffect[];
+  /**
+   * Node opacity, 0-1. Omitted when 1 (fully opaque, the default) to avoid noise on the overwhelming majority of nodes.
+   */
+  opacity?: number;
   children: IRNode[];
   source: Provenance;
 }
@@ -71,6 +83,33 @@ export interface Padding {
 export interface Sizing {
   width: SizingMode;
   height: SizingMode;
+  dimensions?: SizeDimensions;
+}
+/**
+ * Numeric px dimensions for this node's own bounding box, read directly off Figma's node.width/node.height. Always populated when the node reports a size (independent of width/height mode) so a codegen consumer isn't stuck with an unusable "fixed" mode and no value to size a "fixed" axis with; for "fill"/"hug" axes the value is still the node's current rendered size, useful as a hint but not authoritative (the real size there is computed by the layout engine, not fixed).
+ */
+export interface SizeDimensions {
+  width?: number;
+  height?: number;
+}
+/**
+ * A resolved stroke (border): color + weight tokens plus the raw Figma alignment.
+ */
+export interface Border {
+  color: NullableTokenValue;
+  width: NullableTokenValue;
+  align: "inside" | "outside" | "center";
+}
+/**
+ * A single resolved DROP_SHADOW/INNER_SHADOW effect. Offset/blur/spread are raw px numbers (Figma effects have no bindable-variable concept for these sub-fields, unlike fills/strokes/spacing), color is resolved the same way as a fill/stroke color.
+ */
+export interface ShadowEffect {
+  type: "dropShadow" | "innerShadow";
+  color: NullableTokenValue;
+  offsetX: number;
+  offsetY: number;
+  blur: number;
+  spread: number;
 }
 /**
  * Origin metadata for a node, used to diff IR across re-exports of the same Figma file.
@@ -123,6 +162,32 @@ export interface TokenRef {
    * Reserved for a later stage: the generated design-system symbol name for this token. Optional and unused in v1.
    */
   symbol?: string;
+  literal?: TypographyLiteral;
+}
+/**
+ * Populated only when `token` is null: the raw font values read directly off the text segment (getStyledTextSegments), so a codegen consumer can still render the text instead of losing the style entirely. Never populated alongside a non-null `token` (the token path is the source of truth there).
+ */
+export interface TypographyLiteral {
+  fontFamily?: string;
+  /**
+   * Figma's fontName.style, e.g. "Regular", "Bold", "Semi Bold Italic".
+   */
+  fontStyle?: string;
+  fontSize?: number;
+  fontWeight?: number;
+  /**
+   * Either a concrete value+unit pair, or the literal string "AUTO" when Figma computes line height automatically from the font.
+   */
+  lineHeight?:
+    | {
+        value: number;
+        unit: "PIXELS" | "PERCENT";
+      }
+    | "AUTO";
+  letterSpacing?: {
+    value: number;
+    unit: "PIXELS" | "PERCENT";
+  };
 }
 /**
  * A component instance. Opaque past this boundary: the instance's internal children are NEVER included, only its resolved properties, named slot content, and call-site layout.
@@ -183,6 +248,11 @@ export interface LayoutFieldsPartial {
 export interface SizingPartial {
   width?: SizingMode;
   height?: SizingMode;
+  dimensions?: SizeDimensions1;
+}
+export interface SizeDimensions1 {
+  width?: number;
+  height?: number;
 }
 /**
  * Records a value that could not be resolved during extraction (a missing token, an unmapped component variant/property, etc). Every unresolvable value MUST produce one of these rather than a silent substitution or omission.
@@ -200,6 +270,10 @@ export interface UnresolvedEntry {
    * Optional free-form human-readable detail for debugging.
    */
   detail?: string;
+  /**
+   * How much this entry should stand out to a human reviewing the warnings list (backlog Q9: a flat list of hundreds of entries buries real problems in routine noise). Assigned centrally from `reason` by `plugin/src/extractor/severity.ts` at the end of extraction (extractors themselves never set this), not authored per call site, so the mapping stays in one place. "error": the exported value is actually missing/wrong for a design-system-mapped concept (e.g. "unmapped-component", "unresolvable-alias-chain"). "warning": a literal was used instead of a token — usually fine, but worth eventually binding a variable (e.g. "unbound-literal", "unsupported-paint"). "info": expected/structural, not actionable (e.g. "absolute-positioning"). Optional for backward compatibility with older `*.ir.json` artifacts that predate this field; absence does not imply any particular severity.
+   */
+  severity?: "error" | "warning" | "info";
 }
 /**
  * A vector or image, represented as an export reference — never inline geometry/path data.
@@ -250,4 +324,26 @@ export interface ListNode {
    */
   itemCount: number;
   source: Provenance;
+}
+
+/**
+ * The top-level export envelope written to a `*.ir.json` file / posted from the plugin sandbox / copied to the clipboard: `{ schemaVersion, nodes, unresolved, version }`. `irNode` (above) only describes one node in `nodes[]`, not this envelope — validate a whole exported artifact against `irDocument`, not `irNode`, to catch envelope-shape drift (e.g. a missing `schemaVersion`).
+ */
+export interface IRDocument {
+  /**
+   * The IR schema version this document conforms to (the `v1` path segment in this schema's `$id`). Present in every exported artifact so a future v2 consumer/tool can tell old and new exports apart without guessing from shape alone.
+   */
+  schemaVersion: 1;
+  /**
+   * The extracted root IR nodes, one per top-level selected Figma layer.
+   */
+  nodes: IRNode[];
+  /**
+   * Every UnresolvedEntry produced anywhere in the extraction, flattened into one list.
+   */
+  unresolved: UnresolvedEntry[];
+  /**
+   * The `Provenance.version` shared by every node in `nodes` for this export (see `provenance.version` below).
+   */
+  version: string;
 }

@@ -3,7 +3,7 @@ import { computeOverlayAlign, groupOverlayChildren } from "../overlay.js";
 import { mockFrame } from "../../test/nodeBuilders.js";
 import type { TextNode as IRTextNode } from "@figma-normalizator/schema";
 
-const ctx = { fileKey: "fk", version: "1", ancestorPath: [] };
+const ctx = { fileKey: "fk", version: "1", ancestorPath: [], exportRefRegistry: new Map() };
 
 function textIr(text: string): IRTextNode {
   return {

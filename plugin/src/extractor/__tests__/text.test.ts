@@ -10,7 +10,7 @@ const noopFigma: FigmaAPI = {
   },
 };
 
-const ctx = { fileKey: "fk", version: "1", ancestorPath: [] };
+const ctx = { fileKey: "fk", version: "1", ancestorPath: [], exportRefRegistry: new Map() };
 
 describe("buildTextNode", () => {
   it("emits a plain string for a single uniform-style segment", async () => {
@@ -25,7 +25,10 @@ describe("buildTextNode", () => {
 
     const { node: irNode, unresolved } = await buildTextNode(noopFigma, node, ctx);
     expect(irNode.text).toBe("Sensor expired");
-    expect(irNode.typography).toEqual({ token: null });
+    expect(irNode.typography).toEqual({
+      token: null,
+      literal: { fontFamily: "Inter", fontStyle: "Regular", fontSize: 16 },
+    });
     expect(irNode.color).toBeNull();
     // Both typography and color are unbound literals here.
     expect(unresolved).toHaveLength(1);
@@ -51,8 +54,22 @@ describe("buildTextNode", () => {
     const { node: irNode } = await buildTextNode(noopFigma, node, ctx);
     expect(Array.isArray(irNode.text)).toBe(true);
     expect(irNode.text).toEqual([
-      { text: "Hello ", typography: { token: null }, color: undefined },
-      { text: "world", typography: { token: null }, color: undefined },
+      {
+        text: "Hello ",
+        typography: {
+          token: null,
+          literal: { fontFamily: "Inter", fontStyle: "Regular", fontSize: 14 },
+        },
+        color: undefined,
+      },
+      {
+        text: "world",
+        typography: {
+          token: null,
+          literal: { fontFamily: "Inter", fontStyle: "Bold", fontSize: 14 },
+        },
+        color: undefined,
+      },
     ]);
     expect(irNode.typography).toBeNull();
     expect(irNode.color).toBeNull();

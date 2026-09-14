@@ -49,6 +49,29 @@ designer can act on directly.
 Selecting a different layer on the canvas at any time updates the header
 and re-enables **Extract** for the new selection.
 
+## `fileKey`: when it's populated, and what happens when it isn't
+
+`Provenance.fileKey` and the `{fileKey}` segment of the export filename come
+from `figma.fileKey`. That Plugin API field is not always readable:
+
+- It requires `enablePrivatePluginApi: true` in `manifest.json` (already set
+  here) — without it, the field doesn't exist at all.
+- Even with that flag, **Figma only populates it for private/org plugins and
+  Figma-owned resources** — a public or dev-mode-only install can still see
+  it resolve to `undefined`.
+
+When `figma.fileKey` is unavailable, `code.ts`'s `resolveFileKey` does not
+silently degrade `Provenance.fileKey` to an empty string with no trace of
+why — it still uses `""` (the schema requires a `string`, and inventing a
+fake key would be worse), but also pushes an explicit `missing-file-key`
+`UnresolvedEntry` (see "Warning reasons" below) naming the selection's root
+node, so the gap is visible in the panel's warnings list rather than only
+showing up later as "why do exports from two different files look the
+same?". If this plugin is ever distributed outside the org that owns it,
+expect `fileKey` to be consistently missing and this warning to always
+fire — that's an accurate reflection of what the Plugin API allows for
+non-private installs, not a bug to chase.
+
 ## Export versioning: what `version` means
 
 `Provenance.version` (and the `{version}` segment of the export filename)
@@ -97,6 +120,23 @@ never does; it always uses the computed content hash.
 **This is a real design decision made under real Plugin API constraints,
 not an incidental implementation detail — flagged here explicitly for
 review**, since there's no perfect answer available.
+
+## The export envelope: `IRDocument` and `schemaVersion`
+
+The clipboard-copy/file-download payload (`serializeForExport` in `ui.ts`)
+is `ExtractionResult` — `{ schemaVersion, nodes, unresolved, version }` —
+not a single IR node. `schema/ir/v1/schema.json`'s root `$ref` only
+describes one `irNode` (used to validate one entry of `nodes[]`); it now
+also defines `$defs/irDocument` for this envelope shape, and
+`schemaVersion` (`IR_SCHEMA_VERSION` from `@figma-normalizator/schema`, a
+literal `1` matching this schema's `v1` path segment) is threaded all the
+way from `extractSelection`'s return value into every exported artifact.
+Previously (backlog G6/G7) no exported `*.ir.json` carried its own schema
+version at all, and the schema had nothing to validate the envelope
+against — only `nodes[i]` individually. A future v2 consumer/migration
+tool can now branch on `schemaVersion` instead of guessing from shape, and
+`fixtures/src/__tests__/schema-validation.test.ts` validates each fixture's
+whole file against `irDocument`, not just its `nodes[]` entries.
 
 ## Symbol resolution (token-map)
 
@@ -163,6 +203,115 @@ component-map.json`, imported via `@figma-normalizator/mappings`) — same
   resolution" above, where the emitted `token` is likewise always the
   outermost variable's name.
 
+## Typography literal fallback
+
+`TokenRef.literal` (see `schema/ir/v1/schema.json`'s `typographyLiteral`
+def) is populated only when `TokenRef.token` is `null` — i.e. exactly the
+cases `resolveTypographyToken` already reports via an `unbound-literal` (or
+`unresolvable-alias-chain`) `UnresolvedEntry`. Before this existed, an
+unbound text run lost `fontFamily`/`fontSize`/`fontWeight`/`lineHeight`/
+`letterSpacing` entirely — the IR recorded that something was wrong but
+gave a codegen consumer nothing to render the text with. `buildTextNode`
+now threads the same `getStyledTextSegments` segment used for
+`boundVariables` into `resolveTypographyToken`, which reads its raw
+`fontName`/`fontSize`/`fontWeight`/`lineHeight`/`letterSpacing` fields
+directly (no resolution, no token lookup) into `literal`. Fields Figma
+doesn't report for a given segment are simply omitted rather than defaulted
+to `0`/`""`; `literal` itself is omitted entirely (not an empty object)
+when nothing was readable. This is additive-only: any `TokenRef` with a
+non-null `token` is unaffected.
+
+## Sizing dimensions
+
+`Sizing.dimensions` (`{ width?, height? }` px, rounded to whole pixels) is
+populated by `resolveSizing` (`layout.ts`) directly from `node.width`/
+`node.height`, alongside the existing `width`/`height` sizing **modes**
+(`"fixed"`/`"fill"`/`"hug"`). Previously a `"fixed"` mode carried no actual
+size — the single most common case in real screens — leaving a codegen
+consumer with nothing to size the node with. `dimensions` is populated
+regardless of mode (a `"fill"`/`"hug"` node's current rendered size is
+still a useful hint, just not the authoritative size — that's computed by
+the layout engine, not this fixed snapshot) and omitted entirely (not an
+empty object) when neither dimension is readable off the node. This
+mirrors `AssetNode.width`/`height`'s existing rounding convention
+(`Math.round`) and, like `TokenRef.literal` above, is additive-only.
+
+## Border, effects, and opacity
+
+`LayoutNode` now carries three more optional fields, previously dropped
+entirely with no `UnresolvedEntry` at all (backlog item B5,
+docs/BACKLOG.md) — all resolved in `extractor/effects.ts`:
+
+- **`border`** (`Border | undefined`): resolved from `node.strokes` (color,
+  via the same SOLID-paint/bound-variable logic as `background`, factored
+  into a shared `resolvePaintColor` in `tokens.ts`) + `node.strokeWeight`
+  (bound-variable-aware, like `gap`/`cornerRadius`) + `node.strokeAlign`
+  (a plain enum: `"inside"`/`"outside"`/`"center"`, not a design token —
+  there's nothing to bind a variable to). Omitted entirely (not `null`)
+  when the node has no strokes at all.
+- **`effects`** (`ShadowEffect[] | undefined`): resolved from `node.effects`.
+  Only `DROP_SHADOW`/`INNER_SHADOW` are modeled; `LAYER_BLUR`/
+  `BACKGROUND_BLUR` push an `unsupported-effect` UnresolvedEntry instead
+  (see the "Warning reasons" table). Effect colors are resolved as literal
+  values only — Figma's per-effect variable binding is not attempted here,
+  a deliberately scoped-down first pass, not a silent loss (the effect
+  itself is still always accounted for, in `effects[]` or `unresolved[]`).
+  Omitted entirely when the node has no modeled effects.
+- **`opacity`** (`number | undefined`): `node.opacity`, omitted when `1`
+  (fully opaque, the default) to avoid noise on the overwhelming majority
+  of nodes.
+
+**Still open from B5** (not addressed by this pass): `rotation`,
+`blendMode`, `clipsContent`, `textAlignHorizontal`/`textAlignVertical`,
+`textAutoResize`, `maxLines`, `letterSpacing`/`lineHeight` at the node
+level (the literal-typography fallback above covers these per-segment, not
+as a first-class `TextNode`/`LayoutNode` field), `counterAxisSpacing`
+(grid/wrap), `layoutWrap`, `constraints`, `minWidth`/`maxWidth`. See
+docs/BACKLOG.md B5 for the up-to-date remaining list.
+
+## Non-solid paints (gradients, images, video)
+
+`background`/`border` colors are resolved from the first visible `SOLID`
+paint in `node.fills`/`node.strokes` only (`resolvePaintColor` in
+`tokens.ts`) — gradients and image/video fills are not converted to a
+color. Previously a node with, say, only a `GRADIENT_LINEAR` fill and no
+`SOLID` fill got a plain `background: null`, indistinguishable from a node
+that's genuinely transparent by design (backlog G1). Now that case pushes
+an `unsupported-paint` UnresolvedEntry naming the paint type(s) actually
+present, so the loss is visible instead of silent — see the "Warning
+reasons" table below. This does not add gradient/image support itself;
+that remains open (see docs/BACKLOG.md).
+
+## Deterministic `exportRef` collision handling
+
+`AssetNode.exportRef` starts as a slug of the node's name (`slugify` in
+`slug.ts`). Two unrelated graphics with the same name (e.g. two layers
+both called "icon" — backlog G2, seen 3x/2x/2x in a real export) used to
+slugify to the same `exportRef` and silently collide, so one graphic's
+export would overwrite the other's file on disk. `resolveExportRef`
+(`asset.ts`) now tracks every assigned base slug in a
+`ProvenanceContext.exportRefRegistry` shared for the whole
+`extractSelection` call; a second node claiming an already-taken slug gets
+its Figma node id appended (`"icon"` -> `"icon_165_3186"`) and a
+`duplicate-export-ref` UnresolvedEntry naming both the original slug and
+its disambiguated replacement. Disambiguation is keyed by node id, not
+processing order, so the same node always gets the same `exportRef`
+regardless of selection/traversal order.
+
+## Asset type classification
+
+`inferAssetType` (`asset.ts`) is a deliberately approximate heuristic, not
+a reliable classifier — see docs/BACKLOG.md G3. It checks, in order: (1)
+the node's name contains "icon" (case-insensitive) -> `"icon"`; (2) the
+node is at most 48x48 -> `"icon"` (added for G3: a real export had glyphs
+like `misc_lightbulb` 32x32 with no "icon" in the name, previously
+misclassified as `"image"`); (3) a top-level node at least 120x120 ->
+`"illustration"`; (4) otherwise -> `"image"`. Size thresholds are a
+judgment call, not derived from any Figma metadata — a real screen may
+still have edge cases (e.g. a non-square icon-ish glyph with one side over
+48px) that this doesn't catch; `assetType` should be treated as a hint for
+codegen/asset-pipeline tooling, not an authoritative classification.
+
 ## Variable alias resolution
 
 A Figma Variable's value for a given mode is not always a literal
@@ -209,6 +358,38 @@ produce a real value rather than stringifying the alias object itself.
   (see "Warning reasons" below), the same `unresolved[]`-channel philosophy
   already used for `unbound-literal`/`mixed-value`/etc — never a silently
   dropped or invented value.
+
+## Performance: variable/collection caching and signature memoization
+
+Two hot paths that scale with node/reference count, not with the number of
+_distinct_ variables/structures involved, are memoized for the lifetime of
+a single `extractSelection` call:
+
+- **Variable/collection lookups (`src/extractor/variableCache.ts`).** A
+  real screen routinely re-references the same handful of tokens (e.g.
+  `color/text/primary`) from dozens of nodes/fields. `extractSelection`
+  wraps `figma.variables` once, at the top of the call, in
+  `createCachingVariablesAPI`, which memoizes `getVariableByIdAsync`/
+  `getVariableCollectionByIdAsync` by id — including caching the in-flight
+  `Promise`, not just its resolved value, so two concurrent lookups for the
+  same id (this extractor `Promise.all`s many fields per node) share one
+  underlying Plugin API call instead of racing duplicate requests. This
+  turns repeated-token cost from O(references) Plugin API round-trips into
+  O(distinct variables/collections).
+- **List-collapsing structural signatures (`src/extractor/list.ts`).**
+  `collapseLists` scans siblings for runs of structurally-identical nodes
+  by comparing a deep structural signature of each candidate against its
+  predecessor. Previously each comparison recomputed both sides' signatures
+  from scratch (including every descendant), so the same node's signature
+  could be rebuilt many times over a long run. `collapseLists` now keeps a
+  `Map<FigmaNode, string>` cache scoped to one call, so each node's
+  signature is computed once and reused for every comparison it takes part
+  in.
+
+Both caches are local to a single call (a plain `Map`/closure, not a
+module-level singleton), so nothing leaks across separate extractions or
+test runs, and re-running `extractSelection` on a changed selection always
+sees fresh Plugin API state.
 
 ## Determinism guarantee
 
@@ -263,21 +444,66 @@ fully unit-testable without a DOM — see `src/ui/__tests__/clipboard.test.ts`.
 
 ### Warning reasons
 
-| Reason                            | Emitted by                                           | Meaning                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| --------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `unbound-literal`                 | extractor (`tokens.ts`)                              | A color/spacing/typography value has no bound Figma variable/style.                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `unresolvable-alias-chain`        | extractor (`tokens.ts`)                              | A bound variable's value is a `VARIABLE_ALIAS` chain that is circular, or exceeds the max alias-hop depth (10), so it could not be followed to a literal value. See "Variable alias resolution" above.                                                                                                                                                                                                                                                                                                                        |
-| `unmapped-variant`                | extractor (`instance.ts`)                            | A component's VARIANT property value has no `component-map.yaml` routing.                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `unmapped-component`              | extractor (`instance.ts`)                            | A component set has no `component-map.yaml` entry (or no mapped Compose component) at all. The instance's real children are still recursed into and extracted (see "Instance boundary" below) — this is a hygiene warning, not a truncation.                                                                                                                                                                                                                                                                                  |
-| `missing-main-component`          | extractor (`instance.ts`)                            | An INSTANCE node whose main component couldn't be resolved (deleted, or in an unavailable library). See "Detached instances" below.                                                                                                                                                                                                                                                                                                                                                                                           |
-| `unreadable-component-properties` | extractor (`instance.ts`, also guarded in `list.ts`) | `node.componentProperties` is a Figma Plugin API getter that threw — the underlying component set has broken/conflicting variant definitions **in the Figma file itself**. This is a data-integrity issue in the design file, not a plugin bug, and can't be fixed by re-exporting or updating the plugin — repair it in Figma (Assets panel → find the component set → fix/republish its conflicting variant definitions). The instance's real children are still recursed into and extracted, same as `unmapped-component`. |
-| `mixed-value`                     | extractor (`tokens.ts`, `index.ts`)                  | A property genuinely varies internally within the node — Figma's real Plugin API returns the `figma.mixed` sentinel (a `Symbol`) instead of a scalar value for it, e.g. a rectangle/frame with independent per-corner radii, or a node with multiple sets of fills. This can't be represented as a single token/value. This is a Figma-file-side authoring choice to potentially reconsider (e.g. use a uniform radius), not a plugin bug, similar in spirit to `unreadable-component-properties` above.                      |
-| `absolute-positioning`            | extractor (`overlay.ts`)                             | Children were grouped into an `overlay` node (absolutely positioned inside an Auto Layout parent). Structurally handled either way — this entry exists so it's also visible to designers in the warnings list.                                                                                                                                                                                                                                                                                                                |
+Each entry's `severity` (`"error"` / `"warning"` / `"info"`) is assigned
+centrally from `reason` by `extractor/severity.ts` — see "Severity and
+warning ordering" below.
+
+| Reason                            | Severity | Emitted by                                           | Meaning                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| --------------------------------- | -------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `unbound-literal`                 | warning  | extractor (`tokens.ts`)                              | A color/spacing/typography value has no bound Figma variable/style.                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `unresolvable-alias-chain`        | error    | extractor (`tokens.ts`)                              | A bound variable's value is a `VARIABLE_ALIAS` chain that is circular, or exceeds the max alias-hop depth (10), so it could not be followed to a literal value. See "Variable alias resolution" above.                                                                                                                                                                                                                                                                                                                        |
+| `unmapped-variant`                | error    | extractor (`instance.ts`)                            | A component's VARIANT property value has no `component-map.yaml` routing.                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `unmapped-component`              | error    | extractor (`instance.ts`)                            | A component set has no `component-map.yaml` entry (or no mapped Compose component) at all. The instance's real children are still recursed into and extracted (see "Instance boundary" below) — this is a hygiene warning, not a truncation.                                                                                                                                                                                                                                                                                  |
+| `missing-main-component`          | error    | extractor (`instance.ts`)                            | An INSTANCE node whose main component couldn't be resolved (deleted, or in an unavailable library). See "Detached instances" below.                                                                                                                                                                                                                                                                                                                                                                                           |
+| `unreadable-component-properties` | error    | extractor (`instance.ts`, also guarded in `list.ts`) | `node.componentProperties` is a Figma Plugin API getter that threw — the underlying component set has broken/conflicting variant definitions **in the Figma file itself**. This is a data-integrity issue in the design file, not a plugin bug, and can't be fixed by re-exporting or updating the plugin — repair it in Figma (Assets panel → find the component set → fix/republish its conflicting variant definitions). The instance's real children are still recursed into and extracted, same as `unmapped-component`. |
+| `mixed-value`                     | warning  | extractor (`tokens.ts`, `index.ts`)                  | A property genuinely varies internally within the node — Figma's real Plugin API returns the `figma.mixed` sentinel (a `Symbol`) instead of a scalar value for it, e.g. a rectangle/frame with independent per-corner radii, or a node with multiple sets of fills. This can't be represented as a single token/value. This is a Figma-file-side authoring choice to potentially reconsider (e.g. use a uniform radius), not a plugin bug, similar in spirit to `unreadable-component-properties` above.                      |
+| `absolute-positioning`            | info     | extractor (`overlay.ts`)                             | Children were grouped into an `overlay` node (absolutely positioned inside an Auto Layout parent). Structurally handled either way — this entry exists so it's also visible to designers in the warnings list.                                                                                                                                                                                                                                                                                                                |
+| `missing-file-key`                | error    | `code.ts` (not the extractor)                        | `figma.fileKey` was unavailable (missing `enablePrivatePluginApi`, or a non-private/org install) — `Provenance.fileKey`/the export filename's `{fileKey}` segment fell back to `""`. See "`fileKey`: when it's populated, and what happens when it isn't" above.                                                                                                                                                                                                                                                              |
+| `unsupported-effect`              | warning  | extractor (`effects.ts`)                             | The node has a `LAYER_BLUR`/`BACKGROUND_BLUR` effect, which isn't modeled in `ShadowEffect` (only `DROP_SHADOW`/`INNER_SHADOW` are) — dropped from `LayoutNode.effects` rather than silently. See "Border, effects, and opacity" below.                                                                                                                                                                                                                                                                                       |
+| `unsupported-paint`               | warning  | extractor (`tokens.ts`)                              | A fill/stroke paint array has no visible `SOLID` paint, but does have another visible paint type (`GRADIENT_LINEAR`/`GRADIENT_RADIAL`/`GRADIENT_ANGULAR`/`GRADIENT_DIAMOND`/`IMAGE`/`VIDEO`) — only `SOLID` is resolved to a color, so the color is dropped from `background`/`border` instead of silently.                                                                                                                                                                                                                   |
+| `duplicate-export-ref`            | warning  | extractor (`asset.ts`)                               | Two different asset nodes slugified to the same `exportRef`; the second one was disambiguated with a node-id suffix so the two exports don't overwrite the same output file. See "Deterministic `exportRef` collision handling" above.                                                                                                                                                                                                                                                                                        |
 
 Reasons above the line are extractor-emitted (present in `unresolved[]` in
 the IR itself); `absolute-positioning` was added in this task as a small,
 targeted extractor change (`overlay.ts`) specifically so the UI can surface
 it, per the plugin-validator-ui task description.
+
+### Severity and warning ordering
+
+A real screen's `unresolved[]` can run into the hundreds of entries (one
+real export analyzed during this project had 361), and the overwhelming
+majority are routine `unbound-literal` noise (a spacing value with no
+bound variable) rather than actual design-system problems. To keep real
+problems from getting lost:
+
+- Every `UnresolvedEntry` now carries an optional `severity`
+  (`"error" | "warning" | "info"`), stamped once by `withSeverity`
+  (`extractor/severity.ts`) at the very end of `extractSelection`, from a
+  fixed table keyed by `reason` (see the table above). Extractors
+  themselves never set `severity` at the point they emit an entry — the
+  classification lives in exactly one place.
+- `"error"`: the exported value is actually missing/wrong for a
+  design-system-mapped concept (unmapped component/variant, an
+  unresolvable alias chain, a missing main component, ...) — something a
+  human needs to fix in Figma or `component-map.yaml`.
+- `"warning"`: a literal was used where a token binding was expected.
+  Extremely common and often perfectly fine, but worth eventually binding
+  a variable.
+- `"info"`: expected/structural, surfaced purely for visibility
+  (`absolute-positioning`).
+- The panel's warnings list (`ui/warnings.ts`'s `groupWarningsByReason`)
+  groups by `reason` as before, but now stably sorts the groups by
+  severity (error, then warning, then info) before rendering — so, e.g.,
+  a handful of `unmapped-component` entries surface above dozens of
+  `unbound-literal` entries, without merging, discarding, or hiding any
+  individual entry.
+- Because `InstanceNode.unresolved` and the flattened top-level array
+  share the same entry objects (see `index.ts`), stamping severity on the
+  flattened array covers the nested copies too — no separate tree walk.
+- `severity` is optional in the schema for backward compatibility: an
+  older exported `*.ir.json` that predates this field is still valid, and
+  the UI/`groupWarningsByReason` treat a missing `severity` as
+  `"warning"`-ranked for sorting purposes.
 
 ### Instance boundary: opaque only when mapped
 

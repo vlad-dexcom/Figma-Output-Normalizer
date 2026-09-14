@@ -53,8 +53,33 @@ function structuralSignature(node: FigmaNode): unknown {
   };
 }
 
-function sameStructure(a: FigmaNode, b: FigmaNode): boolean {
-  return JSON.stringify(structuralSignature(a)) === JSON.stringify(structuralSignature(b));
+/**
+ * Memoized, stringified `structuralSignature`, keyed by node identity.
+ *
+ * `collapseLists` compares every sibling against its immediate
+ * predecessor while scanning for runs, so each node's signature would
+ * otherwise be recomputed once per comparison it takes part in (up to
+ * twice: once as "current", once as the next candidate) — and
+ * `structuralSignature` itself recurses into every descendant, so for a
+ * deep/wide subtree that's a lot of repeated work for the same answer.
+ * Caching the (already-JSON-stringified, directly comparable) signature
+ * per node turns each node's signature into O(1) after the first
+ * comparison it appears in, rather than recomputing it from scratch on
+ * every comparison. The cache is a plain `Map` scoped to one
+ * `collapseLists` call (see below), not a module-level cache, so nothing
+ * survives across separate extractions/tests.
+ */
+function memoizedSignature(node: FigmaNode, cache: Map<FigmaNode, string>): string {
+  let cached = cache.get(node);
+  if (cached === undefined) {
+    cached = JSON.stringify(structuralSignature(node));
+    cache.set(node, cached);
+  }
+  return cached;
+}
+
+function sameStructure(a: FigmaNode, b: FigmaNode, cache: Map<FigmaNode, string>): boolean {
+  return memoizedSignature(a, cache) === memoizedSignature(b, cache);
 }
 
 export interface OrderedChild {
@@ -74,6 +99,7 @@ export function collapseLists(
   items: readonly OrderedChild[],
   ctx: ProvenanceContext,
 ): OrderedChild[] {
+  const signatureCache = new Map<FigmaNode, string>();
   const result: OrderedChild[] = [];
   let i = 0;
   while (i < items.length) {
@@ -88,7 +114,7 @@ export function collapseLists(
       if (
         !candidate ||
         candidate.node.layoutPositioning !== current.node.layoutPositioning ||
-        !sameStructure(candidate.node, current.node)
+        !sameStructure(candidate.node, current.node, signatureCache)
       ) {
         break;
       }

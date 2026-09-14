@@ -446,6 +446,35 @@ describe("resolveFillColor", () => {
       { nodeId: "1:1", reason: "mixed-value", detail: expect.stringContaining("fills") },
     ]);
   });
+
+  it("emits token:null plus an unsupported-paint UnresolvedEntry for a visible non-SOLID paint (G1)", async () => {
+    const figma = mockFigmaAPI({}, {});
+    const result = await resolveFillColor(
+      figma,
+      "1:1",
+      [{ type: "GRADIENT_LINEAR", visible: true }],
+      undefined,
+    );
+    expect(result.token).toBeNull();
+    expect(result.unresolved).toEqual([
+      {
+        nodeId: "1:1",
+        reason: "unsupported-paint",
+        detail: expect.stringContaining("GRADIENT_LINEAR"),
+      },
+    ]);
+  });
+
+  it("does not emit unsupported-paint for an invisible non-SOLID paint", async () => {
+    const figma = mockFigmaAPI({}, {});
+    const result = await resolveFillColor(
+      figma,
+      "1:1",
+      [{ type: "GRADIENT_LINEAR", visible: false }],
+      undefined,
+    );
+    expect(result).toEqual({ token: null, unresolved: [] });
+  });
 });
 
 describe("resolveTypographyToken", () => {

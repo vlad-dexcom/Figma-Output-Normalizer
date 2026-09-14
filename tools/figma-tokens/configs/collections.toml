@@ -1,0 +1,29 @@
+# Figma collections and branches that must NOT be turned into generated tokens.
+#
+# This file is source-controlled so every developer and CI run skips the same
+# collections. It is picked up automatically by the generator; override it with
+# `--collections-config <path>` or the `collections-config` key in the main config.
+#
+# Matching is case-insensitive and supports shell-style globs (`*`, `?`, `[seq]`),
+# so `wip-*` skips every collection whose name starts with `wip-`.
+#
+# Excluded collections are dropped before resolution, and alias references
+# pointing into them fall back to the concrete (literal) value, so the generated
+# code never references a class that was not produced.
+#
+# Patterns that match nothing are reported as a warning, so a typo never turns
+# into a silent no-op.
+
+exclude = [
+    "figma-only",
+]
+
+# Branches (top-level groups inside a kept collection, i.e. the first segment of
+# a Figma variable name such as `apple` in `apple/system-black`).
+#
+# A pattern containing `/` matches `<collection>/<branch>` (e.g. `base/apple`);
+# a bare pattern matches that branch in every collection (`apple` == `*/apple`).
+#
+# Dropping a branch removes its tokens, its data class and its factory
+# parameters; aliases into it fall back to the literal value.
+exclude-branches = []

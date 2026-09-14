@@ -1,4 +1,5 @@
 {
+  "schemaVersion": 1,
   "nodes": [
     {
       "kind": "layout",
@@ -44,12 +45,18 @@
               "text": [
                 {
                   "text": "Your sensor expires in ",
-                  "typography": { "token": null },
+                  "typography": {
+                    "token": null,
+                    "literal": { "fontFamily": "Inter", "fontStyle": "Regular", "fontSize": 14 }
+                  },
                   "color": { "token": null, "value": "#666666" }
                 },
                 {
                   "text": "2 days",
-                  "typography": { "token": null },
+                  "typography": {
+                    "token": null,
+                    "literal": { "fontFamily": "Inter", "fontStyle": "Bold", "fontSize": 14 }
+                  },
                   "color": { "token": null, "value": "#1A1A1A" }
                 }
               ],
@@ -122,47 +129,56 @@
     {
       "nodeId": "test:8",
       "reason": "unbound-literal",
-      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value."
+      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:7",
       "reason": "unbound-literal",
-      "detail": "Field \"cornerRadius\" has no bound variable; using raw literal value."
+      "detail": "Field \"cornerRadius\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:1",
       "reason": "unbound-literal",
-      "detail": "Field \"fills\" has no bound variable; using raw literal value."
+      "detail": "Field \"fills\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:2",
       "reason": "unbound-literal",
-      "detail": "Text style has no bound typography variable; using raw literal font."
+      "detail": "Text style has no bound typography variable; using raw literal font.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:2",
       "reason": "unbound-literal",
-      "detail": "Field \"fills\" has no bound variable; using raw literal value."
+      "detail": "Field \"fills\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:2",
       "reason": "unbound-literal",
-      "detail": "Text style has no bound typography variable; using raw literal font."
+      "detail": "Text style has no bound typography variable; using raw literal font.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:2",
       "reason": "unbound-literal",
-      "detail": "Field \"fills\" has no bound variable; using raw literal value."
+      "detail": "Field \"fills\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:6",
       "reason": "unbound-literal",
-      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value."
+      "detail": "Field \"itemSpacing\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     },
     {
       "nodeId": "test:6",
       "reason": "unbound-literal",
-      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value."
+      "detail": "Field \"paddingLeft\" has no bound variable; using raw literal value.",
+      "severity": "warning"
     }
   ],
   "version": "1"

@@ -1,7 +1,7 @@
 // Asset detection: vectors, and graphic-only frames/groups/instances, are
 // represented as an `asset` node (an export reference) rather than being
 // descended into. See concern #6 in the plugin-extractor task description.
-import type { AssetNode } from "@figma-normalizator/schema";
+import type { AssetNode, UnresolvedEntry } from "@figma-normalizator/schema";
 import type { FigmaNode } from "./types.js";
 import { buildProvenance, type ProvenanceContext } from "./provenance.js";
 import { slugify } from "./slug.js";
@@ -52,27 +52,85 @@ export function isAssetNode(node: FigmaNode): boolean {
  * Heuristic asset-type classification, deliberately approximate (see
  * plugin-extractor task notes — refining this is a follow-up):
  *   - name contains "icon" (case-insensitive) -> "icon"
+ *   - otherwise, at most 48x48 -> "icon" (backlog G3: small glyphs like
+ *     "right_content" 40x56 or "misc_lightbulb" 32x32 have no "icon" in
+ *     their name but are unmistakably icon-sized, not photos/artwork)
  *   - otherwise, a top-level node at least 120x120 -> "illustration"
  *     (large standalone graphics tend to be illustrations/empty-states)
  *   - otherwise -> "image"
  */
 export function inferAssetType(node: FigmaNode, isTopLevel: boolean): AssetNode["assetType"] {
   if (node.name.toLowerCase().includes("icon")) return "icon";
-  if (isTopLevel && (node.width ?? 0) >= 120 && (node.height ?? 0) >= 120) return "illustration";
+  const width = node.width ?? 0;
+  const height = node.height ?? 0;
+  if (width > 0 && height > 0 && width <= 48 && height <= 48) return "icon";
+  if (isTopLevel && width >= 120 && height >= 120) return "illustration";
   return "image";
+}
+
+/**
+ * Converts a Figma node id (e.g. "165:3186") into a slug-safe suffix
+ * ("165_3186"), for disambiguating `exportRef` collisions.
+ */
+function nodeIdSuffix(nodeId: string): string {
+  return nodeId.replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+}
+
+/**
+ * Deterministically assigns `node`'s `exportRef`, disambiguating a
+ * collision with a previously seen *different* node's slug (backlog G2:
+ * `icon` x3, `action_buttons` x2, `line` x2, etc. in a real export — the
+ * same slugified name from unrelated graphics, which would otherwise
+ * silently overwrite one another's exported file). Disambiguation is by
+ * node id (`"165:3186"` -> `"_165_3186"` suffix), not by processing order,
+ * so the same Figma node always gets the same `exportRef` regardless of
+ * selection/traversal order. A collision is also surfaced as an
+ * `UnresolvedEntry("duplicate-export-ref")` so it's visible to whoever
+ * reviews the export, not just silently renamed.
+ */
+function resolveExportRef(
+  node: FigmaNode,
+  registry: Map<string, string>,
+): { exportRef: string; unresolved: UnresolvedEntry[] } {
+  const baseSlug = slugify(node.name);
+  const owner = registry.get(baseSlug);
+  if (owner === undefined) {
+    registry.set(baseSlug, node.id);
+    return { exportRef: baseSlug, unresolved: [] };
+  }
+  if (owner === node.id) {
+    // Same node seen twice (shouldn't normally happen) — reuse its slug.
+    return { exportRef: baseSlug, unresolved: [] };
+  }
+  const disambiguated = `${baseSlug}_${nodeIdSuffix(node.id)}`;
+  registry.set(disambiguated, node.id);
+  return {
+    exportRef: disambiguated,
+    unresolved: [
+      {
+        nodeId: node.id,
+        reason: "duplicate-export-ref",
+        detail: `exportRef "${baseSlug}" was already assigned to another node; disambiguated to "${disambiguated}" so the two graphics don't overwrite each other's exported file.`,
+      },
+    ],
+  };
 }
 
 export function buildAssetNode(
   node: FigmaNode,
   ctx: ProvenanceContext,
   isTopLevel: boolean,
-): AssetNode {
+): { node: AssetNode; unresolved: UnresolvedEntry[] } {
+  const { exportRef, unresolved } = resolveExportRef(node, ctx.exportRefRegistry);
   return {
-    kind: "asset",
-    assetType: inferAssetType(node, isTopLevel),
-    exportRef: slugify(node.name),
-    width: Math.round(node.width ?? 0),
-    height: Math.round(node.height ?? 0),
-    source: buildProvenance(node, ctx),
+    node: {
+      kind: "asset",
+      assetType: inferAssetType(node, isTopLevel),
+      exportRef,
+      width: Math.round(node.width ?? 0),
+      height: Math.round(node.height ?? 0),
+      source: buildProvenance(node, ctx),
+    },
+    unresolved,
   };
 }

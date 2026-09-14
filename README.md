@@ -27,6 +27,7 @@ Figma's internal document model at all.
 ## Layout
 
 ```
+docs/       # architecture walkthrough + known-gaps backlog
 schema/     # versioned IR JSON Schema, generated TS types, fixtures
 plugin/     # the Figma plugin (TypeScript) that walks the scene graph and
             # emits the IR
@@ -37,6 +38,21 @@ fixtures/   # captured real-screen node data + expected IR snapshots, used
 
 This is an npm workspaces monorepo. Each package has its own
 `package.json` and extends the shared root `tsconfig.json`.
+
+## Documentation
+
+- [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — step-by-step walkthrough
+  of the whole pipeline: the export lifecycle inside the plugin, layout/token/
+  instance/list/overlay/asset resolution, the IR v1 schema, the mappings
+  packages, the Python token generator, and measurements taken against a real
+  exported screen.
+- [`docs/BACKLOG.md`](./docs/BACKLOG.md) — known gaps, limitations, and
+  improvement ideas, grouped by severity.
+
+Both documents are written in Russian, matching the team working on this
+repository. Per-package READMEs (`plugin/README.md`, `schema/README.md`,
+`mappings/README.md`, `mappings/token-map/README.md`, `fixtures/README.md`)
+remain the authoritative reference for each package's own design decisions.
 
 ## Status: Stage 1
 
@@ -57,7 +73,14 @@ npm install        # install all workspace dependencies
 npm run lint        # ESLint across all packages
 npm run typecheck    # tsc --noEmit in every package
 npm test            # vitest, run once
+npm run generate     # regenerate schema types, component-map, token-map bundle, and golden fixtures
+npm run verify:generated  # regenerate + fail if anything above doesn't match what's committed
 ```
 
-CI (`.github/workflows/ci.yml`) runs install, lint, typecheck, and test on
-every push and pull request.
+CI (`.github/workflows/ci.yml`) runs install, lint, typecheck, test, and
+`verify:generated` on every push and pull request — a commit that changes
+`schema/ir/v1/schema.json`, `mappings/component-map.yaml`,
+`mappings/token-map/*.token-map.json`, or extractor behavior without also
+regenerating and committing the derived artifacts (`schema/src/generated/ir.ts`,
+`mappings/src/generated/*.json`, `fixtures/src/corpus/*/expected.ir.json`)
+fails CI instead of silently drifting.

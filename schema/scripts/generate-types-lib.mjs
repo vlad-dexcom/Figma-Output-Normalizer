@@ -19,6 +19,44 @@ export const banner = `/**
 
 `;
 
+/**
+ * Renders the `IRDocument` interface from `schema.$defs.irDocument` as a
+ * plain string, rather than a second `compile()` pass. A second full
+ * `compile()` call for `irDocument` would transitively re-expand and
+ * duplicate every interface `irNode` already produced above (`irDocument`
+ * `$ref`s `irNode`/`unresolvedEntry`), and `unreachableDefinitions: true`
+ * on the single existing pass doesn't reach it either (the library's
+ * unreachable-defs pickup only fires for `type: object` root schemas;
+ * `irNode`'s root is a bare `oneOf`). `irDocument`'s shape is small and
+ * stable (four properties), so this hand-rolled renderer — driven
+ * entirely by the schema's own property list/required/const/description,
+ * not hardcoded field values — is simpler and more robust than fighting
+ * the compiler's reachability model. `IRNode`/`UnresolvedEntry` are
+ * referenced by name, relying on the invariant that the primary `compile()`
+ * call above always emits both under those exact names.
+ */
+function renderIRDocumentInterface(schema) {
+  const doc = schema.$defs.irDocument;
+  const required = new Set(doc.required ?? []);
+  const typeFor = {
+    schemaVersion: String(doc.properties.schemaVersion.const),
+    nodes: "IRNode[]",
+    unresolved: "UnresolvedEntry[]",
+    version: "string",
+  };
+
+  const fields = Object.keys(doc.properties)
+    .map((key) => {
+      const prop = doc.properties[key];
+      const optional = required.has(key) ? "" : "?";
+      const comment = prop.description ? `  /**\n   * ${prop.description}\n   */\n` : "";
+      return `${comment}  ${key}${optional}: ${typeFor[key]};`;
+    })
+    .join("\n");
+
+  return `/**\n * ${doc.description}\n */\n` + `export interface IRDocument {\n${fields}\n}\n`;
+}
+
 /** Compiles ir/v1/schema.json into the full generated file contents (banner + TS). */
 export async function generateIrTypesFile() {
   const schema = JSON.parse(await readFile(schemaPath, "utf8"));
@@ -40,5 +78,8 @@ export async function generateIrTypesFile() {
     unreachableDefinitions: false,
     cwd: path.dirname(schemaPath),
   });
-  return banner + ts;
+
+  const documentTs = renderIRDocumentInterface(schema);
+
+  return banner + ts + "\n" + documentTs;
 }

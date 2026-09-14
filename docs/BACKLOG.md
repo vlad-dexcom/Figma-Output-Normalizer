@@ -1,0 +1,236 @@
+# Figma-Normalizator — что не доделано и что можно улучшить
+
+Снимок состояния на коммит `f2cb9e7`. Как устроен пайплайн — см.
+**[ARCHITECTURE.md](./ARCHITECTURE.md)**; нумерация ссылается на его разделы.
+
+Отсортировано по влиянию на конечную цель — IR, пригодный для кодогенерации.
+Часть пунктов подтверждена замерами на реальном экспорте (см. раздел 8
+ARCHITECTURE.md): 134 ноды, 361 запись в `unresolved`, 80% токенов не резолвятся,
+**0 mapped-инстансов из 46**.
+
+Легенда: 🔴 блокер · 🟠 существенный пробел · 🟡 качество/производительность ·
+🟢 инфраструктура и следующие этапы.
+
+## 🔴 Блокеры для кодогенерации
+
+**B1. ✅ (исправлено) `fileKey` всегда пустой.** ~~В реальном экспорте `source.fileKey === ""` во всех
+134 нодах.~~ `manifest.json` теперь запрашивает `enablePrivatePluginApi`, а
+`code.ts#resolveFileKey` явно эмитит `UnresolvedEntry("missing-file-key")`, когда
+`figma.fileKey` всё равно недоступен (непубличный/не-org плагин), вместо тихой
+пустой строки. См. `plugin/README.md` → «`fileKey`: when it's populated…».
+
+**B2. 🟡 Частично исправлено. В реальном экране 0 mapped-инстансов из 46.**
+`component-map.yaml` покрывает библиотеку **NUI - iOS Components** (10
+записей), а реальный экран использует `Section Header`, `Container`,
+`Segmented Controls`, `Slider`, `Tab Bars`, `Insights Card`, `🔒 Assets / *` и
+т. д. — эти компоненты просто отсутствуют в карте, и добавить их может только
+человек с доступом к дизайн-системе (`compose`/`package`/`variants` для
+каждого — не то, что можно достоверно угадать из кода). Это по-прежнему
+открыто.
+
+~~Отдельно: в файле есть `Badge` (ед. ч.), а в карте — `Badges` (мн. ч.) → 3
+промаха на пустом месте, потому что `findComponentMapEntry` сравнивает строки
+**точно**.~~ Исправлено: `findComponentMapEntry` (`mappings/src/index.ts`)
+теперь, если точное совпадение не найдено, повторяет поиск по нормализованному
+имени (регистр/пробелы/наивное отбрасывание конечной "s") — фиксит именно
+`Badge`/`Badges` и подобный дрейф без ложных срабатываний на действительно
+немаппленных наборах (`Section Header`, `Container` по-прежнему `null`).
+Сопоставление по `figmaComponentKey` не сделано — в `component-map.yaml` нет
+устойчивого across-file key, только `figmaNodeId` (per-file, бесполезен здесь).
+
+**B3. ✅ (исправлено) Потеря литеральных значений типографики.** ~~При
+`typography.token === null` (20 случаев) в IR не остаётся ничего.~~ `TokenRef`
+теперь несёт опциональное поле `literal` (`typographyLiteral` в схеме:
+`fontFamily`/`fontStyle`/`fontSize`/`fontWeight`/`lineHeight`/`letterSpacing`),
+заполняемое из того же `getStyledTextSegments`-сегмента, когда `token === null`.
+См. `plugin/README.md` → «Typography literal fallback».
+
+**B4. ✅ (исправлено) Нет числовых размеров.** ~~`sizing: {width: "fixed"}` не несёт
+значения в px.~~ `Sizing` теперь несёт опциональное `dimensions: {width?, height?}`,
+заполняемое из `node.width/node.height` (округление до целого px, как у
+`AssetNode.width/height`) независимо от режима — см. `plugin/README.md` → «Sizing
+dimensions».
+
+**B5. 🟡 Частично исправлено. Не извлекаются целые классы свойств.**
+~~Молча теряются: `strokes`/`strokeWeight`/`strokeAlign` (границы), `effects`
+(тени, blur), `opacity` ноды~~ — эти три теперь извлекаются в
+`LayoutNode.border`/`effects`/`opacity` (`effects.ts`), с `unsupported-effect`
+для `LAYER_BLUR`/`BACKGROUND_BLUR`. См. `plugin/README.md` → «Border, effects,
+and opacity».
+
+Ещё не сделано (по-прежнему молча теряются, без единого `UnresolvedEntry`):
+`rotation`, `blendMode`, `clipsContent`, `textAlignHorizontal/Vertical`,
+`textAutoResize`, `maxLines`, `letterSpacing`/`lineHeight` на уровне ноды
+(только per-segment фолбэк из B3 покрывает это), `textDecoration`,
+`counterAxisSpacing` (grid/wrap), `layoutWrap`, `constraints`,
+`minWidth/maxWidth`. Это по-прежнему нарушение задекларированного в схеме
+инварианта «ничего не теряем молча» для перечисленных полей.
+
+## 🟠 Существенные пробелы
+
+**G1. ✅ (исправлено) Градиенты и не-SOLID заливки теряются тихо.**
+~~`resolveFillColor` берёт первый `SOLID` и возвращает `null` без варнинга,
+если его нет. `GRADIENT_LINEAR`, `IMAGE`, `VIDEO` просто исчезают.~~
+`resolvePaintColor` (`tokens.ts`) теперь при отсутствии видимого `SOLID`
+проверяет, есть ли видимая заливка другого типа, и если да — эмитит
+`UnresolvedEntry("unsupported-paint")` с перечислением найденных типов,
+вместо тихого `background`/`border: null`. Само разрешение градиентов/
+изображений в цвет по-прежнему не реализовано — см.
+`plugin/README.md` → «Non-solid paints (gradients, images, video)».
+
+**G2. ✅ (исправлено) Коллизии `exportRef`.** ~~В реальном файле: `icon` ×3,
+`action_buttons` ×2, `line` ×2, `gradient_mask` ×2, `content` ×2. Разные
+картинки получат одно имя файла.~~ `resolveExportRef` (`asset.ts`) теперь
+отслеживает уже занятые слаги в `ProvenanceContext.exportRefRegistry`
+(общий на весь `extractSelection`) и при коллизии добавляет суффикс из
+nodeId (детерминированно, не зависит от порядка обхода), плюс эмитит
+`UnresolvedEntry("duplicate-export-ref")`. См. `plugin/README.md` →
+«Deterministic `exportRef` collision handling».
+
+**G3. ✅ (исправлено, частично) Эвристика `inferAssetType` промахивается.**
+~~22 `image` против 3 `icon` на экране, где иконок явно больше:
+`right_content` 40×56 и `misc_lightbulb` 32×32 помечены как `image`.~~
+`inferAssetType` (`asset.ts`) теперь дополнительно относит к `"icon"` любой
+узел ≤48×48 (не только по имени) — это чинит `misc_lightbulb` 32×32.
+`right_content` 40×56 всё ещё не попадает под это правило (одна сторона
+&gt;48px) — граничный случай, задокументированный в `plugin/README.md` →
+«Asset type classification» как сознательно не покрытый этой эвристикой.
+
+**G4. Ассеты не экспортируются.** `exportRef` — это только _предложенное имя_.
+Реальных SVG/PNG байт нет (`exportAsync` не вызывается), `networkAccess: none`.
+Кодогенератору нечего положить в ресурсы.
+
+**G5. `INSTANCE_SWAP`-слоты всегда `null`.** Содержимое подставленного компонента
+не резолвится (явно отложено). Иконки в кнопках теряются.
+
+**G6. ✅ Конверт экспорта не покрыт схемой (исправлено).** `schema/ir/v1/schema.json`
+теперь содержит `$defs/irDocument` — `{schemaVersion, nodes, unresolved, version}` —
+отдельно от `irNode` (который по-прежнему описывает один элемент `nodes[]`).
+`fixtures/src/__tests__/schema-validation.test.ts` валидирует каждую fixture
+целиком через `irDocument`, а не только по узлам. Типы сгенерированы вручную
+через `renderIRDocumentInterface()` в `generate-types-lib.mjs` (ограничение
+`json-schema-to-typescript`: `unreachableDefinitions` не подхватывает
+`$defs`, не достижимые из корневого `oneOf`-схемы — см. комментарии в файле).
+
+**G7. ✅ Версия схемы не попадает в артефакт (исправлено).** `ExtractionResult`
+(и оба возврата `extractSelection`) теперь несут `schemaVersion: IR_SCHEMA_VERSION`
+(литерал `1`, уже существовавшая константа из `@figma-normalizator/schema`).
+Экспортируемый `*.ir.json` — это теперь полноценный `IRDocument`, который можно
+провалидировать и различить по версии при появлении v2. См.
+`plugin/README.md` → «The export envelope: `IRDocument` and `schemaVersion`».
+
+**G8. `symbol` заполняется у 14 объектов из 313.** Только ветка `base/color`
+Android_Avalon. Для `components/*` (а на реальном экране это большинство токенов:
+`components/section-header/size/padding/...`) символов нет вообще.
+
+**G9. Продукт захардкожен.** Плагин бандлит только `android-avalon.token-map.json`;
+выбора продукта (Avalon/Stelo) при экспорте нет. Задокументировано как известное
+ограничение, но при появлении второго потребителя сломается.
+
+**G10. token-map обновляется вручную и межрепозиторно.** `tools/figma-tokens/json/
+tokens.json` не коммитится, генерация требует локальный чекаут Android_*,
+`bundle:token-map` запускается руками. Бандл может незаметно протухнуть
+относительно живого файла Figma — и при этом `symbol` просто молча отсутствует.
+
+**G11. `tools/figma-tokens` не интегрирован.** Папка лежит в корне, но её нет в
+`workspaces`, нет в CI, нет npm-скрипта-обёртки, `.gitignore` не покрывает
+`__pycache__`/`.pytest_cache` (они уже в рабочем дереве), а `mappings/token-map/
+README.md` всё ещё ссылается на неё как на «репозиторий DexFigmaPlugin».
+
+## 🟡 Качество и производительность
+
+**Q1. ✅ (исправлено) `structuralSignature` — O(n²) по поддереву.** Раньше для
+каждой пары соседей подпись **всего поддерева** строилась заново (JSON.stringify
+пересчитывался на каждое сравнение, включая пересчёт подписи одного и того же
+"текущего" элемента на каждой итерации внутреннего цикла). Теперь `collapseLists`
+заводит `Map<FigmaNode, string>`-кэш подписей на один вызов (`memoizedSignature` в
+`list.ts`): подпись каждой ноды считается один раз и переиспользуется во всех
+сравнениях, где эта нода участвует.
+
+**Q2. Глобальный мутабельный `unreadableSignatureCounter`** в `list.ts` по-прежнему
+существует (используется как маркер "не читается" для нод со сломанными
+component-свойствами), но после мемоизации (Q1) вызывается уже не на каждое
+сравнение, а максимум один раз на ноду — частично снижает нечистоту функции, но
+сам счётчик как модульная переменная остаётся: не устраняется этим фиксом, отдельная
+задача, если понадобится полная чистота.
+
+**Q3. Порог списка `MIN_RUN_LENGTH = 3` и бюджет `5000` захардкожены** без возможности
+настройки из UI.
+
+**Q4. ✅ (исправлено) Последовательный `await` в горячих циклах: нет кэша
+резолвленных переменных.** `resolveVariable` резолвит режимы строго по очереди
+(осталось как есть — модовые значения одной переменной естественно зависимы), но
+повторные резолвы **одного и того же** `variableId`/`variableCollectionId` с разных
+нод/полей теперь кэшируются: `extractSelection` оборачивает `figma.variables` в
+`createCachingVariablesAPI` (`variableCache.ts`), созданный один раз на весь вызов
+и переданный вниз через существующий параметр `figma`. Кэшируются сами промисы (а
+не только резолвленные значения), так что параллельные обращения к одному id, ещё
+не завершившиеся к моменту второго вызова, тоже не дублируют сетевой запрос.
+
+**Q5. `BOOLEAN_OPERATION` в двух списках одновременно** — и в `CONTAINER_TYPES`
+(`index.ts`), и в `VECTOR_LIKE_TYPES` (`asset.ts`). Работает, но порядок проверок
+неочевиден и хрупок.
+
+**Q6. `crossAxisAlign: "stretch"` только если тянутся ВСЕ дети.** Частичный stretch
+теряется без варнинга. `BASELINE` схлопывается в `start` — тоже молча.
+
+**Q7. `ui.ts` не покрыт тестами** (осознанно), но в нём уже накопилась логика
+состояния (`lastResult`, `warningsCollapsed`, таймер статуса).
+
+**Q8. Нет `unresolved` внутри нод, кроме `instance`.** Схема даёт
+`InstanceNode.unresolved`, а layout/text/asset-проблемы живут только в плоском
+корневом массиве. Связь «варнинг ↔ нода» только через `nodeId`.
+
+**Q9. ✅ (исправлено) Огромный плоский `unresolved` (361 запись).** Раньше все
+записи были равнозначны — реальная проблема (`unmapped-component`) тонула среди
+десятков рутинных `unbound-literal`. Теперь `schema/ir/v1/schema.json` добавляет
+опциональное поле `severity` (`"error" | "warning" | "info"`) в `unresolvedEntry`;
+`extractor/severity.ts` проставляет его один раз в конце `extractSelection` по
+таблице `reason -> severity` (единое место классификации, а не разбросанное по
+каждому месту эмита). Панель (`ui/warnings.ts`) по-прежнему группирует по `reason`,
+но теперь стабильно сортирует группы по severity (error → warning → info) —
+дедупликация по (reason, field) сознательно не сделана в этом проходе, так как
+она удаляла бы отдельные записи из `unresolved[]`, а группировка+сортировка уже
+решает заявленную проблему «шум прячет реальные проблемы» без потери ни одной
+записи.
+
+**Q10. Два `*.token-map.json` по 35 000 строк каждый и побайтово идентичны.**
+Задокументировано, но 70 000 строк дублирующегося JSON в репозитории.
+
+## 🟢 Инфраструктура и следующие этапы
+
+**S1. Нет MCP-сервера** для отдачи IR агентам/инструментам (Stage 2).
+
+**S2. Нет кодогенерации** Compose/SwiftUI из IR (Stage 3).
+
+**S3. ✅ (исправлено) Нет CI-проверки актуальности сгенерированных артефактов.**
+Добавлен корневой скрипт `npm run generate` (регенерирует, в порядке зависимостей,
+`schema/src/generated/ir.ts`, `mappings/src/generated/component-map.json`,
+`mappings/src/generated/token-map.json` и все 5 `fixtures/src/corpus/*/expected.ir.json`
+— всё из уже закоммиченных источников, без внешних входов) и
+`npm run verify:generated` (`generate` + `git diff --exit-code` по этим трём
+директориям). `.github/workflows/ci.yml` теперь запускает `verify:generated`
+последним шагом: PR с рассинхронизированным сгенерированным артефактом красный.
+Намеренно не включает `generate:token-map` (требует внешний `tokens.json` из
+другого репозитория — не воспроизводимо в CI, см. G10/wire-python-tool).
+
+**S4. Нет Python-части в CI.** `tools/figma-tokens/tests` (pytest) не запускается.
+
+**S5. Нет версионирования/релизов плагина.** Все `package.json` — `0.0.0`,
+`manifest.json.id` подставлен, но README всё ещё называет его плейсхолдером.
+
+**S6. ✅ (исправлено) Нет сквозного e2e-теста на реальном файле.** Приложенный
+`daily_*.ir.json` перемещён из корня (был неотслеживаемым файлом) в
+`fixtures/src/real-world/` и теперь валидируется тестом
+(`fixtures/src/__tests__/real-world.test.ts`): каждый узел из `nodes[]` — против
+`irNode`, каждая запись `unresolved[]` — против `unresolvedEntry`. Полная валидация
+конверта (`irDocument`) невозможна: файл захвачен до появления `schemaVersion`,
+поэтому проверяется на уровне узлов/записей, а не всего конверта — задокументировано
+в `fixtures/src/real-world/README.md`. Так как оригинальное Figma-дерево, породившее
+этот файл, недоступно (сохранён только результат, не вход), он не участвует в
+`fixtures:update`/snapshot-тесте, как остальной корпус — это дополнение, а не замена
+существующих 5 синтетических фикстур.
+
+**S7. Документация фрагментирована.** `plugin/README.md` — 26 КБ, куда попало и
+описание UI, и ADR-обоснования (версионирование, алиасы, detached instances).
+Стоит вынести решения в `docs/adr/`, оставив README справочником.

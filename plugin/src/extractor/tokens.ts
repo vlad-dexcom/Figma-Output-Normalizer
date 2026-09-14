@@ -3,7 +3,12 @@
 // a schema `TokenValue`/`TokenRef`, or a `token: null` literal + an
 // UnresolvedEntry with reason "unbound-literal" when there's no bound
 // variable. See concern #3 in the plugin-extractor task description.
-import type { TokenValue, TokenRef, UnresolvedEntry } from "@figma-normalizator/schema";
+import type {
+  TokenValue,
+  TokenRef,
+  TypographyLiteral,
+  UnresolvedEntry,
+} from "@figma-normalizator/schema";
 import { findTokenSymbol } from "@figma-normalizator/mappings";
 import type { FigmaAPI, FigmaPaint, VariableAliasBinding } from "./types.js";
 import { isMixed } from "./mixed.js";
@@ -292,6 +297,61 @@ export async function resolveTokenValue(
 }
 
 /**
+ * Resolves a fill/stroke paint array's first visible SOLID paint to a
+ * `TokenValue`. Returns `null` (not an unresolved entry) when there is no
+ * visible solid paint at all — that's "no color", not "an unresolved
+ * color". `fieldName` selects the `boundVariables` key to consult
+ * ("fills"/"strokes") and appears in any emitted UnresolvedEntry detail.
+ */
+async function resolvePaintColor(
+  figma: FigmaAPI,
+  nodeId: string,
+  paints: readonly FigmaPaint[] | symbol | undefined,
+  boundVariables:
+    Record<string, VariableAliasBinding | VariableAliasBinding[] | undefined> | undefined,
+  fieldName: "fills" | "strokes",
+): Promise<TokenResolutionResult<TokenValue | null>> {
+  if (isMixed(paints)) {
+    // The node has multiple sets of fills/strokes (e.g. per-character text
+    // fills observed at the node level) — there is no single color to
+    // resolve, so surface a clear warning rather than passing a `Symbol`
+    // into `colorToHex`/onward toward `postMessage`.
+    return mixedValueResult(
+      nodeId,
+      `Field "${fieldName}" is mixed (this node has multiple sets of ${fieldName}) and cannot be represented as a single color; consider using a uniform ${fieldName === "fills" ? "fill" : "stroke"} or documenting the intended per-${fieldName === "fills" ? "fill" : "stroke"} values separately.`,
+    );
+  }
+  const visiblePaints = (paints ?? []).filter((f) => f.visible !== false);
+  const paint = visiblePaints.find((f) => f.type === "SOLID");
+  if (paint?.color) {
+    return resolveTokenValue(figma, nodeId, boundVariables, fieldName, colorToHex(paint.color));
+  }
+
+  // No visible SOLID paint — either there's genuinely no paint (a plain
+  // `null` color, not a loss) or the only visible paint(s) are a type this
+  // extractor doesn't resolve (gradients, images, video — backlog G1). The
+  // two cases must not be indistinguishable: a dropped gradient/image is a
+  // real loss and needs an UnresolvedEntry, unlike an intentionally absent
+  // fill/stroke.
+  const unsupportedTypes = [...new Set(visiblePaints.map((f) => f.type))].filter(
+    (type) => type !== "SOLID",
+  );
+  if (unsupportedTypes.length > 0) {
+    return {
+      token: null,
+      unresolved: [
+        {
+          nodeId,
+          reason: "unsupported-paint",
+          detail: `Field "${fieldName}" has no visible SOLID paint; the visible paint type(s) (${unsupportedTypes.join(", ")}) are not resolved to a color by this extractor.`,
+        },
+      ],
+    };
+  }
+  return { token: null, unresolved: [] };
+}
+
+/**
  * Resolves a fill/paint array's first visible SOLID paint to a `TokenValue`.
  * Returns `null` (not an unresolved entry) when there is no visible solid
  * paint at all — that's "no color", not "an unresolved color".
@@ -303,21 +363,65 @@ export async function resolveFillColor(
   boundVariables:
     Record<string, VariableAliasBinding | VariableAliasBinding[] | undefined> | undefined,
 ): Promise<TokenResolutionResult<TokenValue | null>> {
-  if (isMixed(fills)) {
-    // The node has multiple sets of fills (e.g. per-character text fills
-    // observed at the node level) — there is no single fill color to
-    // resolve, so surface a clear warning rather than passing a `Symbol`
-    // into `colorToHex`/onward toward `postMessage`.
-    return mixedValueResult(
-      nodeId,
-      'Field "fills" is mixed (this node has multiple sets of fills) and cannot be represented as a single color; consider using a uniform fill or documenting the intended per-fill values separately.',
-    );
+  return resolvePaintColor(figma, nodeId, fills, boundVariables, "fills");
+}
+
+/**
+ * Same as `resolveFillColor`, but for `node.strokes` (border color) — see
+ * backlog item B5 (docs/BACKLOG.md): strokes were previously dropped
+ * entirely with no `UnresolvedEntry` at all.
+ */
+export async function resolveStrokeColor(
+  figma: FigmaAPI,
+  nodeId: string,
+  strokes: readonly FigmaPaint[] | symbol | undefined,
+  boundVariables:
+    Record<string, VariableAliasBinding | VariableAliasBinding[] | undefined> | undefined,
+): Promise<TokenResolutionResult<TokenValue | null>> {
+  return resolvePaintColor(figma, nodeId, strokes, boundVariables, "strokes");
+}
+
+/**
+ * Builds the `literal` fallback for an unbound `TokenRef` from a styled
+ * text segment's raw font fields (see `getStyledTextSegments`), so a
+ * `token: null` typography no longer loses fontFamily/fontSize/fontWeight/
+ * lineHeight/letterSpacing entirely (see backlog item "B3" /
+ * docs/BACKLOG.md). Fields Figma didn't report are simply omitted rather
+ * than defaulted, matching TypographyLiteral's all-optional schema shape.
+ * Returns `undefined` (rather than `{}`) when `segment` is missing or
+ * carries no readable fields, keeping the IR free of empty-object noise.
+ */
+function buildTypographyLiteral(
+  segment: TypographySegmentLike | undefined,
+): TypographyLiteral | undefined {
+  if (!segment) return undefined;
+  const literal: TypographyLiteral = {};
+  if (segment.fontName?.family) literal.fontFamily = segment.fontName.family;
+  if (segment.fontName?.style) literal.fontStyle = segment.fontName.style;
+  if (typeof segment.fontSize === "number") literal.fontSize = segment.fontSize;
+  if (typeof segment.fontWeight === "number") literal.fontWeight = segment.fontWeight;
+  if (segment.lineHeight) {
+    literal.lineHeight =
+      "value" in segment.lineHeight
+        ? { value: segment.lineHeight.value, unit: segment.lineHeight.unit }
+        : "AUTO";
   }
-  const paint = (fills ?? []).find((f) => f.type === "SOLID" && f.visible !== false);
-  if (!paint || !paint.color) {
-    return { token: null, unresolved: [] };
+  if (segment.letterSpacing) {
+    literal.letterSpacing = {
+      value: segment.letterSpacing.value,
+      unit: segment.letterSpacing.unit,
+    };
   }
-  return resolveTokenValue(figma, nodeId, boundVariables, "fills", colorToHex(paint.color));
+  return Object.keys(literal).length > 0 ? literal : undefined;
+}
+
+/** The subset of `FigmaStyledTextSegment` needed to build a `TypographyLiteral`. */
+export interface TypographySegmentLike {
+  fontName?: { family: string; style: string };
+  fontSize?: number;
+  fontWeight?: number;
+  lineHeight?: { value: number; unit: "PIXELS" | "PERCENT" } | { unit: "AUTO" };
+  letterSpacing?: { value: number; unit: "PIXELS" | "PERCENT" };
 }
 
 /**
@@ -325,19 +429,22 @@ export async function resolveFillColor(
  * expected to come from a single styled text segment (see
  * `getStyledTextSegments`); the segment's `fontName`/`fontSize` bindings
  * (or lack thereof) determine whether this resolves to a named style or a
- * `token: null` unbound literal.
+ * `token: null` unbound literal. When unbound, `segment` (the same styled
+ * text segment) is used to populate `TokenRef.literal` so the raw font
+ * values aren't lost entirely — see `buildTypographyLiteral`.
  */
 export async function resolveTypographyToken(
   figma: FigmaAPI,
   nodeId: string,
   boundVariables:
     Record<string, VariableAliasBinding | VariableAliasBinding[] | undefined> | undefined,
+  segment?: TypographySegmentLike,
 ): Promise<TokenResolutionResult<TokenRef>> {
   const variableId =
     singleBinding(boundVariables, "fontName") ?? singleBinding(boundVariables, "fontSize");
   if (!variableId) {
     return {
-      token: { token: null },
+      token: { token: null, literal: buildTypographyLiteral(segment) },
       unresolved: [
         {
           nodeId,
@@ -353,7 +460,7 @@ export async function resolveTypographyToken(
   } catch (error) {
     if (error instanceof UnresolvableAliasChainError) {
       return {
-        token: { token: null },
+        token: { token: null, literal: buildTypographyLiteral(segment) },
         unresolved: [
           {
             nodeId,
@@ -364,7 +471,7 @@ export async function resolveTypographyToken(
       };
     }
     return {
-      token: { token: null },
+      token: { token: null, literal: buildTypographyLiteral(segment) },
       unresolved: [
         {
           nodeId,

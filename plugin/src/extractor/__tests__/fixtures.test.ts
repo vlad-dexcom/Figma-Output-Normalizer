@@ -50,6 +50,7 @@ describe("fixture: button-instance.json", () => {
       fileKey: "z4Ns3yQoXwMgjky6H9WYtP",
       version: "1",
       ancestorPath: ["Screen", "Footer"],
+      exportRefRegistry: new Map(),
     };
 
     const result = await buildInstanceNode(instance, footer, ctx);
