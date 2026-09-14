@@ -17,6 +17,9 @@ jobs:
       - run: npm install
       - run: npm run lint
       - run: npm run typecheck
+      # Fails if a checked-in generated artifact drifted from its source.
+      # See scripts/verify-generated.mjs for why this gate exists.
+      - run: npm run verify:generated
       - run: npm run build
       - run: npm test
       - run: npm run verify:generated

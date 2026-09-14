@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "exclude": ["figma-only"],
+  "exclude-branches": [],
+  "exclude-remote-collections": true
+}

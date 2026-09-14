@@ -5,6 +5,7 @@
 // deliberately kept as plain types (no Figma or DOM imports) so either side
 // can depend on it without pulling in the other's runtime environment.
 import type { ExtractionResult } from "./extractor/index.js";
+import type { TokenDocument } from "@figma-normalizator/schema";
 
 /** Minimal identity of the current Figma selection, shown at the top of the panel. */
 export interface SelectionSummary {
@@ -20,6 +21,15 @@ export interface ExportSource {
   version: string;
 }
 
+/**
+ * Enough provenance to name an exported token document. Tokens are
+ * file-scoped, so unlike `ExportSource` there is no node id involved.
+ */
+export interface TokenExportSourceInfo {
+  fileKey: string;
+  version: string;
+}
+
 /** A stable, machine-readable reason an operation requested by the UI didn't succeed. */
 export type PluginErrorCode =
   | "empty-selection"
@@ -27,12 +37,21 @@ export type PluginErrorCode =
   | "node-not-found"
   | "unsupported"
   | "unknown"
-  | "symbol-leak";
+  | "symbol-leak"
+  | "token-budget-exceeded"
+  | "variables-api-unavailable";
 
 /** Messages the plugin sandbox (`code.ts`) posts to the UI iframe (`ui.ts`). */
 export type PluginToUIMessage =
   | ({ type: "selection-changed" } & SelectionSummary)
   | { type: "ir-result"; ir: ExtractionResult; source: ExportSource }
+  | {
+      type: "token-result";
+      tokens: TokenDocument;
+      source: TokenExportSourceInfo;
+      /** Counts for the panel's summary line, not part of the exported artifact. */
+      summary: { variableCount: number; skippedCollections: { name: string; reason: string }[] };
+    }
   | { type: "error"; message: string; code: PluginErrorCode };
 
 /** Messages the UI iframe (`ui.ts`) posts to the plugin sandbox (`code.ts`). */
@@ -46,4 +65,7 @@ export type UIToPluginMessage =
    * and so the later `ir-export` task has a hook to intercept/extend export
    * behavior without touching `ui.ts`.
    */
-  | { type: "export"; source: ExportSource };
+  | { type: "export"; source: ExportSource }
+  /** Requests a file-scoped design-token export (see extractor/tokenExport.ts). */
+  | { type: "extract-tokens" }
+  | { type: "export-tokens"; source: TokenExportSourceInfo };

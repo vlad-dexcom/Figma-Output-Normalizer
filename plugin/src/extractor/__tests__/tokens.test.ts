@@ -12,7 +12,10 @@ function mockFigmaAPI(
     string,
     { name: string; variableCollectionId: string; valuesByMode: Record<string, unknown> }
   >,
-  collections: Record<string, { modes: { modeId: string; name: string }[]; defaultModeId: string }>,
+  collections: Record<
+    string,
+    { modes: { modeId: string; name: string }[]; defaultModeId: string; name?: string }
+  >,
 ): FigmaAPI {
   return {
     variables: {
@@ -50,6 +53,7 @@ describe("resolveTokenValue", () => {
             { modeId: "mode:dark", name: "dark" },
           ],
           defaultModeId: "mode:light",
+          name: "base",
         },
       },
     );
@@ -64,6 +68,7 @@ describe("resolveTokenValue", () => {
 
     expect(result.token).toEqual({
       token: "spacing/md",
+      collection: "base",
       value: 16,
       modes: { light: 16, dark: 16 },
     });
@@ -86,6 +91,7 @@ describe("resolveTokenValue", () => {
             { modeId: "mode:dark", name: "dark" },
           ],
           defaultModeId: "mode:light",
+          name: "base",
         },
       },
     );
@@ -99,9 +105,11 @@ describe("resolveTokenValue", () => {
     );
     expect(result.token).toEqual({
       token: "color/surface/canvas/primary",
+      collection: "base",
       value: "#FFFFFF",
       modes: { light: "#FFFFFF", dark: "#000000" },
       symbol: "AppTheme.semanticColors.surface.canvas.primary",
+      symbolFrom: "base-color",
     });
   });
 
@@ -154,6 +162,7 @@ describe("resolveTokenValue", () => {
             { modeId: "mode:dark", name: "dark" },
           ],
           defaultModeId: "mode:light",
+          name: "base",
         },
       },
     );
@@ -169,9 +178,11 @@ describe("resolveTokenValue", () => {
     expect(result.unresolved).toEqual([]);
     expect(result.token).toEqual({
       token: "color/surface/tone/emphasis",
+      collection: "base",
       value: "#0000FF",
       modes: { light: "#0000FF", dark: "#0000FF" },
       symbol: "AppTheme.semanticColors.surface.tone.emphasis",
+      symbolFrom: "base-color",
     });
   });
 
@@ -198,6 +209,7 @@ describe("resolveTokenValue", () => {
         "col:1": {
           modes: [{ modeId: "mode:default", name: "default" }],
           defaultModeId: "mode:default",
+          name: "base",
         },
       },
     );
@@ -211,7 +223,11 @@ describe("resolveTokenValue", () => {
     );
 
     expect(result.unresolved).toEqual([]);
-    expect(result.token).toEqual({ token: "spacing/component/gap", value: 16 });
+    expect(result.token).toEqual({
+      token: "spacing/component/gap",
+      collection: "base",
+      value: 16,
+    });
   });
 
   it("emits an unresolvable-alias-chain UnresolvedEntry for a circular alias chain (A -> B -> A)", async () => {
@@ -232,6 +248,7 @@ describe("resolveTokenValue", () => {
         "col:1": {
           modes: [{ modeId: "mode:default", name: "default" }],
           defaultModeId: "mode:default",
+          name: "base",
         },
       },
     );
@@ -280,10 +297,12 @@ describe("resolveTokenValue", () => {
             { modeId: "mode:dark", name: "dark" },
           ],
           defaultModeId: "mode:light",
+          name: "base",
         },
         "col:primitive": {
           modes: [{ modeId: "mode:value", name: "value" }],
           defaultModeId: "mode:value",
+          name: "primitives",
         },
       },
     );
@@ -299,19 +318,20 @@ describe("resolveTokenValue", () => {
     expect(result.unresolved).toEqual([]);
     expect(result.token).toEqual({
       token: "color/surface/base",
+      collection: "base",
       value: "#000000",
       modes: { light: "#000000", dark: "#000000" },
+      symbol: "AppTheme.semanticColors.surface.base",
+      symbolFrom: "base-color",
     });
   });
 });
 
-describe("resolveTokenValue: token-map symbol lookup", () => {
-  // "color/border/accent/default" is a real entry in the bundled
-  // Android_Avalon token-map (mappings/src/generated/token-map.json), with
-  // symbol "AppTheme.semanticColors.border.accent.default" — used here
-  // (rather than a synthetic path) to exercise the actual bundled lookup,
-  // not a mock of it.
-  it("populates TokenValue.symbol when the resolved token path has a confirmed entry in the bundled token-map", async () => {
+describe("resolveTokenValue: wiring-rule symbol resolution", () => {
+  // These exercise the real, bundled wiring rules
+  // (mappings/wiring-rules/wiring-rules.yaml) rather than a mock of them,
+  // so a rule change that breaks symbol derivation fails here.
+  it("derives TokenValue.symbol from the base-color wiring rule, and records which rule produced it", async () => {
     const figma = mockFigmaAPI(
       {
         "var:1": {
@@ -324,6 +344,7 @@ describe("resolveTokenValue: token-map symbol lookup", () => {
         "col:1": {
           modes: [{ modeId: "mode:default", name: "default" }],
           defaultModeId: "mode:default",
+          name: "base",
         },
       },
     );
@@ -339,24 +360,51 @@ describe("resolveTokenValue: token-map symbol lookup", () => {
     expect(result.unresolved).toEqual([]);
     expect(result.token).toEqual({
       token: "color/border/accent/default",
+      collection: "base",
       value: "#000000",
       symbol: "AppTheme.semanticColors.border.accent.default",
+      symbolFrom: "base-color",
     });
   });
 
-  it("leaves TokenValue.symbol absent (no new unresolved entry) when the token path has no confirmed symbol in the bundled token-map", async () => {
-    // Covers both cases the token-map lookup treats identically (see
-    // findTokenSymbol's doc comment in mappings/src/index.ts): a path with
-    // no entry at all in the bundled map (this test's
-    // "spacing/component/nonexistent"), and a path whose full
-    // mappings/token-map/*.token-map.json entry has `symbol: null` — the
-    // bundle only ever contains entries with a confirmed symbol, so a
-    // null-symbol source entry is dropped from the bundle and becomes
-    // indistinguishable from "not found" by construction.
+  it("camelCases each path segment when deriving the accessor", async () => {
     const figma = mockFigmaAPI(
       {
         "var:1": {
-          name: "spacing/component/nonexistent",
+          name: "color/data/sets/4-color/option-3/b",
+          variableCollectionId: "col:1",
+          valuesByMode: { "mode:default": { r: 0, g: 0, b: 0 } },
+        },
+      },
+      {
+        "col:1": {
+          modes: [{ modeId: "mode:default", name: "default" }],
+          defaultModeId: "mode:default",
+          name: "base",
+        },
+      },
+    );
+
+    const result = await resolveTokenValue(
+      figma,
+      "1:1",
+      { strokes: { type: "VARIABLE_ALIAS", id: "var:1" } },
+      "strokes",
+      "#000000",
+    );
+
+    expect(result.token.symbol).toBe("AppTheme.semanticColors.data.sets._4Color.option3.b");
+  });
+
+  it("leaves symbol absent (and raises no unresolved entry) for a base branch with no confirmed wiring", async () => {
+    // base's non-color branches (radius, opacity, scale, ...) are NOT
+    // mechanically derivable from AppTheme — see the base-other-branches
+    // rule's `reason`. An absent symbol here is the expected, unremarkable
+    // outcome, not a hygiene problem to warn about.
+    const figma = mockFigmaAPI(
+      {
+        "var:1": {
+          name: "radius/md",
           variableCollectionId: "col:1",
           valuesByMode: { "mode:default": 8 },
         },
@@ -365,6 +413,7 @@ describe("resolveTokenValue: token-map symbol lookup", () => {
         "col:1": {
           modes: [{ modeId: "mode:default", name: "default" }],
           defaultModeId: "mode:default",
+          name: "base",
         },
       },
     );
@@ -378,24 +427,20 @@ describe("resolveTokenValue: token-map symbol lookup", () => {
     );
 
     expect(result.unresolved).toEqual([]);
-    expect(result.token).toEqual({ token: "spacing/component/nonexistent", value: 8 });
+    expect(result.token).toEqual({ token: "radius/md", collection: "base", value: 8 });
     expect(result.token.symbol).toBeUndefined();
   });
 
-  it("looks up the outer/semantic variable's path, not an inner primitive it aliases through", async () => {
+  it("does NOT give a non-base collection base's symbol, even for an identical path", async () => {
+    // Regression test for the ambiguity this refactor fixed: the retired
+    // token-map bundle was indexed by path alone, and `base` shared 324 of
+    // 324 paths with the (since-deleted) `stelo` product collection. A
+    // path-only lookup would confidently return base's AppTheme accessor
+    // for a different collection's token.
     const figma = mockFigmaAPI(
       {
-        "var:semantic": {
+        "var:1": {
           name: "color/border/accent/default",
-          variableCollectionId: "col:1",
-          valuesByMode: { "mode:default": { type: "VARIABLE_ALIAS", id: "var:primitive" } },
-        },
-        "var:primitive": {
-          // Deliberately a path with no bundled-token-map entry, to prove
-          // the lookup used the semantic variable's own name above, not
-          // this one — if it had used this path, `symbol` would be
-          // absent instead of populated.
-          name: "primitives/palette/does-not-exist",
           variableCollectionId: "col:1",
           valuesByMode: { "mode:default": { r: 0, g: 0, b: 0 } },
         },
@@ -404,6 +449,76 @@ describe("resolveTokenValue: token-map symbol lookup", () => {
         "col:1": {
           modes: [{ modeId: "mode:default", name: "default" }],
           defaultModeId: "mode:default",
+          name: "some-product-theme",
+        },
+      },
+    );
+
+    const result = await resolveTokenValue(
+      figma,
+      "1:1",
+      { strokes: { type: "VARIABLE_ALIAS", id: "var:1" } },
+      "strokes",
+      "#000000",
+    );
+
+    expect(result.token.collection).toBe("some-product-theme");
+    expect(result.token.symbol).toBeUndefined();
+  });
+
+  it("does NOT fall through into base's rule when the owning collection can't be read", async () => {
+    // `getVariableCollectionByIdAsync` returning null means "unknown
+    // collection", which must never be treated as a match.
+    const figma = mockFigmaAPI(
+      {
+        "var:1": {
+          name: "color/border/accent/default",
+          variableCollectionId: "col:missing",
+          valuesByMode: { "mode:default": { r: 0, g: 0, b: 0 } },
+        },
+      },
+      {},
+    );
+
+    const result = await resolveTokenValue(
+      figma,
+      "1:1",
+      { strokes: { type: "VARIABLE_ALIAS", id: "var:1" } },
+      "strokes",
+      "#000000",
+    );
+
+    expect(result.token.collection).toBeNull();
+    expect(result.token.symbol).toBeUndefined();
+  });
+
+  it("resolves against the outer/semantic variable's path, not an inner primitive it aliases through", async () => {
+    const figma = mockFigmaAPI(
+      {
+        "var:semantic": {
+          name: "color/border/accent/default",
+          variableCollectionId: "col:1",
+          valuesByMode: { "mode:default": { type: "VARIABLE_ALIAS", id: "var:primitive" } },
+        },
+        "var:primitive": {
+          // Deliberately in a collection whose rule derives no symbol, to
+          // prove resolution used the semantic variable's own identity
+          // above and not this one.
+          name: "palette/does-not-exist",
+          variableCollectionId: "col:2",
+          valuesByMode: { "mode:default": { r: 0, g: 0, b: 0 } },
+        },
+      },
+      {
+        "col:1": {
+          modes: [{ modeId: "mode:default", name: "default" }],
+          defaultModeId: "mode:default",
+          name: "base",
+        },
+        "col:2": {
+          modes: [{ modeId: "mode:default", name: "default" }],
+          defaultModeId: "mode:default",
+          name: "primitives",
         },
       },
     );
@@ -417,6 +532,7 @@ describe("resolveTokenValue: token-map symbol lookup", () => {
     );
 
     expect(result.token.symbol).toBe("AppTheme.semanticColors.border.accent.default");
+    expect(result.token.collection).toBe("base");
   });
 });
 
@@ -494,16 +610,22 @@ describe("resolveTypographyToken", () => {
           valuesByMode: { m: "x" },
         },
       },
-      { "col:1": { modes: [{ modeId: "m", name: "default" }], defaultModeId: "m" } },
+      {
+        "col:1": {
+          modes: [{ modeId: "m", name: "default" }],
+          defaultModeId: "m",
+          name: "typography",
+        },
+      },
     );
     const result = await resolveTypographyToken(figma, "1:1", {
       fontName: { type: "VARIABLE_ALIAS", id: "var:1" },
     });
-    expect(result.token).toEqual({ token: "typography/body/large" });
+    expect(result.token).toEqual({ token: "typography/body/large", collection: "typography" });
     expect(result.unresolved).toEqual([]);
   });
 
-  it("populates TokenRef.symbol when the resolved token path has a confirmed entry in the bundled token-map", async () => {
+  it("populates TokenRef.symbol/symbolFrom from the wiring rules, qualified by collection", async () => {
     const figma = mockFigmaAPI(
       {
         "var:1": {
@@ -512,14 +634,22 @@ describe("resolveTypographyToken", () => {
           valuesByMode: { m: "x" },
         },
       },
-      { "col:1": { modes: [{ modeId: "m", name: "default" }], defaultModeId: "m" } },
+      {
+        "col:1": {
+          modes: [{ modeId: "m", name: "default" }],
+          defaultModeId: "m",
+          name: "base",
+        },
+      },
     );
     const result = await resolveTypographyToken(figma, "1:1", {
       fontName: { type: "VARIABLE_ALIAS", id: "var:1" },
     });
     expect(result.token).toEqual({
       token: "color/border/accent/default",
+      collection: "base",
       symbol: "AppTheme.semanticColors.border.accent.default",
+      symbolFrom: "base-color",
     });
     expect(result.unresolved).toEqual([]);
   });

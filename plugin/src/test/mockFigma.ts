@@ -13,6 +13,12 @@ export interface MockFigmaOptions {
   variableCollections?: Record<string, FigmaVariableCollection>;
   /** Nodes `getNodeByIdAsync` can resolve, e.g. for `select-node` message tests. */
   nodesById?: Record<string, FigmaNode>;
+  /**
+   * Set false to simulate an older Figma build with no
+   * `getLocalVariableCollectionsAsync`, which the token export must report
+   * rather than crash on.
+   */
+  supportsLocalVariableCollections?: boolean;
 }
 
 export type MockFigma = ExtractFigmaAPI & {
@@ -35,6 +41,11 @@ export function createMockFigma(options: MockFigmaOptions = {}): MockFigma {
     variables: {
       getVariableByIdAsync: vi.fn(async (id: string) => variables[id] ?? null),
       getVariableCollectionByIdAsync: vi.fn(async (id: string) => variableCollections[id] ?? null),
+      ...(options.supportsLocalVariableCollections === false
+        ? {}
+        : {
+            getLocalVariableCollectionsAsync: vi.fn(async () => Object.values(variableCollections)),
+          }),
     },
     fileKey: options.fileKey ?? "test-file-key",
     notify: vi.fn(),

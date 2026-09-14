@@ -28,13 +28,41 @@ Figma's internal document model at all.
 
 ```
 docs/       # architecture walkthrough + known-gaps backlog
-schema/     # versioned IR JSON Schema, generated TS types, fixtures
+schema/     # versioned JSON Schemas, generated TS types, fixtures
+            #   ir/v1      - the node IR (a selection of the scene graph)
+            #   tokens/v1  - the token document (the file's design tokens)
 plugin/     # the Figma plugin (TypeScript) that walks the scene graph and
-            # emits the IR
-mappings/   # Figma component set -> design system component map
+            # the variable collections, and emits both documents
+mappings/   # Figma component set -> design system component map,
+            # token -> Kotlin symbol wiring rules, and the token export's
+            # collection/branch exclusion policy
 fixtures/   # captured real-screen node data + expected IR snapshots, used
             # in tests
+scripts/    # repo-wide checks (verify-generated.mjs)
 ```
+
+## Two documents, split by cadence
+
+The plugin emits two artifacts, and the split between them is **cadence**,
+not subject matter:
+
+|         | `*.ir.json`           | `*.tokens.json`            |
+| ------- | --------------------- | -------------------------- |
+| Scope   | the current selection | the whole file's variables |
+| Changes | constantly            | rarely                     |
+| Schema  | `schema/ir/v1`        | `schema/tokens/v1`         |
+
+Both share the same doctrine: semantics resolved on the Figma side,
+deterministic canonical serialization, a content-hash version, and an
+explicit `unresolved[]` channel instead of silent drops.
+
+The token document exists because the alternative — dumping raw variables
+and normalizing them downstream — measurably loses data. On a real
+production file that path silently dropped three variables, could not
+resolve 327 dangling alias targets, discarded every variable's `scopes`,
+alphabetized mode names (destroying the default-mode signal), and flattened
+leaf-collection values in a way that collapsed light/dark. See
+`schema/tokens/MIGRATION.md` for the full field-by-field contract.
 
 This is an npm workspaces monorepo. Each package has its own
 `package.json` and extends the shared root `tsconfig.json`.
@@ -51,7 +79,7 @@ This is an npm workspaces monorepo. Each package has its own
 
 Both documents are written in Russian, matching the team working on this
 repository. Per-package READMEs (`plugin/README.md`, `schema/README.md`,
-`mappings/README.md`, `mappings/token-map/README.md`, `fixtures/README.md`)
+`mappings/README.md`, `mappings/wiring-rules/README.md`, `fixtures/README.md`)
 remain the authoritative reference for each package's own design decisions.
 
 ## Status: Stage 1
@@ -69,18 +97,26 @@ Those are later stages, built on top of the IR produced here.
 ## Development
 
 ```bash
-npm install        # install all workspace dependencies
-npm run lint        # ESLint across all packages
-npm run typecheck    # tsc --noEmit in every package
-npm test            # vitest, run once
-npm run generate     # regenerate schema types, component-map, token-map bundle, and golden fixtures
-npm run verify:generated  # regenerate + fail if anything above doesn't match what's committed
+npm install               # install all workspace dependencies
+npm run lint              # ESLint across all packages
+npm run typecheck         # tsc --noEmit in every package
+npm run verify:generated  # regenerate + fail if anything below doesn't match what's committed
+npm test                  # vitest, run once
+npm run generate          # regenerate schema types, component-map, wiring-rules, collections-policy, and golden fixtures
 ```
 
-CI (`.github/workflows/ci.yml`) runs install, lint, typecheck, test, and
-`verify:generated` on every push and pull request — a commit that changes
-`schema/ir/v1/schema.json`, `mappings/component-map.yaml`,
-`mappings/token-map/*.token-map.json`, or extractor behavior without also
+CI (`.github/workflows/ci.yml`) runs install, lint, typecheck,
+verify:generated, build, and test on every push and pull request — a
+commit that changes `schema/ir/v1/schema.json`, `schema/tokens/v1/schema.json`,
+`mappings/component-map.yaml`, `mappings/wiring-rules/wiring-rules.yaml`,
+`mappings/collections-policy.yaml`, or extractor behavior without also
 regenerating and committing the derived artifacts (`schema/src/generated/ir.ts`,
-`mappings/src/generated/*.json`, `fixtures/src/corpus/*/expected.ir.json`)
-fails CI instead of silently drifting.
+`schema/src/generated/tokens.ts`, `mappings/src/generated/*.json`,
+`fixtures/src/corpus/*/expected.ir.json`) fails CI instead of silently
+drifting.
+
+`verify:generated` exists because of a measured failure, not a hypothetical
+one: a checked-in generated artifact was bundled into the plugin and then
+silently decayed until a third of it referenced tokens that no longer
+existed. Generated files are committed for reproducibility; this gate is
+what keeps "committed" from meaning "stale".

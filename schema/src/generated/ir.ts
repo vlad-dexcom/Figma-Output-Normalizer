@@ -56,6 +56,10 @@ export interface TokenValue {
    */
   token: string | null;
   /**
+   * The Figma variable *collection* the token lives in (e.g. "base", "components", "primitives"). Token paths are NOT unique on their own: sibling collections routinely define the same path with different values (a product-theme collection overriding `base` is the normal case), so `token` alone is an ambiguous identifier and MUST NOT be used as a lookup key on its own. `null` means the owning collection could not be read; consumers should treat that as "unknown", never as a match. Optional for backwards compatibility with v1 documents produced before this field existed.
+   */
+  collection?: string | null;
+  /**
    * The concrete resolved value for the mode active at extraction time.
    */
   value: string | number;
@@ -66,9 +70,13 @@ export interface TokenValue {
     [k: string]: string | number;
   };
   /**
-   * Reserved for a later stage: the generated design-system symbol name for this token. Optional and unused in v1 (forward-compat placeholder, see schema description).
+   * The Kotlin design-system symbol for this token, derived by evaluating the declarative wiring rules in mappings/wiring-rules/wiring-rules.yaml against (`collection`, `token`). Omitted when no rule confidently derives one - which is the normal, expected state for most tokens and is NOT an unresolved-entry-worthy condition.
    */
   symbol?: string;
+  /**
+   * The id of the wiring rule that produced `symbol` (see mappings/wiring-rules/wiring-rules.yaml). Present only when `symbol` is. Lets a consumer trace any emitted symbol back to the rule - and the evidence - that justified it.
+   */
+  symbolFrom?: string;
 }
 /**
  * Per-side padding. Any side may be omitted (no padding on that side). `all` may be present instead of/alongside explicit sides as a convenience shorthand from the extractor; consumers should treat explicit sides as overriding `all`.
@@ -159,9 +167,17 @@ export interface TokenRef {
    */
   token: string | null;
   /**
-   * Reserved for a later stage: the generated design-system symbol name for this token. Optional and unused in v1.
+   * The Figma variable *collection* the token lives in (e.g. "base", "components", "primitives"). Token paths are NOT unique on their own: sibling collections routinely define the same path with different values (a product-theme collection overriding `base` is the normal case), so `token` alone is an ambiguous identifier and MUST NOT be used as a lookup key on its own. `null` means the owning collection could not be read; consumers should treat that as "unknown", never as a match. Optional for backwards compatibility with v1 documents produced before this field existed.
+   */
+  collection?: string | null;
+  /**
+   * The Kotlin design-system symbol for this token, derived by evaluating the declarative wiring rules in mappings/wiring-rules/wiring-rules.yaml against (`collection`, `token`). Omitted when no rule confidently derives one - which is the normal, expected state for most tokens and is NOT an unresolved-entry-worthy condition.
    */
   symbol?: string;
+  /**
+   * The id of the wiring rule that produced `symbol` (see mappings/wiring-rules/wiring-rules.yaml). Present only when `symbol` is. Lets a consumer trace any emitted symbol back to the rule - and the evidence - that justified it.
+   */
+  symbolFrom?: string;
   literal?: TypographyLiteral;
 }
 /**

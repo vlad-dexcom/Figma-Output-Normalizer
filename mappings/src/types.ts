@@ -56,17 +56,89 @@ export interface ComponentMap {
 }
 
 /**
- * One entry of the bundled token-map lookup table
- * (`src/generated/token-map.json`): a Figma variable path (the same string
- * `TokenValue.token`/`TokenRef.token` carry) paired with its confirmed
- * Kotlin design-system symbol. Trimmed from the full
- * `mappings/token-map/*.token-map.json` entry shape (documented in
- * `mappings/token-map/README.md`) down to just the two fields the plugin
- * extractor needs — see `mappings/scripts/bundle-token-map-lib.mjs`'s header
- * comment for why entries with a null `symbol` are dropped entirely rather
- * than carried through as `symbol: null`.
+ * One declarative Figma-token -> Kotlin-symbol wiring rule, parsed from
+ * `wiring-rules/wiring-rules.yaml`. Rules are evaluated in file order and
+ * the first whose `match` applies wins, so a rule with no constraints at
+ * all (`match: {}`) acts as the terminal catch-all.
  */
-export interface TokenMapBundleEntry {
-  path: string;
-  symbol: string;
+export interface WiringRule {
+  id: string;
+  status: "mapped" | "unmapped";
+  description?: string;
+  /** An absent/empty `match` matches every token — the catch-all. */
+  match?: { collection?: string; pathPrefix?: string };
+  /** Present only on `status: mapped` rules. */
+  symbol?: {
+    /** Kotlin accessor root, e.g. `AppTheme.semanticColors`. */
+    prefix: string;
+    /** How many leading Figma path segments to drop before camelCasing the rest. */
+    dropSegments?: number;
+  };
+  /** Required on `status: unmapped` rules: why there is deliberately no symbol. */
+  reason?: string;
+  /** Why a `mapped` rule is believed correct — the source that was actually read. */
+  evidence?: string;
+}
+
+export interface WiringRules {
+  version: number;
+  rules: WiringRule[];
+}
+
+/**
+ * The outcome of resolving one qualified token to a Kotlin symbol. Always
+ * returned (never `undefined`), so "no symbol" is an explained outcome
+ * rather than an absence. `from` is the id of the rule that decided, or
+ * `null` when no rule matched at all.
+ */
+export interface SymbolResolution {
+  symbol: string | null;
+  from: string | null;
+  /** Present only when `symbol` is null. */
+  reason?: string;
+}
+
+/**
+ * The parsed `collections-policy.yaml`. Key names deliberately mirror the
+ * platform generator's `configs/collections.toml` (kebab-case, same field
+ * names) so the two configs read identically side by side.
+ */
+export interface CollectionsPolicy {
+  version: number;
+  /** Collection name patterns to exclude (case-insensitive shell globs). */
+  exclude?: string[];
+  /** Branch patterns: `<collection>/<branch>` when the pattern contains a slash, else any collection. */
+  "exclude-branches"?: string[];
+  /** Whether to drop collections imported from other Figma libraries. Defaults to true. */
+  "exclude-remote-collections"?: boolean;
+}
+
+/** Why (or whether) the policy excluded one collection or branch. */
+export interface PolicyDecision {
+  excluded: boolean;
+  /** The pattern (or pseudo-pattern) responsible, when excluded. */
+  by?: string;
+  reason?: string;
+}
+
+/** The `policy` block echoed into an exported token document. */
+export interface PolicyReportShape {
+  excludedCollections: string[];
+  excludedBranches: string[];
+  excludeRemoteCollections: boolean;
+  unmatchedPatterns: string[];
+}
+
+/**
+ * A stateful policy evaluator. Stateful because it tracks which patterns
+ * actually matched something, so `unmatchedPatterns()` can surface the ones
+ * that did not — a pattern matching nothing looks like a working exclusion
+ * and behaves like a typo.
+ */
+export interface PolicyEvaluator {
+  excludeRemoteCollections: boolean;
+  collection(name: string, remote: boolean): PolicyDecision;
+  branch(collection: string, path: string): PolicyDecision;
+  unmatchedPatterns(): string[];
+  report(unmatched: string[]): PolicyReportShape;
 }

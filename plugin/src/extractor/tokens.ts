@@ -9,7 +9,7 @@ import type {
   TypographyLiteral,
   UnresolvedEntry,
 } from "@figma-normalizator/schema";
-import { findTokenSymbol } from "@figma-normalizator/mappings";
+import { resolveTokenSymbol } from "@figma-normalizator/mappings";
 import type { FigmaAPI, FigmaPaint, VariableAliasBinding } from "./types.js";
 import { isMixed } from "./mixed.js";
 
@@ -162,30 +162,35 @@ async function resolveModeValue(
 
 /**
  * Resolves a single bound variable id to a `TokenValue`-shaped
- * `{ token, value, modes?, symbol? }`, reading `variable.name` verbatim as
- * the token path (Figma variable names already use `/` as a path
- * separator) and `valuesByMode` + the owning collection's mode names for
- * `modes`.
+ * `{ token, collection, value, modes?, symbol? }`, reading `variable.name`
+ * verbatim as the token path (Figma variable names already use `/` as a
+ * path separator) and `valuesByMode` + the owning collection's mode names
+ * for `modes`.
  *
- * `symbol` is looked up from the bundled Figma-token -> Kotlin-symbol map
- * (`@figma-normalizator/mappings`'s `findTokenSymbol`, see
- * `plugin/README.md`'s "Symbol resolution (token-map)" section) against
- * this exact `token` path — the outer/semantic variable's own name, never
- * an inner primitive it aliases through, since alias resolution above only
- * ever affects `value`/`modes`, not the `token` this function returns. When
- * the bundled map has no confirmed symbol for this path (most tokens
- * today — see mappings/token-map/README.md), `symbol` is simply omitted;
- * this is the expected, unremarkable default, not a hygiene issue, so no
- * `UnresolvedEntry` is raised for it.
+ * `collection` is the owning collection's **name**, and it is part of the
+ * token's identity, not decoration: sibling collections routinely define
+ * the same path with different values, so a bare path is ambiguous. It is
+ * also what `symbol` resolution keys on.
+ *
+ * `symbol` comes from evaluating the declarative wiring rules
+ * (`@figma-normalizator/mappings`'s `resolveTokenSymbol`) against this
+ * exact `(collection, token)` pair — the outer/semantic variable's own
+ * name, never an inner primitive it aliases through, since alias resolution
+ * above only ever affects `value`/`modes`. When no rule derives a symbol
+ * (most tokens today), `symbol`/`symbolFrom` are simply omitted; that is
+ * the expected default, not a hygiene issue, so no `UnresolvedEntry` is
+ * raised for it.
  */
 export async function resolveVariable(
   figma: FigmaAPI,
   variableId: string,
 ): Promise<{
   token: string;
+  collection: string | null;
   value: string | number;
   modes?: Record<string, string | number>;
   symbol?: string;
+  symbolFrom?: string;
 }> {
   const variable = await figma.variables.getVariableByIdAsync(variableId);
   if (!variable) {
@@ -219,11 +224,16 @@ export async function resolveVariable(
     modes[modeNames[0] ?? ""] ??
     "";
 
+  const collectionName = collection?.name ?? null;
+  const symbolResolution = resolveTokenSymbol(collectionName, variable.name);
+
   return {
     token: variable.name,
+    collection: collectionName,
     value,
     modes: modeNames.length > 1 ? modes : undefined,
-    symbol: findTokenSymbol(variable.name),
+    symbol: symbolResolution.symbol ?? undefined,
+    symbolFrom: symbolResolution.symbol !== null ? (symbolResolution.from ?? undefined) : undefined,
   };
 }
 
@@ -456,7 +466,15 @@ export async function resolveTypographyToken(
   }
   try {
     const resolved = await resolveVariable(figma, variableId);
-    return { token: { token: resolved.token, symbol: resolved.symbol }, unresolved: [] };
+    return {
+      token: {
+        token: resolved.token,
+        collection: resolved.collection,
+        symbol: resolved.symbol,
+        symbolFrom: resolved.symbolFrom,
+      },
+      unresolved: [],
+    };
   } catch (error) {
     if (error instanceof UnresolvableAliasChainError) {
       return {

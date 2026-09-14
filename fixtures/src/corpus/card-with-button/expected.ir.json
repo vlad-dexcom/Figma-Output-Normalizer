@@ -5,7 +5,7 @@
       "kind": "layout",
       "direction": "column",
       "gap": { "token": null, "value": 0 },
-      "padding": { "all": { "token": "spacing/lg", "value": 20 } },
+      "padding": { "all": { "token": "spacing/lg", "collection": "base", "value": 20 } },
       "mainAxisAlign": "start",
       "crossAxisAlign": "start",
       "sizing": { "width": "fixed", "height": "hug" },
@@ -15,23 +15,25 @@
         {
           "kind": "layout",
           "direction": "column",
-          "gap": { "token": "spacing/md", "value": 12 },
-          "padding": { "all": { "token": "spacing/lg", "value": 20 } },
+          "gap": { "token": "spacing/md", "collection": "base", "value": 12 },
+          "padding": { "all": { "token": "spacing/lg", "collection": "base", "value": 20 } },
           "mainAxisAlign": "start",
           "crossAxisAlign": "start",
           "sizing": { "width": "fixed", "height": "hug" },
           "background": {
             "token": "color/surface/canvas/primary",
+            "collection": "base",
             "value": "#FFFFFF",
             "modes": { "light": "#FFFFFF", "dark": "#000000" },
-            "symbol": "AppTheme.semanticColors.surface.canvas.primary"
+            "symbol": "AppTheme.semanticColors.surface.canvas.primary",
+            "symbolFrom": "base-color"
           },
           "cornerRadius": { "token": null, "value": 12 },
           "children": [
             {
               "kind": "text",
               "text": "Sensor status",
-              "typography": { "token": "typography/title/medium" },
+              "typography": { "token": "typography/title/medium", "collection": "typography" },
               "color": { "token": null, "value": "#1A1A1A" },
               "source": {
                 "nodeId": "test:1",

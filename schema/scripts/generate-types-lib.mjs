@@ -11,6 +11,9 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 export const schemaPath = path.join(here, "..", "ir", "v1", "schema.json");
 export const generatedFilePath = path.join(here, "..", "src", "generated", "ir.ts");
 
+export const tokensSchemaPath = path.join(here, "..", "tokens", "v1", "schema.json");
+export const tokensGeneratedFilePath = path.join(here, "..", "src", "generated", "tokens.ts");
+
 export const banner = `/**
  * This file was automatically generated from schema/ir/v1/schema.json.
  * DO NOT EDIT MANUALLY — run \`npm run generate:types\` in schema/ to
@@ -55,6 +58,37 @@ function renderIRDocumentInterface(schema) {
     .join("\n");
 
   return `/**\n * ${doc.description}\n */\n` + `export interface IRDocument {\n${fields}\n}\n`;
+}
+
+export const tokensBanner = `/**
+ * This file was automatically generated from schema/tokens/v1/schema.json.
+ * DO NOT EDIT MANUALLY — run \`npm run generate:types\` in schema/ to
+ * regenerate it, then commit the result.
+ */
+
+`;
+
+/**
+ * Compiles tokens/v1/schema.json into the full generated file contents.
+ *
+ * Unlike the node IR, the token document is not recursive, so its root
+ * `$ref` can be dereferenced by compiling the `tokenDocument` subschema
+ * directly (same approach as `generateIrTypesFile` below, for the same
+ * "don't emit a duplicate root type" reason).
+ */
+export async function generateTokenTypesFile() {
+  const schema = JSON.parse(await readFile(tokensSchemaPath, "utf8"));
+  const root = schema.$defs.tokenDocument;
+  root.$defs = schema.$defs;
+
+  const ts = await compile(root, "TokenDocument", {
+    bannerComment: "",
+    additionalProperties: false,
+    style: { singleQuote: false },
+    unreachableDefinitions: false,
+    cwd: path.dirname(tokensSchemaPath),
+  });
+  return tokensBanner + ts;
 }
 
 /** Compiles ir/v1/schema.json into the full generated file contents (banner + TS). */

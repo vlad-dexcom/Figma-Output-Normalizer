@@ -1,28 +1,54 @@
 {
   "kind": "layout",
   "direction": "column",
-  "gap": { "token": "spacing/md", "value": 16 },
-  "padding": { "all": { "token": "spacing/lg", "value": 24 } },
+  "gap": {
+    "token": "spacing/md",
+    "collection": "base",
+    "value": 16
+  },
+  "padding": {
+    "all": {
+      "token": "spacing/lg",
+      "collection": "base",
+      "value": 24
+    }
+  },
   "background": {
     "token": "color/surface/canvas/primary",
+    "collection": "base",
     "value": "#FFFFFF",
-    "modes": { "light": "#FFFFFF", "dark": "#000000" },
-    "symbol": "AppTheme.semanticColors.surface.canvas.primary"
+    "modes": {
+      "light": "#FFFFFF",
+      "dark": "#000000"
+    },
+    "symbol": "AppTheme.semanticColors.surface.canvas.primary",
+    "symbolFrom": "base-color"
   },
   "cornerRadius": null,
   "mainAxisAlign": "start",
   "crossAxisAlign": "stretch",
-  "sizing": { "width": "fill", "height": "hug" },
+  "sizing": {
+    "width": "fill",
+    "height": "hug"
+  },
   "children": [
     {
       "kind": "text",
       "text": "Sensor expired",
-      "typography": { "token": "typography/body/large" },
+      "typography": {
+        "token": "typography/body/large",
+        "collection": "typography"
+      },
       "color": {
         "token": "color/text/base/default",
+        "collection": "base",
         "value": "#1A1A1A",
-        "modes": { "light": "#1A1A1A", "dark": "#FFFFFF" },
-        "symbol": "AppTheme.semanticColors.text.base.default"
+        "modes": {
+          "light": "#1A1A1A",
+          "dark": "#FFFFFF"
+        },
+        "symbol": "AppTheme.semanticColors.text.base.default",
+        "symbolFrom": "base-color"
       },
       "source": {
         "nodeId": "12:342",

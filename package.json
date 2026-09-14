@@ -17,8 +17,8 @@
     "test": "vitest run",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "generate": "npm run generate:types --workspace=schema && npm run generate:map --workspace=mappings && npm run bundle:token-map --workspace=mappings && npm run fixtures:update --workspace=fixtures",
-    "verify:generated": "npm run generate && git diff --exit-code -- schema/src/generated mappings/src/generated fixtures/src/corpus"
+    "generate": "npm run generate:types --workspace=schema && npm run generate:map --workspace=mappings && npm run generate:wiring-rules --workspace=mappings && npm run generate:collections-policy --workspace=mappings && npm run fixtures:update --workspace=fixtures",
+    "verify:generated": "node scripts/verify-generated.mjs && npm run fixtures:update --workspace=fixtures && git diff --exit-code -- fixtures/src/corpus"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",

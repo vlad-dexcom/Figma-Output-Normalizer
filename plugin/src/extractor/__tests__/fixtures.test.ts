@@ -148,14 +148,23 @@ describe("fixture: container-with-text.json", () => {
         },
       },
       variableCollections: {
-        "col:spacing": { modes: [{ modeId: "m", name: "default" }], defaultModeId: "m" },
-        "col:typography": { modes: [{ modeId: "m", name: "default" }], defaultModeId: "m" },
+        "col:spacing": {
+          modes: [{ modeId: "m", name: "default" }],
+          defaultModeId: "m",
+          name: "base",
+        },
+        "col:typography": {
+          modes: [{ modeId: "m", name: "default" }],
+          defaultModeId: "m",
+          name: "typography",
+        },
         "col:color": {
           modes: [
             { modeId: "light", name: "light" },
             { modeId: "dark", name: "dark" },
           ],
           defaultModeId: "light",
+          name: "base",
         },
       },
     });

@@ -8,12 +8,24 @@
     "irNode": {
       "description": "The discriminated union of every IR node kind. `kind` selects the variant.",
       "oneOf": [
-        { "$ref": "#/$defs/layoutNode" },
-        { "$ref": "#/$defs/textNode" },
-        { "$ref": "#/$defs/instanceNode" },
-        { "$ref": "#/$defs/assetNode" },
-        { "$ref": "#/$defs/overlayNode" },
-        { "$ref": "#/$defs/listNode" }
+        {
+          "$ref": "#/$defs/layoutNode"
+        },
+        {
+          "$ref": "#/$defs/textNode"
+        },
+        {
+          "$ref": "#/$defs/instanceNode"
+        },
+        {
+          "$ref": "#/$defs/assetNode"
+        },
+        {
+          "$ref": "#/$defs/overlayNode"
+        },
+        {
+          "$ref": "#/$defs/listNode"
+        }
       ]
     },
 
@@ -56,7 +68,10 @@
           "type": "string",
           "description": "The Figma node id this IR node was derived from."
         },
-        "fileKey": { "type": "string", "description": "The Figma file key the node lives in." },
+        "fileKey": {
+          "type": "string",
+          "description": "The Figma file key the node lives in."
+        },
         "version": {
           "type": "string",
           "description": "A version identifier for this extraction. The Figma Plugin API exposes no per-node revision counter, so producers typically derive this as a deterministic content hash of the extracted IR rather than a true Figma-side version (see the plugin's ir-export task / plugin/README.md 'Export versioning' section for the full rationale and limitations). Consumers should treat it as an opaque, comparable-for-equality identifier, not a parseable/ordered version number."
@@ -64,11 +79,12 @@
         "path": {
           "type": "array",
           "description": "Stable chain of node names from the nearest meaningful root down to and including this node's own name, used for diffing across re-exports (e.g. [\"Screen\", \"Footer\", \"Buttons\"] for a node named \"Buttons\" nested under \"Screen\" > \"Footer\").",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
-
     "tokenValue": {
       "title": "TokenValue",
       "description": "A resolved Figma variable/style reference plus its concrete value(s). The optional `symbol` field is reserved for a later stage that will map `token` to a generated design-system symbol name (e.g. \"AppTheme.semanticColors.text.base.default\"); it is optional and unpopulated in v1 so that adding it later is additive, not a breaking change.",
@@ -80,6 +96,10 @@
           "type": ["string", "null"],
           "description": "The raw Figma variable/style path, e.g. \"color/text/base/default\". `null` means this value is a raw literal with no bound Figma variable; extractors MUST also push an UnresolvedEntry with reason \"unbound-literal\" alongside a null token rather than inventing a path."
         },
+        "collection": {
+          "type": ["string", "null"],
+          "description": "The Figma variable *collection* the token lives in (e.g. \"base\", \"components\", \"primitives\"). Token paths are NOT unique on their own: sibling collections routinely define the same path with different values (a product-theme collection overriding `base` is the normal case), so `token` alone is an ambiguous identifier and MUST NOT be used as a lookup key on its own. `null` means the owning collection could not be read; consumers should treat that as \"unknown\", never as a match. Optional for backwards compatibility with v1 documents produced before this field existed."
+        },
         "value": {
           "description": "The concrete resolved value for the mode active at extraction time.",
           "type": ["string", "number"]
@@ -87,15 +107,20 @@
         "modes": {
           "type": "object",
           "description": "Present only when the value is theme-dependent. Maps mode name (e.g. \"light\", \"dark\") to the resolved value in that mode.",
-          "additionalProperties": { "type": ["string", "number"] }
+          "additionalProperties": {
+            "type": ["string", "number"]
+          }
         },
         "symbol": {
           "type": "string",
-          "description": "Reserved for a later stage: the generated design-system symbol name for this token. Optional and unused in v1 (forward-compat placeholder, see schema description)."
+          "description": "The Kotlin design-system symbol for this token, derived by evaluating the declarative wiring rules in mappings/wiring-rules/wiring-rules.yaml against (`collection`, `token`). Omitted when no rule confidently derives one - which is the normal, expected state for most tokens and is NOT an unresolved-entry-worthy condition."
+        },
+        "symbolFrom": {
+          "type": "string",
+          "description": "The id of the wiring rule that produced `symbol` (see mappings/wiring-rules/wiring-rules.yaml). Present only when `symbol` is. Lets a consumer trace any emitted symbol back to the rule - and the evidence - that justified it."
         }
       }
     },
-
     "tokenRef": {
       "title": "TokenRef",
       "description": "Same shape as TokenValue but for typography tokens, which have no single resolved numeric/string value. The optional `symbol` field carries the same forward-compat intent as TokenValue.symbol.",
@@ -107,9 +132,17 @@
           "type": ["string", "null"],
           "description": "The raw Figma typography style path, e.g. \"typography/body/large\". `null` means this text has no bound typography style/variable (a raw literal font); extractors MUST also push an UnresolvedEntry with reason \"unbound-literal\" alongside a null token rather than inventing a path."
         },
+        "collection": {
+          "type": ["string", "null"],
+          "description": "The Figma variable *collection* the token lives in (e.g. \"base\", \"components\", \"primitives\"). Token paths are NOT unique on their own: sibling collections routinely define the same path with different values (a product-theme collection overriding `base` is the normal case), so `token` alone is an ambiguous identifier and MUST NOT be used as a lookup key on its own. `null` means the owning collection could not be read; consumers should treat that as \"unknown\", never as a match. Optional for backwards compatibility with v1 documents produced before this field existed."
+        },
         "symbol": {
           "type": "string",
-          "description": "Reserved for a later stage: the generated design-system symbol name for this token. Optional and unused in v1."
+          "description": "The Kotlin design-system symbol for this token, derived by evaluating the declarative wiring rules in mappings/wiring-rules/wiring-rules.yaml against (`collection`, `token`). Omitted when no rule confidently derives one - which is the normal, expected state for most tokens and is NOT an unresolved-entry-worthy condition."
+        },
+        "symbolFrom": {
+          "type": "string",
+          "description": "The id of the wiring rule that produced `symbol` (see mappings/wiring-rules/wiring-rules.yaml). Present only when `symbol` is. Lets a consumer trace any emitted symbol back to the rule - and the evidence - that justified it."
         },
         "literal": {
           "$ref": "#/$defs/typographyLiteral",
@@ -157,7 +190,6 @@
         }
       }
     },
-
     "unresolvedEntry": {
       "title": "UnresolvedEntry",
       "description": "Records a value that could not be resolved during extraction (a missing token, an unmapped component variant/property, etc). Every unresolvable value MUST produce one of these rather than a silent substitution or omission.",
@@ -184,7 +216,6 @@
         }
       }
     },
-
     "propValue": {
       "title": "PropValue",
       "description": "The resolved value of a single Figma component property, used in instance node `props`.",
@@ -196,23 +227,28 @@
           "additionalProperties": false,
           "required": ["value"],
           "properties": {
-            "value": { "type": ["string", "number", "boolean"] }
+            "value": {
+              "type": ["string", "number", "boolean"]
+            }
           }
         },
         {
           "title": "VariantPropValue",
-          "description": "For VARIANT component properties. `from` is the raw Figma variant property value (e.g. \"Style=Primary\") kept for traceability back to the source. `variant` is `null` when the component-map has no Compose equivalent for this specific Figma variant value (component-map.yaml status: unmapped) — extractors MUST also push an UnresolvedEntry with reason \"unmapped-variant\" alongside a null variant rather than guessing.",
+          "description": "For VARIANT component properties. `from` is the raw Figma variant property value (e.g. \"Style=Primary\") kept for traceability back to the source. `variant` is `null` when the component-map has no Compose equivalent for this specific Figma variant value (component-map.yaml status: unmapped) \u2014 extractors MUST also push an UnresolvedEntry with reason \"unmapped-variant\" alongside a null variant rather than guessing.",
           "type": "object",
           "additionalProperties": false,
           "required": ["variant", "from"],
           "properties": {
-            "variant": { "type": ["string", "null"] },
-            "from": { "type": "string" }
+            "variant": {
+              "type": ["string", "null"]
+            },
+            "from": {
+              "type": "string"
+            }
           }
         }
       ]
     },
-
     "sizing": {
       "title": "Sizing",
       "type": "object",
@@ -249,21 +285,29 @@
         "dimensions": { "$ref": "#/$defs/sizeDimensions" }
       }
     },
-
     "padding": {
       "title": "Padding",
       "description": "Per-side padding. Any side may be omitted (no padding on that side). `all` may be present instead of/alongside explicit sides as a convenience shorthand from the extractor; consumers should treat explicit sides as overriding `all`.",
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "top": { "$ref": "#/$defs/tokenValue" },
-        "right": { "$ref": "#/$defs/tokenValue" },
-        "bottom": { "$ref": "#/$defs/tokenValue" },
-        "left": { "$ref": "#/$defs/tokenValue" },
-        "all": { "$ref": "#/$defs/tokenValue" }
+        "top": {
+          "$ref": "#/$defs/tokenValue"
+        },
+        "right": {
+          "$ref": "#/$defs/tokenValue"
+        },
+        "bottom": {
+          "$ref": "#/$defs/tokenValue"
+        },
+        "left": {
+          "$ref": "#/$defs/tokenValue"
+        },
+        "all": {
+          "$ref": "#/$defs/tokenValue"
+        }
       }
     },
-
     "styledSegment": {
       "title": "StyledSegment",
       "description": "One run of text from Figma's getStyledTextSegments, sharing a single typography/color style.",
@@ -271,40 +315,81 @@
       "additionalProperties": false,
       "required": ["text"],
       "properties": {
-        "text": { "type": "string" },
-        "typography": { "$ref": "#/$defs/tokenRef" },
-        "color": { "$ref": "#/$defs/tokenValue" }
+        "text": {
+          "type": "string"
+        },
+        "typography": {
+          "$ref": "#/$defs/tokenRef"
+        },
+        "color": {
+          "$ref": "#/$defs/tokenValue"
+        }
       }
     },
-
     "layoutFieldsPartial": {
       "title": "LayoutFieldsPartial",
-      "description": "The subset of layout node fields relevant to an instance's call-site layout (sizing, spacing, etc as needed) — NOT the internal styling of the component. Every field is optional; only fields actually relevant at the call site are present.",
+      "description": "The subset of layout node fields relevant to an instance's call-site layout (sizing, spacing, etc as needed) \u2014 NOT the internal styling of the component. Every field is optional; only fields actually relevant at the call site are present.",
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "direction": { "$ref": "#/$defs/layoutDirection" },
-        "gap": { "$ref": "#/$defs/nullableTokenValue" },
-        "padding": { "$ref": "#/$defs/padding" },
-        "mainAxisAlign": { "$ref": "#/$defs/mainAxisAlign" },
-        "crossAxisAlign": { "$ref": "#/$defs/crossAxisAlign" },
-        "sizing": { "$ref": "#/$defs/sizingPartial" },
-        "background": { "$ref": "#/$defs/nullableTokenValue" },
-        "cornerRadius": { "$ref": "#/$defs/nullableTokenValue" }
+        "direction": {
+          "$ref": "#/$defs/layoutDirection"
+        },
+        "gap": {
+          "$ref": "#/$defs/nullableTokenValue"
+        },
+        "padding": {
+          "$ref": "#/$defs/padding"
+        },
+        "mainAxisAlign": {
+          "$ref": "#/$defs/mainAxisAlign"
+        },
+        "crossAxisAlign": {
+          "$ref": "#/$defs/crossAxisAlign"
+        },
+        "sizing": {
+          "$ref": "#/$defs/sizingPartial"
+        },
+        "background": {
+          "$ref": "#/$defs/nullableTokenValue"
+        },
+        "cornerRadius": {
+          "$ref": "#/$defs/nullableTokenValue"
+        }
       }
     },
-
-    "layoutDirection": { "type": "string", "enum": ["row", "column", "stack"] },
-    "mainAxisAlign": { "type": "string", "enum": ["start", "center", "end", "spaceBetween"] },
-    "crossAxisAlign": { "type": "string", "enum": ["start", "center", "end", "stretch"] },
-
+    "layoutDirection": {
+      "type": "string",
+      "enum": ["row", "column", "stack"]
+    },
+    "mainAxisAlign": {
+      "type": "string",
+      "enum": ["start", "center", "end", "spaceBetween"]
+    },
+    "crossAxisAlign": {
+      "type": "string",
+      "enum": ["start", "center", "end", "stretch"]
+    },
     "nullableTokenValue": {
-      "oneOf": [{ "$ref": "#/$defs/tokenValue" }, { "type": "null" }]
+      "oneOf": [
+        {
+          "$ref": "#/$defs/tokenValue"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "nullableTokenRef": {
-      "oneOf": [{ "$ref": "#/$defs/tokenRef" }, { "type": "null" }]
+      "oneOf": [
+        {
+          "$ref": "#/$defs/tokenRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
-
     "layoutNode": {
       "title": "LayoutNode",
       "description": "An Auto Layout container resolved to intent (direction/alignment/sizing), not raw Figma enums.",
@@ -390,19 +475,33 @@
       "additionalProperties": false,
       "required": ["kind", "text", "typography", "color", "source"],
       "properties": {
-        "kind": { "const": "text" },
+        "kind": {
+          "const": "text"
+        },
         "text": {
           "oneOf": [
-            { "type": "string" },
-            { "type": "array", "items": { "$ref": "#/$defs/styledSegment" } }
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/styledSegment"
+              }
+            }
           ]
         },
-        "typography": { "$ref": "#/$defs/nullableTokenRef" },
-        "color": { "$ref": "#/$defs/nullableTokenValue" },
-        "source": { "$ref": "#/$defs/provenance" }
+        "typography": {
+          "$ref": "#/$defs/nullableTokenRef"
+        },
+        "color": {
+          "$ref": "#/$defs/nullableTokenValue"
+        },
+        "source": {
+          "$ref": "#/$defs/provenance"
+        }
       }
     },
-
     "instanceNode": {
       "title": "InstanceNode",
       "description": "A component instance. Opaque past this boundary: the instance's internal children are NEVER included, only its resolved properties, named slot content, and call-site layout.",
@@ -420,50 +519,85 @@
         "source"
       ],
       "properties": {
-        "kind": { "const": "instance" },
+        "kind": {
+          "const": "instance"
+        },
         "component": {
           "description": "The mapped design-system component name (e.g. \"AppButton\"), or null if this component set has no mapping yet.",
           "type": ["string", "null"]
         },
-        "figmaComponentSetName": { "type": "string" },
-        "figmaComponentKey": { "type": "string" },
+        "figmaComponentSetName": {
+          "type": "string"
+        },
+        "figmaComponentKey": {
+          "type": "string"
+        },
         "props": {
           "type": "object",
           "description": "Resolved component properties keyed by Figma property name.",
-          "additionalProperties": { "$ref": "#/$defs/propValue" }
+          "additionalProperties": {
+            "$ref": "#/$defs/propValue"
+          }
         },
         "slots": {
           "type": "object",
           "description": "Named slot content for INSTANCE_SWAP or boolean-gated optional children (e.g. leadingIcon/trailingIcon). A null value means the slot exists but is empty/hidden.",
           "additionalProperties": {
-            "oneOf": [{ "$ref": "#/$defs/irNode" }, { "type": "null" }]
+            "oneOf": [
+              {
+                "$ref": "#/$defs/irNode"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
-        "layout": { "$ref": "#/$defs/layoutFieldsPartial" },
-        "unresolved": { "type": "array", "items": { "$ref": "#/$defs/unresolvedEntry" } },
-        "source": { "$ref": "#/$defs/provenance" }
+        "layout": {
+          "$ref": "#/$defs/layoutFieldsPartial"
+        },
+        "unresolved": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/unresolvedEntry"
+          }
+        },
+        "source": {
+          "$ref": "#/$defs/provenance"
+        }
       }
     },
-
     "assetNode": {
       "title": "AssetNode",
-      "description": "A vector or image, represented as an export reference — never inline geometry/path data.",
+      "description": "A vector or image, represented as an export reference \u2014 never inline geometry/path data.",
       "type": "object",
       "additionalProperties": false,
       "required": ["kind", "assetType", "exportRef", "width", "height", "source"],
       "properties": {
-        "kind": { "const": "asset" },
-        "assetType": { "type": "string", "enum": ["icon", "image", "illustration"] },
+        "kind": {
+          "const": "asset"
+        },
+        "assetType": {
+          "type": "string",
+          "enum": ["icon", "image", "illustration"]
+        },
         "exportRef": {
           "type": "string",
           "description": "Suggested filename/drawable name, deterministic from the node name."
         },
-        "width": { "type": "number", "description": "Logical width; no path data." },
-        "height": { "type": "number", "description": "Logical height; no path data." },
-        "source": { "$ref": "#/$defs/provenance" }
+        "width": {
+          "type": "number",
+          "description": "Logical width; no path data."
+        },
+        "height": {
+          "type": "number",
+          "description": "Logical height; no path data."
+        },
+        "source": {
+          "$ref": "#/$defs/provenance"
+        }
       }
     },
-
     "overlayNode": {
       "title": "OverlayNode",
       "description": "Absolutely positioned children inside an otherwise auto-layout parent.",
@@ -471,7 +605,9 @@
       "additionalProperties": false,
       "required": ["kind", "children", "source"],
       "properties": {
-        "kind": { "const": "overlay" },
+        "kind": {
+          "const": "overlay"
+        },
         "children": {
           "type": "array",
           "items": {
@@ -479,14 +615,22 @@
             "additionalProperties": false,
             "required": ["node", "align"],
             "properties": {
-              "node": { "$ref": "#/$defs/irNode" },
+              "node": {
+                "$ref": "#/$defs/irNode"
+              },
               "align": {
                 "type": "object",
                 "additionalProperties": false,
                 "required": ["horizontal", "vertical"],
                 "properties": {
-                  "horizontal": { "type": "string", "enum": ["start", "center", "end"] },
-                  "vertical": { "type": "string", "enum": ["start", "center", "end"] }
+                  "horizontal": {
+                    "type": "string",
+                    "enum": ["start", "center", "end"]
+                  },
+                  "vertical": {
+                    "type": "string",
+                    "enum": ["start", "center", "end"]
+                  }
                 }
               },
               "offset": {
@@ -494,17 +638,22 @@
                 "additionalProperties": false,
                 "required": ["x", "y"],
                 "properties": {
-                  "x": { "type": "number" },
-                  "y": { "type": "number" }
+                  "x": {
+                    "type": "number"
+                  },
+                  "y": {
+                    "type": "number"
+                  }
                 }
               }
             }
           }
         },
-        "source": { "$ref": "#/$defs/provenance" }
+        "source": {
+          "$ref": "#/$defs/provenance"
+        }
       }
     },
-
     "listNode": {
       "title": "ListNode",
       "description": "N identical/near-identical siblings collapsed to one template.",
@@ -512,14 +661,20 @@
       "additionalProperties": false,
       "required": ["kind", "itemTemplate", "itemCount", "source"],
       "properties": {
-        "kind": { "const": "list" },
-        "itemTemplate": { "$ref": "#/$defs/irNode" },
+        "kind": {
+          "const": "list"
+        },
+        "itemTemplate": {
+          "$ref": "#/$defs/irNode"
+        },
         "itemCount": {
           "type": "integer",
           "minimum": 0,
           "description": "Count observed in the design; informational only, not a rendering directive."
         },
-        "source": { "$ref": "#/$defs/provenance" }
+        "source": {
+          "$ref": "#/$defs/provenance"
+        }
       }
     }
   }

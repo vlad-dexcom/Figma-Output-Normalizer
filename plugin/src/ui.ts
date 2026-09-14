@@ -5,11 +5,16 @@
 // modules under `./ui/` that this file just calls and renders.
 import type { ExtractionResult } from "./extractor/index.js";
 import { canonicalStringify } from "./extractor/canonical.js";
-import type { UnresolvedEntry } from "@figma-normalizator/schema";
-import { buildExportFilename } from "./ui/filename.js";
+import type { TokenDocument, UnresolvedEntry } from "@figma-normalizator/schema";
+import { buildExportFilename, buildTokenExportFilename } from "./ui/filename.js";
 import { buildWarningsViewModel } from "./ui/warnings.js";
 import { copyToClipboard, type ClipboardDeps } from "./ui/clipboard.js";
-import type { ExportSource, PluginToUIMessage, UIToPluginMessage } from "./messages.js";
+import type {
+  ExportSource,
+  PluginToUIMessage,
+  TokenExportSourceInfo,
+  UIToPluginMessage,
+} from "./messages.js";
 
 function byId<T extends HTMLElement>(id: string): T {
   const el = document.getElementById(id);
@@ -26,12 +31,24 @@ const bannerEl = byId<HTMLDivElement>("banner");
 const warningsEl = byId<HTMLDivElement>("warnings");
 const warningsToggleButton = byId<HTMLButtonElement>("warnings-toggle");
 const irPreviewEl = byId<HTMLPreElement>("ir-preview");
+const extractTokensButton = byId<HTMLButtonElement>("extract-tokens-button");
+const exportTokensButton = byId<HTMLButtonElement>("export-tokens-button");
+const tokensStatusEl = byId<HTMLSpanElement>("tokens-status");
 
 let copyStatusResetTimer: number | undefined;
 
 /** State needed across messages: the latest extraction result plus enough provenance to name an export. */
 let lastResult: ExtractionResult | null = null;
 let lastSource: ExportSource | null = null;
+
+/**
+ * Token-export state, kept separate from `lastResult`/`lastSource` on
+ * purpose: a token document is file-scoped and survives selection changes,
+ * so tying it to the selection-scoped result would throw it away every time
+ * the designer clicked a different layer.
+ */
+let lastTokens: TokenDocument | null = null;
+let lastTokenSource: TokenExportSourceInfo | null = null;
 
 /**
  * "Collapse all" toggle for the warnings panel: hides each group's
@@ -154,6 +171,25 @@ function handlePluginMessage(message: PluginToUIMessage): void {
       return;
     }
 
+    case "token-result": {
+      clearBanner();
+      lastTokens = message.tokens;
+      lastTokenSource = message.source;
+      exportTokensButton.disabled = false;
+
+      const collections = message.tokens.collections.length;
+      const tokens = message.tokens.collections.reduce((n, c) => n + c.tokens.length, 0);
+      const unresolved = message.tokens.unresolved.length;
+      const skipped = message.summary.skippedCollections.length;
+      // Unresolved count is always shown, even at zero: the whole point of
+      // the unresolved channel is that it is never silently empty because
+      // something was dropped.
+      tokensStatusEl.textContent =
+        `${tokens} tokens in ${collections} collections · ${unresolved} unresolved` +
+        (skipped > 0 ? ` · ${skipped} collections skipped by policy` : "");
+      return;
+    }
+
     case "error": {
       lastResult = null;
       lastSource = null;
@@ -171,6 +207,32 @@ function handlePluginMessage(message: PluginToUIMessage): void {
 extractButton.addEventListener("click", () => {
   clearBanner();
   postToPlugin({ type: "extract" });
+});
+
+extractTokensButton.addEventListener("click", () => {
+  clearBanner();
+  tokensStatusEl.textContent = "Extracting tokens…";
+  postToPlugin({ type: "extract-tokens" });
+});
+
+exportTokensButton.addEventListener("click", () => {
+  if (!lastTokens || !lastTokenSource) return;
+
+  // Same canonical serialization as the IR export, for the same reason:
+  // re-exporting unchanged content must be byte-identical, not merely
+  // deep-equal.
+  const blob = new Blob([canonicalStringify(lastTokens, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = buildTokenExportFilename(lastTokenSource);
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+
+  postToPlugin({ type: "export-tokens", source: lastTokenSource });
 });
 
 warningsToggleButton.addEventListener("click", () => {

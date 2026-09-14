@@ -14,6 +14,7 @@
 // this module; real Figma nodes are a structural superset of `FigmaNode`, so
 // that cast is safe in practice (real nodes have every field below, plus
 // many more we don't read).
+import type { CollectionsPolicy } from "@figma-normalizator/mappings";
 
 /** A Figma variable/style binding, as found in `boundVariables`. */
 export interface VariableAliasBinding {
@@ -26,18 +27,40 @@ export interface FigmaVariable {
   name: string;
   variableCollectionId: string;
   valuesByMode: Record<string, unknown>;
+  /** Present on real Figma variables; read by the token export, not by node extraction. */
+  id?: string;
+  resolvedType?: "COLOR" | "FLOAT" | "STRING" | "BOOLEAN";
+  description?: string;
+  scopes?: readonly string[];
+  codeSyntax?: Record<string, string>;
+  hiddenFromPublishing?: boolean;
+  /** Figma sets this on a deleted variable that something still references. */
+  deletedButReferenced?: boolean;
+  remote?: boolean;
 }
 
 /** Subset of Figma's `VariableCollection` this extractor reads. */
 export interface FigmaVariableCollection {
   modes: { modeId: string; name: string }[];
   defaultModeId: string;
+  /**
+   * The collection's name. Part of a token's *identity* (see
+   * `resolveVariable`), not decoration: sibling collections routinely
+   * define the same variable path with different values.
+   */
+  name?: string;
+  id?: string;
+  remote?: boolean;
+  hiddenFromPublishing?: boolean;
+  variableIds?: readonly string[];
 }
 
 /** Subset of the Figma plugin `variables` API this extractor reads. */
 export interface FigmaVariablesAPI {
   getVariableByIdAsync(id: string): Promise<FigmaVariable | null>;
   getVariableCollectionByIdAsync(id: string): Promise<FigmaVariableCollection | null>;
+  /** Used only by the token export (`tokenExport.ts`), not by node extraction. */
+  getLocalVariableCollectionsAsync?(): Promise<FigmaVariableCollection[]>;
 }
 
 /** A resolved Figma text-style/typography style, read off a bound style id. */
@@ -183,4 +206,29 @@ export interface ExtractionSource {
    * snapshots) may still pass one explicitly, which is used verbatim.
    */
   version?: string;
+}
+
+/** Everything the token export needs from the ambient `figma` global. */
+export interface TokenExportFigmaAPI {
+  variables: FigmaVariablesAPI;
+}
+
+/** Deterministic token-export inputs that don't come off the variables API itself. */
+export interface TokenExportSource {
+  fileKey: string;
+  /**
+   * Optional literal override for `TokenDocument.envelope.version`.
+   * Production callers omit it: `extractTokens` then derives a
+   * deterministic content hash from the document itself. Tests that want a
+   * fixed, human-readable version may pass one, which is used verbatim.
+   */
+  version?: string;
+  /**
+   * Optional policy override. Omitted in production, where the bundled
+   * `collections-policy.yaml` is used; tests pass one to exercise a
+   * specific exclusion without editing the checked-in config.
+   */
+  policy?: CollectionsPolicy;
+  /** Optional override for the variable budget (see budget.ts). */
+  variableBudget?: number;
 }
