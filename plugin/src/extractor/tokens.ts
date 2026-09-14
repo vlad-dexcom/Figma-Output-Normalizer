@@ -85,6 +85,21 @@ export function colorToHex(color: { r: number; g: number; b: number; a?: number 
 }
 
 /**
+ * Merges a Figma `Paint`'s own `color.a` (almost always `1` for a SOLID
+ * paint — Figma stores per-channel alpha on the color, but the fill/stroke
+ * opacity slider users actually interact with is a *separate* `paint.opacity`
+ * field, default `1`) into a single effective alpha before hex-encoding.
+ * Using `color.a` alone (the previous behavior) silently dropped any
+ * transparency set via that opacity slider, exporting a translucent fill/
+ * stroke as fully opaque.
+ */
+function paintColorToHex(paint: { color: { r: number; g: number; b: number; a?: number }; opacity?: number }): string {
+  const colorAlpha = paint.color.a ?? 1;
+  const paintOpacity = paint.opacity ?? 1;
+  return colorToHex({ ...paint.color, a: colorAlpha * paintOpacity });
+}
+
+/**
  * Resolves a single raw `valuesByMode` entry to a scalar, following
  * `VARIABLE_ALIAS` chains recursively (a semantic token aliasing another
  * semantic token aliasing a primitive, etc — see the "Variable alias
@@ -334,7 +349,13 @@ async function resolvePaintColor(
   const visiblePaints = (paints ?? []).filter((f) => f.visible !== false);
   const paint = visiblePaints.find((f) => f.type === "SOLID");
   if (paint?.color) {
-    return resolveTokenValue(figma, nodeId, boundVariables, fieldName, colorToHex(paint.color));
+    return resolveTokenValue(
+      figma,
+      nodeId,
+      boundVariables,
+      fieldName,
+      paintColorToHex({ color: paint.color, opacity: paint.opacity }),
+    );
   }
 
   // No visible SOLID paint — either there's genuinely no paint (a plain

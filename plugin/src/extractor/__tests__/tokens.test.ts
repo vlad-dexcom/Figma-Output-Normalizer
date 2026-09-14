@@ -591,6 +591,34 @@ describe("resolveFillColor", () => {
     );
     expect(result).toEqual({ token: null, unresolved: [] });
   });
+
+  it("folds paint.opacity (the fill's own opacity slider) into the exported alpha channel", async () => {
+    // Figma's SOLID paint stores per-channel alpha on `color.a` (normally 1),
+    // but the opacity slider users actually drag in the fills panel is a
+    // *separate* `paint.opacity` field. A fill set to 50% opacity has
+    // `color.a: 1, opacity: 0.5` — losing `opacity` here would silently
+    // export it as a fully opaque color.
+    const figma = mockFigmaAPI({}, {});
+    const result = await resolveFillColor(
+      figma,
+      "1:1",
+      [{ type: "SOLID", visible: true, color: { r: 1, g: 0, b: 0 }, opacity: 0.5 }],
+      undefined,
+    );
+    expect(result.token).toEqual({ token: null, value: "#FF000080" });
+  });
+
+  it("multiplies color.a and paint.opacity when both are present", async () => {
+    const figma = mockFigmaAPI({}, {});
+    const result = await resolveFillColor(
+      figma,
+      "1:1",
+      [{ type: "SOLID", visible: true, color: { r: 1, g: 0, b: 0, a: 0.5 }, opacity: 0.5 }],
+      undefined,
+    );
+    // 0.5 * 0.5 = 0.25 -> 64/255 rounded -> 0x40
+    expect(result.token).toEqual({ token: null, value: "#FF000040" });
+  });
 });
 
 describe("resolveTypographyToken", () => {
