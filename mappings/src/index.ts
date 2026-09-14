@@ -9,64 +9,123 @@
 // token-map, trimmed and pre-generated to JSON at build time — see
 // scripts/bundle-token-map.mjs) plus `findTokenSymbol` below, rather than
 // reading mappings/token-map/*.token-map.json directly.
+// Consumers should likewise import the wiring-rule evaluator
+// (`resolveTokenSymbol`, from ./wiring.ts) rather than a checked-in
+// token->symbol table; the former 2371-row token-map artifacts were retired
+// in favour of the rules they encoded (see mappings/wiring-rules/README.md).
 import componentMapJson from "./generated/component-map.json" with { type: "json" };
-import tokenMapJson from "./generated/token-map.json" with { type: "json" };
 import type {
   ComponentMap,
   ComponentMapEntry,
   ComponentMapValueEntry,
   ComponentMapVariantGroup,
-  TokenMapBundleEntry,
 } from "./types.js";
 
 export * from "./types.js";
+export { resolveTokenSymbol, toCamelCaseSegment, wiringRules } from "./wiring.js";
+export { collectionsPolicy, createPolicyEvaluator, globMatches, globToRegExp } from "./policy.js";
 
 /** The parsed component-map.yaml, pre-generated to JSON at build time. */
 export const componentMap = componentMapJson as unknown as ComponentMap;
 
+/**
+ * The outcome of looking up a Figma component set in the component map.
+ * `matchedBy` records *how* the entry was found so callers can surface a
+ * drift warning: matching on `figmaNodeId` is stable across renames, while
+ * matching on `name` is not — a renamed component set silently stops
+ * matching, which is exactly the failure this field makes visible.
+ */
+export interface ComponentMapLookup {
+  entry: ComponentMapEntry | null;
+  matchedBy: "figmaNodeId" | "name" | null;
+  /** Set when the entry was found by node id but its recorded name is stale. */
+  nameDrift?: { mapName: string; figmaName: string };
+}
+
+/**
+ * Looks up a component-map entry, preferring the stable Figma node id over
+ * the display name.
+ *
+ * The map has always carried `figmaNodeId` "for traceability" while lookup
+ * matched on `figmaComponentSet` (the *name*) — so renaming a component set
+ * in Figma silently unmapped every instance of it, degrading those nodes
+ * into raw geometry trees. Node id is now the primary key; the name is kept
+ * as a fallback (entries may legitimately have `figmaNodeId: null`) and a
+ * name/id disagreement is reported rather than ignored.
+ */
+export function lookupComponentMapEntry(
+  figmaComponentSetName: string,
+  figmaNodeId?: string | null,
+): ComponentMapLookup {
+  if (figmaNodeId) {
+    const byId = componentMap.entries.find((entry) => entry.figmaNodeId === figmaNodeId);
+    if (byId) {
+      return {
+        entry: byId,
+        matchedBy: "figmaNodeId",
+        ...(byId.figmaComponentSet !== figmaComponentSetName
+          ? { nameDrift: { mapName: byId.figmaComponentSet, figmaName: figmaComponentSetName } }
+          : {}),
+      };
+    }
+  }
+
+  const byName = componentMap.entries.find(
+    (entry) => entry.figmaComponentSet === figmaComponentSetName,
+  );
+  return byName ? { entry: byName, matchedBy: "name" } : { entry: null, matchedBy: null };
+}
+
 /** Looks up a component-map entry by its exact Figma component set name. */
 export function findComponentMapEntry(figmaComponentSetName: string): ComponentMapEntry | null {
-  return (
-    componentMap.entries.find((entry) => entry.figmaComponentSet === figmaComponentSetName) ?? null
-  );
+  return lookupComponentMapEntry(figmaComponentSetName).entry;
 }
 
 /**
- * The bundled token-map (Android_Avalon, see mappings/token-map/README.md
- * and scripts/bundle-token-map-lib.mjs for why this product's map is the
- * one bundled) — trimmed to just the entries with a confirmed symbol, and
- * pre-generated to JSON at build time.
+ * A count of how much of the component map is actually usable.
+ *
+ * Mapping coverage is the single variable that decides whether the IR is
+ * useful: an unmapped instance is not emitted as an `instance` node at all,
+ * so the extractor recurses into its raw children and the IR degrades into
+ * the geometry tree this project exists to avoid. That makes coverage a
+ * first-class health metric, not trivia — so it is computed rather than
+ * left to be guessed at from the YAML.
  */
-export const tokenMap = tokenMapJson as unknown as TokenMapBundleEntry[];
-
-/**
- * Path -> symbol index over `tokenMap`, built once (module-level, lazily on
- * first lookup) and reused for every subsequent `findTokenSymbol` call —
- * `tokenMap` has ~250 entries today and could grow along with the source
- * token-map, so a per-call linear scan (`Array.prototype.find`, as
- * `findComponentMapEntry` above does over ~a few hundred component-map
- * entries) would needlessly cost O(n) per resolved token instead of O(1).
- */
-let tokenSymbolIndex: Map<string, string> | undefined;
-
-function getTokenSymbolIndex(): Map<string, string> {
-  tokenSymbolIndex ??= new Map(tokenMap.map((entry) => [entry.path, entry.symbol]));
-  return tokenSymbolIndex;
+export interface ComponentMapCoverage {
+  entries: number;
+  mappedEntries: number;
+  /** Entries with no `figmaNodeId`, i.e. only matchable by a rename-fragile name. */
+  entriesWithoutNodeId: number;
+  variantValues: number;
+  mappedVariantValues: number;
 }
 
-/**
- * Looks up a Figma variable path (the same string carried by
- * `TokenValue.token`/`TokenRef.token`) against the bundled token-map.
- * Returns the confirmed Kotlin design-system symbol, or `undefined` when
- * the path has no entry in the bundled map, or has an entry whose `symbol`
- * couldn't be confidently derived (dropped from the bundle — see
- * `TokenMapBundleEntry`'s doc comment). Both cases are deliberately
- * indistinguishable to callers: an absent symbol is the normal, expected
- * state for most tokens today (see mappings/token-map/README.md), not a
- * hygiene problem to warn about.
- */
-export function findTokenSymbol(path: string): string | undefined {
-  return getTokenSymbolIndex().get(path);
+export function componentMapCoverage(map: ComponentMap = componentMap): ComponentMapCoverage {
+  let variantValues = 0;
+  let mappedVariantValues = 0;
+
+  for (const entry of map.entries) {
+    for (const group of entry.variants ?? []) {
+      for (const value of group.values ?? []) {
+        variantValues += 1;
+        if (
+          group.status !== "unmapped" &&
+          value.status !== "unmapped" &&
+          value.composeValue !== undefined
+        ) {
+          mappedVariantValues += 1;
+        }
+      }
+    }
+  }
+
+  return {
+    entries: map.entries.length,
+    mappedEntries: map.entries.filter((e) => e.status === "mapped").length,
+    entriesWithoutNodeId: map.entries.filter((e) => !e.figmaNodeId).length,
+    variantValues,
+    mappedVariantValues,
+  };
 }
 
 /**

@@ -232,6 +232,17 @@
       <button id="copy-button" disabled>Copy to clipboard</button>
       <span id="copy-status" class="copy-status"></span>
     </div>
+    <!--
+      Tokens are a FILE-scoped export and screens are SELECTION-scoped, so
+      these live on their own row rather than beside Extract: they are not
+      affected by the current selection, and grouping them would imply they
+      were.
+    -->
+    <div class="toolbar">
+      <button id="extract-tokens-button">Extract tokens</button>
+      <button id="export-tokens-button" disabled>Export tokens</button>
+      <span id="tokens-status" class="copy-status"></span>
+    </div>
     <main>
       <div id="banner"></div>
       <section>

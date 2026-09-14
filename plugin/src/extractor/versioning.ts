@@ -32,7 +32,6 @@
 //     (detecting accidental content drift, not defending against a
 //     party deliberately crafting a colliding IR tree) but are not
 //     cryptographically impossible.
-import type { IRNode } from "@figma-normalizator/schema";
 import { canonicalStringify } from "./canonical.js";
 
 /** Version scheme tag, so a future change to the hash algorithm can be distinguished from this one. */
@@ -52,14 +51,21 @@ function fnv1a64(input: string): bigint {
 }
 
 /**
- * Derives a stable `Provenance.version` from the (already-extracted) IR
- * content. Callers should extract with a placeholder `version` first (any
- * fixed value is fine — it just needs to be the same on every call so the
- * hash input is otherwise deterministic), then substitute the real hash
- * back in via `withVersion` below.
+ * Derives a stable content hash from any already-extracted payload.
+ *
+ * Used for both `Provenance.version` on the node IR and
+ * `TokenDocument.envelope.version`, which is why it is typed on `unknown`
+ * rather than `IRNode[]`: the guarantee it provides ("same content in, same
+ * version out, independent of key order") is about serialization, not about
+ * a particular document shape.
+ *
+ * For the node IR, callers should extract with a placeholder `version`
+ * first (any fixed value is fine — it just needs to be the same on every
+ * call so the hash input is otherwise deterministic), then substitute the
+ * real hash back in via `withVersion` below.
  */
-export function computeContentVersion(nodes: readonly IRNode[]): string {
-  const canonicalJSON = canonicalStringify(nodes);
+export function computeContentVersion(payload: unknown): string {
+  const canonicalJSON = canonicalStringify(payload);
   const hash = fnv1a64(canonicalJSON);
   return `${VERSION_SCHEME}-${hash.toString(16).padStart(16, "0")}`;
 }

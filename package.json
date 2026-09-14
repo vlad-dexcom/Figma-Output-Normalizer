@@ -13,6 +13,7 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "npm run typecheck --workspaces --if-present",
+    "verify:generated": "node scripts/verify-generated.mjs",
     "build": "npm run build --workspaces --if-present",
     "test": "vitest run",
     "format": "prettier --write .",

@@ -9,11 +9,13 @@ pipeline).
 
 ```
 schema/
-  ir/v1/schema.json      # the versioned JSON Schema — source of truth
-  src/generated/ir.ts    # TypeScript types generated FROM schema.json
-  src/index.ts           # public entry point (re-exports types + raw schema)
-  scripts/               # the generator (generate-types.mjs / -lib.mjs)
-  fixtures/               # hand-written example IR documents
+  ir/v1/schema.json          # node IR JSON Schema — source of truth
+  tokens/v1/schema.json      # token document JSON Schema — source of truth
+  src/generated/ir.ts        # TypeScript types generated FROM ir/v1/schema.json
+  src/generated/tokens.ts    # TypeScript types generated FROM tokens/v1/schema.json
+  src/index.ts               # public entry point (re-exports types + raw schemas)
+  scripts/                   # the generator (generate-types.mjs / -lib.mjs)
+  fixtures/                  # hand-written example IR documents
 ```
 
 `ir/v1/schema.json` is the only hand-maintained source of truth for node
@@ -111,16 +113,65 @@ To make that additive rather than breaking:
   include `symbol?: string`).
 
 **Update: this "later stage" has now happened, partially.** The plugin
-extractor (`plugin/src/extractor/tokens.ts`'s `resolveVariable`) looks up
-each resolved token's path against a bundled Figma-token -> Kotlin-symbol
-map (`mappings/token-map/`, wired in via `@figma-normalizator/mappings`'s
-`findTokenSymbol`) and populates `TokenValue.symbol`/`TokenRef.symbol` when
-a confirmed mapping exists. As of this snapshot that's only the `base`
-collection's `color` branch (246 of 2,371 known tokens) — every other token
-still resolves with `symbol` absent, exactly as before this change, since
-the bundled map has no confidently-derivable symbol for it yet (not a bug;
-see `mappings/token-map/README.md`). See `plugin/README.md`'s "Symbol
-resolution (token-map)" section for the full mechanics.
+extractor (`plugin/src/extractor/tokens.ts`'s `resolveVariable`) resolves
+each token's **qualified** identity — `(collection, path)`, since a bare
+path is ambiguous across collections — against the declarative wiring rules
+in `mappings/wiring-rules/wiring-rules.yaml`, and populates
+`TokenValue.symbol`/`TokenRef.symbol` plus `symbolFrom` (the id of the rule
+that decided) when a rule confidently derives one. As of this snapshot that
+is only the `base` collection's `color` branch; every other token still
+resolves with `symbol` absent, which is the expected state and not a bug
+(see `mappings/wiring-rules/README.md`). See `plugin/README.md`'s "Symbol
+resolution (wiring rules)" section for the full mechanics.
+
+`collection` and `symbolFrom` were added to `tokenValue`/`tokenRef` as
+**optional** fields, which is an additive, backwards-compatible change
+within v1 per the versioning policy above: a v1 document produced before
+they existed still validates.
+
+## Token document schema (tokens/v1)
+
+`tokens/v1/schema.json` is a second, independently versioned document
+describing a Figma file's **design-token variables**, produced by the same
+plugin (`plugin/src/extractor/tokenExport.ts`) and typed by
+`src/generated/tokens.ts` / `TOKENS_SCHEMA_VERSION`.
+
+It is versioned separately from the node IR on purpose: the two describe
+different things on different cadences — a _selection_ of the scene graph
+that changes constantly, versus the _file's_ tokens which change rarely —
+so tying them to one number would force meaningless version bumps.
+
+Shape, briefly:
+
+```
+TokenDocument
+  envelope     { schemaVersion, kind: "tokens", fileKey, version }
+  policy       the exclusion policy actually applied, incl. unmatchedPatterns
+  collections  [{ name, id, remote, defaultMode, modes, branches, dependsOn, tokens }]
+  unresolved   [{ collection, path, reason, detail }]
+```
+
+Design decisions worth knowing:
+
+- **The envelope carries `fileKey`/`version` once**, not per token. (The
+  node IR still repeats them per node via `Provenance`; hoisting those out
+  would be a v2 break and is deliberately not bundled into this change.)
+- **No timestamp anywhere**, so re-exporting unchanged content is
+  byte-identical.
+- **Alias edges are preserved per mode** alongside resolved literals,
+  because a leaf collection with one mode aliasing into a light/dark
+  collection has a flattened value that is misleading on its own.
+- **Mode order is Figma's declared order, never sorted**, and
+  `defaultMode` is always carried.
+- **Kotlin/codegen concerns are out of scope**: package names, class
+  shapes, factory functions and build order stay in the generator. The
+  document carries the observed raw material (`branches`, `dependsOn`,
+  `modes`, `defaultMode`) those are derived from, because that is measured
+  Figma structure rather than a codegen decision.
+- **Nothing is ever silently dropped**: a variable that cannot be
+  represented appears in `unresolved` with a stable reason code
+  (`missing-alias-target`, `unresolvable-alias-chain`,
+  `excluded-collection-alias`, `excluded-by-policy`, `unsupported-value`).
 
 ## Fixtures
 

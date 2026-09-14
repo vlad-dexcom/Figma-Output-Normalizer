@@ -212,3 +212,66 @@ describe("handleUIMessage: export", () => {
     expect(mockFigma.notify).toHaveBeenCalledWith("Figma Normalizator: IR exported.");
   });
 });
+
+describe("handleUIMessage: extract-tokens", () => {
+  const collections = {
+    "col:base": {
+      id: "col:base",
+      name: "base",
+      remote: false,
+      defaultModeId: "light",
+      modes: [
+        { modeId: "light", name: "light" },
+        { modeId: "dark", name: "dark" },
+      ],
+      variableIds: ["var:1"],
+    },
+  };
+  const variables = {
+    "var:1": {
+      id: "var:1",
+      name: "color/text/base/default",
+      variableCollectionId: "col:base",
+      resolvedType: "COLOR" as const,
+      valuesByMode: { light: { r: 0, g: 0, b: 0 }, dark: { r: 1, g: 1, b: 1 } },
+    },
+  };
+
+  it("posts a token-result with a summary the panel can render", async () => {
+    const mockFigma = createMockFigma({
+      fileKey: "file-key",
+      variables,
+      variableCollections: collections,
+    });
+
+    await handleUIMessage(mockFigma, { type: "extract-tokens" });
+
+    const posted = vi.mocked(mockFigma.ui.postMessage).mock.calls.at(-1)?.[0];
+    expect(posted?.type).toBe("token-result");
+    if (posted?.type !== "token-result") throw new Error("expected a token-result");
+
+    expect(posted.tokens.envelope.fileKey).toBe("file-key");
+    expect(posted.tokens.envelope.kind).toBe("tokens");
+    expect(posted.source.version).toBe(posted.tokens.envelope.version);
+    expect(posted.summary.variableCount).toBe(1);
+    expect(posted.tokens.collections[0]?.tokens[0]?.path).toBe("color/text/base/default");
+  });
+
+  it("reports a missing variables API instead of throwing", async () => {
+    const mockFigma = createMockFigma({ supportsLocalVariableCollections: false });
+
+    await handleUIMessage(mockFigma, { type: "extract-tokens" });
+
+    const posted = vi.mocked(mockFigma.ui.postMessage).mock.calls.at(-1)?.[0];
+    expect(posted).toMatchObject({ type: "error", code: "variables-api-unavailable" });
+  });
+
+  it("notifies on export-tokens", async () => {
+    const mockFigma = createMockFigma();
+    await handleUIMessage(mockFigma, {
+      type: "export-tokens",
+      source: { fileKey: "f", version: "c1-0" },
+    });
+    expect(mockFigma.notify).toHaveBeenCalledWith("Figma Normalizator: tokens exported.");
+  });
+});

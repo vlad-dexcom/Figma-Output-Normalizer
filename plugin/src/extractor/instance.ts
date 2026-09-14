@@ -16,7 +16,7 @@ import type {
   UnresolvedEntry,
 } from "@figma-normalizator/schema";
 import {
-  findComponentMapEntry,
+  lookupComponentMapEntry,
   resolveRouting,
   resolveStateValue,
   resolveVariantValue,
@@ -85,14 +85,23 @@ function toCamelCase(rawName: string): string {
     .join("");
 }
 
-/** Walks up from a main component to find its owning ComponentSetNode's name, falling back to the component's own name for componentless-variant components. */
-function resolveComponentSetName(mainComponent: FigmaNode): string {
+/**
+ * Walks up from a main component to find its owning ComponentSetNode's
+ * name AND id, falling back to the component's own for
+ * componentless-variant components.
+ *
+ * The id matters: component-map lookup keys on `figmaNodeId` first, because
+ * a name-only key silently unmaps every instance of a component set the
+ * moment someone renames it in Figma — which degrades those nodes into the
+ * raw geometry trees this extractor exists to avoid.
+ */
+function resolveComponentSet(mainComponent: FigmaNode): { name: string; id: string } {
   let ancestor = mainComponent.parent ?? null;
   while (ancestor) {
-    if (ancestor.type === "COMPONENT_SET") return ancestor.name;
+    if (ancestor.type === "COMPONENT_SET") return { name: ancestor.name, id: ancestor.id };
     ancestor = ancestor.parent ?? null;
   }
-  return mainComponent.name;
+  return { name: mainComponent.name, id: mainComponent.id };
 }
 
 function buildInstanceLayoutFields(node: FigmaNode, parent: FigmaNode | undefined) {
@@ -129,7 +138,8 @@ export async function buildInstanceNode(
   const unresolved: UnresolvedEntry[] = [];
 
   const mainComponent = node.getMainComponentAsync ? await node.getMainComponentAsync() : null;
-  const figmaComponentSetName = mainComponent ? resolveComponentSetName(mainComponent) : node.name;
+  const componentSet = mainComponent ? resolveComponentSet(mainComponent) : null;
+  const figmaComponentSetName = componentSet?.name ?? node.name;
   const figmaComponentKey = mainComponent?.key ?? mainComponent?.id ?? node.id;
 
   // `getMainComponentAsync()` resolving to null (main component deleted, or
@@ -150,7 +160,23 @@ export async function buildInstanceNode(
     });
   }
 
-  const entry: ComponentMapEntry | null = findComponentMapEntry(figmaComponentSetName);
+  const lookup = lookupComponentMapEntry(figmaComponentSetName, componentSet?.id);
+  const entry: ComponentMapEntry | null = lookup.entry;
+
+  // Matched by id, but the map's recorded name is stale. The mapping still
+  // works (that is the point of keying on the id), but the drift is
+  // reported so the map can be corrected before someone later "fixes" it
+  // by re-adding a duplicate entry under the new name.
+  if (lookup.nameDrift) {
+    unresolved.push({
+      nodeId: node.id,
+      reason: "component-map-name-drift",
+      detail:
+        `Component set "${lookup.nameDrift.figmaName}" is recorded in component-map.yaml as ` +
+        `"${lookup.nameDrift.mapName}". Matched by figmaNodeId, so the mapping still applies — ` +
+        "update the map's figmaComponentSet to match Figma.",
+    });
+  }
 
   const { properties: componentProperties, readError } = safeReadComponentProperties(node);
   if (readError) {

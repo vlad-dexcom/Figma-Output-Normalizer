@@ -74,6 +74,38 @@ Notes on the shape:
   enough that a design system owner should double-check the semantic
   pairing.
 
+## What else lives in this package
+
+Besides `component-map.yaml`, this package owns two other pieces of data
+the plugin bundles at build time (same build-time-parse pattern, same
+"regenerate and commit, never hand-edit the JSON" convention):
+
+- **[`wiring-rules/`](./wiring-rules/README.md)** - declarative rules
+  mapping a qualified Figma token `(collection, path)` to a Kotlin
+  design-system symbol. Replaced the retired 2371-row
+  `token-map/android-*.token-map.json` artifacts; that README documents
+  what went wrong with them and why rules beat a materialized table.
+- **`collections-policy.yaml`** - which Figma variable collections and
+  branches are in scope for the token export. The plugin-side equivalent
+  of the platform generator's `configs/collections.toml`, with deliberately
+  identical semantics.
+
+Both are regenerated with `npm run generate:wiring-rules` /
+`npm run generate:collections-policy`, and CI's `npm run verify:generated`
+fails if a generated JSON drifts from its YAML source.
+
+## Lookup is by node id, not display name
+
+`lookupComponentMapEntry` keys on `figmaNodeId` first, falling back to
+`figmaComponentSet` (the display name) only when no id matches.
+
+This used to be name-only, while `figmaNodeId` sat in the YAML "for
+traceability" and was never read - meaning renaming a component set in
+Figma silently unmapped every instance of it, degrading those nodes into
+the raw geometry trees this whole project exists to avoid. When an entry
+_is_ found by id but its recorded name disagrees with Figma's, the lookup
+reports `nameDrift` rather than ignoring it, so the map can be corrected.
+
 ## The `unmapped` state
 
 `unmapped` does **not** mean "skip this and move on." An extractor

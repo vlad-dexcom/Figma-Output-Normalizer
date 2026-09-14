@@ -1,0 +1,604 @@
+{
+  "variableCollections": {
+    "VariableCollectionId:32186:2": {
+      "defaultModeId": "32245:0",
+      "id": "VariableCollectionId:32186:2",
+      "name": "base",
+      "remote": false,
+      "modes": [
+        {
+          "modeId": "32245:0",
+          "name": "light"
+        },
+        {
+          "modeId": "32186:0",
+          "name": "dark"
+        }
+      ],
+      "key": "5126990fedb25fd554d45baa9f78ef3a7897155c",
+      "hiddenFromPublishing": false,
+      "isExtension": false,
+      "variableIds": [
+        "VariableID:32186:141",
+        "VariableID:32186:162",
+        "VariableID:32186:213",
+        "VariableID:32186:4",
+        "VariableID:42319:3"
+      ]
+    },
+    "VariableCollectionId:44:2": {
+      "defaultModeId": "44:0",
+      "id": "VariableCollectionId:44:2",
+      "name": "components",
+      "remote": false,
+      "modes": [
+        {
+          "modeId": "44:0",
+          "name": "value"
+        }
+      ],
+      "key": "d4dd6254a72827267de4a7c6a51dc778cbae43e8",
+      "hiddenFromPublishing": false,
+      "isExtension": false,
+      "variableIds": ["VariableID:36383:7", "VariableID:34267:437"]
+    },
+    "VariableCollectionId:3:2": {
+      "defaultModeId": "3:0",
+      "id": "VariableCollectionId:3:2",
+      "name": "primitives",
+      "remote": false,
+      "modes": [
+        {
+          "modeId": "3:0",
+          "name": "Value"
+        },
+        {
+          "modeId": "36292:14",
+          "name": "iOS"
+        },
+        {
+          "modeId": "36292:15",
+          "name": "Android"
+        }
+      ],
+      "key": "14376b32590009aac79605687f899d6c271420d1",
+      "hiddenFromPublishing": false,
+      "isExtension": false,
+      "variableIds": [
+        "VariableID:114:270",
+        "VariableID:114:274",
+        "VariableID:114:283",
+        "VariableID:124:352",
+        "VariableID:51:29",
+        "VariableID:115:52"
+      ]
+    },
+    "VariableCollectionId:32253:4138": {
+      "defaultModeId": "32253:1",
+      "id": "VariableCollectionId:32253:4138",
+      "name": "typography",
+      "remote": false,
+      "modes": [
+        {
+          "modeId": "32253:1",
+          "name": "ios"
+        },
+        {
+          "modeId": "32253:2",
+          "name": "android"
+        }
+      ],
+      "key": "d3b4173d1119f185bcf0c31dfd1e6b2eafc5ae57",
+      "hiddenFromPublishing": false,
+      "isExtension": false,
+      "variableIds": ["VariableID:32253:4303"]
+    },
+    "VariableCollectionId:36305:307": {
+      "defaultModeId": "36305:16",
+      "id": "VariableCollectionId:36305:307",
+      "name": "layout",
+      "remote": false,
+      "modes": [
+        {
+          "modeId": "36305:16",
+          "name": "Mode 1"
+        }
+      ],
+      "key": "27e305e5b5c35c3d468856e823d3fc7a07bf000f",
+      "hiddenFromPublishing": false,
+      "isExtension": false,
+      "variableIds": []
+    },
+    "VariableCollectionId:36292:22": {
+      "defaultModeId": "36292:11",
+      "id": "VariableCollectionId:36292:22",
+      "name": "figma-only",
+      "remote": false,
+      "modes": [
+        {
+          "modeId": "36292:11",
+          "name": "Mode 1"
+        }
+      ],
+      "key": "5ec841b86a1ecf65fc8c4c3a187037af0e810266",
+      "hiddenFromPublishing": false,
+      "isExtension": false,
+      "variableIds": ["VariableID:36292:261", "VariableID:36292:259"]
+    },
+    "VariableCollectionId:cde034ea3dd4141c81503bc2035c3661171efb46/4715:156": {
+      "defaultModeId": "2:1",
+      "id": "VariableCollectionId:cde034ea3dd4141c81503bc2035c3661171efb46/4715:156",
+      "name": "Mode",
+      "remote": true,
+      "modes": [
+        {
+          "modeId": "2:1",
+          "name": "Light"
+        },
+        {
+          "modeId": "3:2",
+          "name": "Dark"
+        }
+      ],
+      "key": "cde034ea3dd4141c81503bc2035c3661171efb46",
+      "hiddenFromPublishing": true,
+      "isExtension": false,
+      "variableIds": []
+    },
+    "VariableCollectionId:c91ff82437671249068e5a6767a0a2fdb1fbb898/2282:390": {
+      "defaultModeId": "1:0",
+      "id": "VariableCollectionId:c91ff82437671249068e5a6767a0a2fdb1fbb898/2282:390",
+      "name": "Primitives",
+      "remote": true,
+      "modes": [
+        {
+          "modeId": "1:0",
+          "name": "Value"
+        }
+      ],
+      "key": "c91ff82437671249068e5a6767a0a2fdb1fbb898",
+      "hiddenFromPublishing": true,
+      "isExtension": false,
+      "variableIds": []
+    },
+    "VariableCollectionId:32cfdb8f0449ae5aedd06084a7dc7db25fcec7ba/32371:21879": {
+      "defaultModeId": "32186:0",
+      "id": "VariableCollectionId:32cfdb8f0449ae5aedd06084a7dc7db25fcec7ba/32371:21879",
+      "name": "base",
+      "remote": true,
+      "modes": [
+        {
+          "modeId": "32186:0",
+          "name": "dark"
+        },
+        {
+          "modeId": "32245:0",
+          "name": "light"
+        }
+      ],
+      "key": "32cfdb8f0449ae5aedd06084a7dc7db25fcec7ba",
+      "hiddenFromPublishing": true,
+      "isExtension": false,
+      "variableIds": ["VariableID:850bb783aae75b6c01b93c3774e6d9a9b41a48ff/32503:24611"]
+    }
+  },
+  "variables": {
+    "VariableID:32186:141": {
+      "name": "color/surface/action/primary/default",
+      "id": "VariableID:32186:141",
+      "remote": false,
+      "key": "de11d61bc769663b36e622aabe4fbd187220544b",
+      "variableCollectionId": "VariableCollectionId:32186:2",
+      "resolvedType": "COLOR",
+      "description": "Semantic surface color \u2014 action/primary/default. Resolves to #ACA8E3.",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "32186:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:114:283"
+        },
+        "32245:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:114:274"
+        }
+      },
+      "scopes": ["FRAME_FILL", "SHAPE_FILL"],
+      "codeSyntax": {}
+    },
+    "VariableID:114:283": {
+      "name": "palette/lavender/500",
+      "id": "VariableID:114:283",
+      "remote": false,
+      "key": "7044ce3f6f5d4deb290ad9b2a6e29cccc185c120",
+      "variableCollectionId": "VariableCollectionId:3:2",
+      "resolvedType": "COLOR",
+      "description": "",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "3:0": {
+          "r": 0.6745098233222961,
+          "g": 0.658823549747467,
+          "b": 0.8901960849761963,
+          "a": 1
+        },
+        "36292:14": {
+          "r": 0.6745098233222961,
+          "g": 0.658823549747467,
+          "b": 0.8901960849761963,
+          "a": 1
+        },
+        "36292:15": {
+          "r": 0.6745098233222961,
+          "g": 0.658823549747467,
+          "b": 0.8901960849761963,
+          "a": 1
+        }
+      },
+      "scopes": [],
+      "codeSyntax": {
+        "WEB": "var(--stone-500)"
+      }
+    },
+    "VariableID:114:274": {
+      "name": "palette/halo/500",
+      "id": "VariableID:114:274",
+      "remote": false,
+      "key": "d6c42aff2df56da5e2db0dcb08fcf107e28975ef",
+      "variableCollectionId": "VariableCollectionId:3:2",
+      "resolvedType": "COLOR",
+      "description": "",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "3:0": {
+          "r": 0.18039216101169586,
+          "g": 0.1764705926179886,
+          "b": 0.24313725531101227,
+          "a": 1
+        },
+        "36292:14": {
+          "r": 0.18039216101169586,
+          "g": 0.1764705926179886,
+          "b": 0.24313725531101227,
+          "a": 1
+        },
+        "36292:15": {
+          "r": 0.18039216101169586,
+          "g": 0.1764705926179886,
+          "b": 0.24313725531101227,
+          "a": 1
+        }
+      },
+      "scopes": [],
+      "codeSyntax": {
+        "WEB": "var(--stone-500)"
+      }
+    },
+    "VariableID:32186:213": {
+      "name": "radius/none",
+      "id": "VariableID:32186:213",
+      "remote": false,
+      "key": "ead8f24e816e58c71be7f2c12215328f3e71b169",
+      "variableCollectionId": "VariableCollectionId:32186:2",
+      "resolvedType": "FLOAT",
+      "description": "Corner radius scale step: none. Resolves to 0px.",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "32186:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:51:29"
+        },
+        "32245:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:51:29"
+        }
+      },
+      "scopes": ["CORNER_RADIUS"],
+      "codeSyntax": {
+        "WEB": "var(--radius-none)"
+      }
+    },
+    "VariableID:51:29": {
+      "name": "radius/radius-0",
+      "id": "VariableID:51:29",
+      "remote": false,
+      "key": "111c35ac013bc3b2a501198ed421ba4bdef3b7af",
+      "variableCollectionId": "VariableCollectionId:3:2",
+      "resolvedType": "FLOAT",
+      "description": "",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "3:0": 0,
+        "36292:14": 0,
+        "36292:15": 0
+      },
+      "scopes": ["CORNER_RADIUS"],
+      "codeSyntax": {
+        "WEB": "var(--radius-none)"
+      }
+    },
+    "VariableID:32186:4": {
+      "name": "apple/color/systemBlue",
+      "id": "VariableID:32186:4",
+      "remote": false,
+      "key": "9733417fd7fad2d982afb92dd5c57bc15618efe3",
+      "variableCollectionId": "VariableCollectionId:32186:2",
+      "resolvedType": "COLOR",
+      "description": "Apple-specific system token \u2014 color/systemBlue. Resolves to #007AFF.",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "32186:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:36292:259"
+        },
+        "32245:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:36292:261"
+        }
+      },
+      "scopes": ["ALL_SCOPES"],
+      "codeSyntax": {}
+    },
+    "VariableID:36292:259": {
+      "name": "apple-color/blue-dark",
+      "id": "VariableID:36292:259",
+      "remote": false,
+      "key": "ccec4e0d6156462f211ed3b33ea5a81392fcb09f",
+      "variableCollectionId": "VariableCollectionId:36292:22",
+      "resolvedType": "COLOR",
+      "description": "",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "36292:11": {
+          "r": 0.03921568766236305,
+          "g": 0.5176470875740051,
+          "b": 1,
+          "a": 1
+        }
+      },
+      "scopes": ["FRAME_FILL", "SHAPE_FILL"],
+      "codeSyntax": {}
+    },
+    "VariableID:36292:261": {
+      "name": "apple-color/blue",
+      "id": "VariableID:36292:261",
+      "remote": false,
+      "key": "8240e20ef13c91dc15406e5bcd62c689b7786729",
+      "variableCollectionId": "VariableCollectionId:36292:22",
+      "resolvedType": "COLOR",
+      "description": "",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "36292:11": {
+          "r": 0,
+          "g": 0.47843137383461,
+          "b": 1,
+          "a": 1
+        }
+      },
+      "scopes": ["FRAME_FILL", "SHAPE_FILL"],
+      "codeSyntax": {}
+    },
+    "VariableID:42319:3": {
+      "name": "color/text/meta/default",
+      "id": "VariableID:42319:3",
+      "remote": false,
+      "key": "1938fdcb46b5f4120afda1a7852453f020c50ad1",
+      "variableCollectionId": "VariableCollectionId:32186:2",
+      "resolvedType": "COLOR",
+      "description": "Secondary metadata text accompanying a value \u2014 unit labels, timestamps and chart start/end markers. Resolves to #84838E.",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "32186:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:42319:2"
+        },
+        "32245:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:42319:2"
+        }
+      },
+      "scopes": ["TEXT_FILL"],
+      "codeSyntax": {},
+      "deletedButReferenced": true
+    },
+    "VariableID:36383:7": {
+      "name": "banners/type/informative/color/surface",
+      "id": "VariableID:36383:7",
+      "remote": false,
+      "key": "9c778dc3a5b954168749e194031394879437e3bf",
+      "variableCollectionId": "VariableCollectionId:44:2",
+      "resolvedType": "COLOR",
+      "description": "Container fill for an informative banner.",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "44:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:32186:162"
+        }
+      },
+      "scopes": ["FRAME_FILL", "SHAPE_FILL"],
+      "codeSyntax": {
+        "ANDROID": "bannersTypeInformativeColorSurface",
+        "iOS": "bannersTypeInformativeColorSurface"
+      }
+    },
+    "VariableID:32186:162": {
+      "name": "color/surface/status/neutral/minimal",
+      "id": "VariableID:32186:162",
+      "remote": false,
+      "key": "53839043e10b8209495df4948ea4234aafb701f1",
+      "variableCollectionId": "VariableCollectionId:32186:2",
+      "resolvedType": "COLOR",
+      "description": "Semantic surface color \u2014 status/neutral/minimal. Resolves to #96959F.",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "32186:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:114:270"
+        },
+        "32245:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:124:352"
+        }
+      },
+      "scopes": ["FRAME_FILL", "SHAPE_FILL"],
+      "codeSyntax": {}
+    },
+    "VariableID:114:270": {
+      "name": "palette/halo/100",
+      "id": "VariableID:114:270",
+      "remote": false,
+      "key": "72fac5bba2303069f48d3a5480ddab2d44f31cf3",
+      "variableCollectionId": "VariableCollectionId:3:2",
+      "resolvedType": "COLOR",
+      "description": "",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "3:0": {
+          "r": 0.5882353186607361,
+          "g": 0.5843137502670288,
+          "b": 0.6235294342041016,
+          "a": 1
+        },
+        "36292:14": {
+          "r": 0.5882353186607361,
+          "g": 0.5843137502670288,
+          "b": 0.6235294342041016,
+          "a": 1
+        },
+        "36292:15": {
+          "r": 0.5882353186607361,
+          "g": 0.5843137502670288,
+          "b": 0.6235294342041016,
+          "a": 1
+        }
+      },
+      "scopes": [],
+      "codeSyntax": {
+        "WEB": "var(--stone-100)"
+      }
+    },
+    "VariableID:124:352": {
+      "name": "palette/slate/300",
+      "id": "VariableID:124:352",
+      "remote": false,
+      "key": "fe2b9e96d68bc4050de6e223fbb13920dac4f21b",
+      "variableCollectionId": "VariableCollectionId:3:2",
+      "resolvedType": "COLOR",
+      "description": "",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "3:0": {
+          "r": 0.8627451062202454,
+          "g": 0.8823529481887817,
+          "b": 0.9176470637321472,
+          "a": 1
+        },
+        "36292:14": {
+          "r": 0.8627451062202454,
+          "g": 0.8823529481887817,
+          "b": 0.9176470637321472,
+          "a": 1
+        },
+        "36292:15": {
+          "r": 0.8627451062202454,
+          "g": 0.8823529481887817,
+          "b": 0.9176470637321472,
+          "a": 1
+        }
+      },
+      "scopes": [],
+      "codeSyntax": {
+        "WEB": "var(--blue-300)"
+      }
+    },
+    "VariableID:34267:437": {
+      "name": "progress-bars/base/size/height",
+      "id": "VariableID:34267:437",
+      "remote": false,
+      "key": "8fa6fc4a3357dff0ecada1d632eb3e0c160b783b",
+      "variableCollectionId": "VariableCollectionId:44:2",
+      "resolvedType": "FLOAT",
+      "description": "Bar height.",
+      "hiddenFromPublishing": true,
+      "valuesByMode": {
+        "44:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:850bb783aae75b6c01b93c3774e6d9a9b41a48ff/32503:24611"
+        }
+      },
+      "scopes": ["WIDTH_HEIGHT"],
+      "codeSyntax": {
+        "ANDROID": "progressBarsSizeHeight",
+        "iOS": "progressBarsSizeHeight"
+      }
+    },
+    "VariableID:850bb783aae75b6c01b93c3774e6d9a9b41a48ff/32503:24611": {
+      "name": "scale/xs",
+      "id": "VariableID:850bb783aae75b6c01b93c3774e6d9a9b41a48ff/32503:24611",
+      "remote": true,
+      "key": "850bb783aae75b6c01b93c3774e6d9a9b41a48ff",
+      "variableCollectionId": "VariableCollectionId:32cfdb8f0449ae5aedd06084a7dc7db25fcec7ba/32371:21879",
+      "resolvedType": "FLOAT",
+      "description": "Spacing scale step: xs \u2014 for gap, padding, and layout spacing. Resolves to 6px.",
+      "hiddenFromPublishing": true,
+      "valuesByMode": {
+        "32186:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:2215ccc4803b66f1dbf23469e37ef0c6d3848e9a/115:3358"
+        },
+        "32245:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:2215ccc4803b66f1dbf23469e37ef0c6d3848e9a/115:3358"
+        }
+      },
+      "scopes": ["WIDTH_HEIGHT", "GAP"],
+      "codeSyntax": {
+        "WEB": "var(--spacing-xs)"
+      }
+    },
+    "VariableID:32253:4303": {
+      "name": "large-title/size",
+      "id": "VariableID:32253:4303",
+      "remote": false,
+      "key": "fdc89118c68d6362107023e915a5fe7bef1c5045",
+      "variableCollectionId": "VariableCollectionId:32253:4138",
+      "resolvedType": "FLOAT",
+      "description": "iOS typography \u2014 headline 5 style, font-size (default). Resolves to 34.",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "32253:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:115:52"
+        },
+        "32253:2": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:115:52"
+        }
+      },
+      "scopes": ["FONT_SIZE"],
+      "codeSyntax": {
+        "WEB": "var(--font-size-overline)"
+      }
+    },
+    "VariableID:115:52": {
+      "name": "typography/font-size/34",
+      "id": "VariableID:115:52",
+      "remote": false,
+      "key": "945b3a598d7facc208e0105d888f53123f492b56",
+      "variableCollectionId": "VariableCollectionId:3:2",
+      "resolvedType": "FLOAT",
+      "description": "",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "3:0": 34,
+        "36292:14": 34,
+        "36292:15": 34
+      },
+      "scopes": ["FONT_SIZE"],
+      "codeSyntax": {
+        "WEB": "var(--font-size-3xl)"
+      }
+    }
+  }
+}

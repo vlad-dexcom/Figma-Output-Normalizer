@@ -1,0 +1,52 @@
+# Figma variable collections and branches that must NOT be exported into the
+# Token IR.
+#
+# This is the plugin-side equivalent of the platform generator's
+# `tools/figma-tokens/configs/collections.toml`, and deliberately mirrors its
+# semantics so the two never disagree about what is in scope. It lives here
+# (and is bundled into the plugin at build time) because the Figma plugin
+# sandbox has no filesystem and no network access - it cannot read a repo
+# file at runtime.
+#
+# Matching is case-insensitive and supports shell-style globs (`*`, `?`,
+# `[seq]`), so `wip-*` skips every collection whose name starts with `wip-`.
+#
+# Excluded collections are dropped BEFORE resolution, and alias references
+# pointing into them fall back to the concrete (literal) value, so generated
+# code never references something that was not emitted. Each such alias is
+# recorded on the token (`alias.byMode.<mode>.excluded`) and reported as an
+# `excluded-collection-alias` entry, so the fallback is visible rather than
+# silent.
+#
+# Patterns that match nothing are reported in the exported document's
+# `policy.unmatchedPatterns`, so a typo never turns into a silent no-op.
+#
+# Do NOT hand-edit `src/generated/collections-policy.json` - run
+# `npm run generate:collections-policy` from mappings/ and commit the diff.
+
+version: 1
+
+# Collection names to exclude.
+exclude:
+  - figma-only
+
+# Branches (top-level groups inside a kept collection, i.e. the first segment
+# of a Figma variable name such as `apple` in `apple/system-black`).
+#
+# A pattern containing `/` matches `<collection>/<branch>` (e.g. `base/apple`);
+# a bare pattern matches that branch in every collection (`apple` == `*/apple`).
+exclude-branches: []
+
+# Collections imported from other Figma libraries.
+#
+# Default `true`, and the default matters: a real production file carried 41
+# collections of which only 6 were local. The other 35 were unrelated library
+# noise (AOSP, Liquid Glass, Nuvia, Traditional Ramps, and a `base` with modes
+# named "Dan - Light v1" and five called "empty"), contributing 200 variables
+# that nothing downstream consumed. Worse, their names collide: that file had
+# five collections named `Primitives`, six named `Mode`, and five named
+# `base`, so any name-keyed consumer silently picks an arbitrary winner.
+#
+# Set to `false` only if you genuinely need to export another library's
+# variables, and expect name collisions when you do.
+exclude-remote-collections: true

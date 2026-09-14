@@ -29,3 +29,17 @@ export function buildExportFilename(source: ExportSource): string {
   const version = sanitizeSegment(source.version, "unknown-version");
   return `${fileKey}_${nodeId}_${version}.ir.json`;
 }
+
+/**
+ * Builds the token-export filename `{fileKey}_{version}.tokens.json`.
+ *
+ * No node id, unlike `buildExportFilename`: a token document is file
+ * scoped, not selection-scoped. The distinct `.tokens.json` suffix keeps
+ * the two artifacts obviously different in a downloads folder, and lets a
+ * consumer route them without parsing.
+ */
+export function buildTokenExportFilename(source: { fileKey: string; version: string }): string {
+  const fileKey = sanitizeSegment(source.fileKey, "unknown-file");
+  const version = sanitizeSegment(source.version, "unknown-version");
+  return `${fileKey}_${version}.tokens.json`;
+}

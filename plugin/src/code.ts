@@ -13,6 +13,9 @@ import {
   type FigmaNode,
 } from "./extractor/index.js";
 import { findSymbolPath } from "./extractor/mixed.js";
+import { extractTokens } from "./extractor/tokenExport.js";
+import { VariableBudgetExceededError } from "./extractor/budget.js";
+import type { TokenExportFigmaAPI } from "./extractor/types.js";
 import type { PluginToUIMessage, SelectionSummary, UIToPluginMessage } from "./messages.js";
 
 /** The minimal slice of the real Figma plugin API this entry point depends on. */
@@ -21,6 +24,8 @@ export interface ExtractFigmaAPI {
   variables: {
     getVariableByIdAsync: (id: string) => Promise<unknown>;
     getVariableCollectionByIdAsync: (id: string) => Promise<unknown>;
+    /** Optional: older Figma builds may not expose it, which the token export handles explicitly. */
+    getLocalVariableCollectionsAsync?: () => Promise<unknown[]>;
   };
   fileKey?: string;
   notify(message: string): void;
@@ -126,6 +131,51 @@ async function handleExtract(api: ExtractFigmaAPI): Promise<void> {
   }
 }
 
+/**
+ * Runs the file-scoped token export and posts either a `token-result` or a
+ * descriptive `error`.
+ *
+ * Never throws, for the same reason `handleExtract` doesn't: a budget
+ * overrun or an older Figma build lacking
+ * `getLocalVariableCollectionsAsync` must surface as a readable panel
+ * message, not an uncaught rejection that leaves the UI spinning.
+ */
+async function handleExtractTokens(api: ExtractFigmaAPI): Promise<void> {
+  if (typeof api.variables.getLocalVariableCollectionsAsync !== "function") {
+    api.ui.postMessage({
+      type: "error",
+      message:
+        "This Figma version cannot enumerate local variable collections, so tokens can't be exported.",
+      code: "variables-api-unavailable",
+    });
+    return;
+  }
+
+  try {
+    const result = await extractTokens(
+      { variables: api.variables as unknown as TokenExportFigmaAPI["variables"] },
+      { fileKey: api.fileKey ?? "" },
+    );
+
+    api.ui.postMessage({
+      type: "token-result",
+      tokens: result.document,
+      source: { fileKey: api.fileKey ?? "", version: result.document.envelope.version },
+      summary: {
+        variableCount: result.variableCount,
+        skippedCollections: result.skippedCollections,
+      },
+    });
+  } catch (error) {
+    if (error instanceof VariableBudgetExceededError) {
+      api.ui.postMessage({ type: "error", message: error.message, code: "token-budget-exceeded" });
+      return;
+    }
+    const message = error instanceof Error ? error.message : "Unknown error during token export.";
+    api.ui.postMessage({ type: "error", message, code: "unknown" });
+  }
+}
+
 /** Re-selects and scrolls to a node by id, so a designer can click a warning and jump to it on the canvas. */
 async function handleSelectNode(api: ExtractFigmaAPI, nodeId: string): Promise<void> {
   if (!api.getNodeByIdAsync) {
@@ -163,6 +213,11 @@ function handleExport(api: ExtractFigmaAPI): void {
   api.notify("Figma Normalizator: IR exported.");
 }
 
+/** Same observe-only hook as `handleExport`, for the token document. */
+function handleExportTokens(api: ExtractFigmaAPI): void {
+  api.notify("Figma Normalizator: tokens exported.");
+}
+
 export async function handleUIMessage(
   api: ExtractFigmaAPI,
   message: UIToPluginMessage,
@@ -176,6 +231,12 @@ export async function handleUIMessage(
       return;
     case "export":
       handleExport(api);
+      return;
+    case "extract-tokens":
+      await handleExtractTokens(api);
+      return;
+    case "export-tokens":
+      handleExportTokens(api);
       return;
   }
 }

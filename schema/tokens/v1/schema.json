@@ -1,0 +1,262 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.figma-normalizator.dev/tokens/v1/schema.json",
+  "title": "TokenDocument",
+  "description": "A semantic, platform-neutral description of a Figma file's design-token variables, produced by the Figma plugin (which can resolve alias chains, real mode names, and imported library variables that a raw REST/plugin variables dump cannot). Companion to ir/v1/schema.json: that schema describes a *selection* of the scene graph and changes constantly; this one describes the *file's* tokens and changes rarely. Kotlin/codegen concerns (package names, class shapes, factory functions, build order) are deliberately NOT modelled here - this document carries Figma-side facts only.",
+  "$ref": "#/$defs/tokenDocument",
+  "$defs": {
+    "tokenDocument": {
+      "title": "TokenDocument",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["envelope", "policy", "collections", "unresolved"],
+      "properties": {
+        "envelope": { "$ref": "#/$defs/envelope" },
+        "policy": { "$ref": "#/$defs/policyReport" },
+        "collections": {
+          "type": "array",
+          "description": "Every collection that survived the policy filter, in Figma's own declared order. A collection with zero variables is emitted as an empty `tokens` array rather than omitted, so 'this collection is empty' stays distinguishable from 'this collection disappeared'.",
+          "items": { "$ref": "#/$defs/tokenCollection" }
+        },
+        "unresolved": {
+          "type": "array",
+          "description": "Every variable that could not be fully represented, with a machine-readable reason. Producers MUST emit an entry here for any input variable not present in `collections` - a variable must never be silently dropped.",
+          "items": { "$ref": "#/$defs/unresolvedToken" }
+        }
+      }
+    },
+
+    "envelope": {
+      "title": "TokenDocumentEnvelope",
+      "description": "Document-level provenance. Deliberately carries no timestamp: an export of unchanged content must be byte-identical to the previous one, which a wall-clock field would break.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "kind", "fileKey", "version"],
+      "properties": {
+        "schemaVersion": {
+          "type": "integer",
+          "description": "The token schema major version this document conforms to (currently 1).",
+          "const": 1
+        },
+        "kind": {
+          "type": "string",
+          "const": "tokens",
+          "description": "Discriminates this document from the node IR when both are handled by one consumer."
+        },
+        "fileKey": {
+          "type": "string",
+          "description": "The Figma file key these tokens came from."
+        },
+        "version": {
+          "type": "string",
+          "description": "A deterministic content hash of this document's own payload (see the plugin's versioning.ts). Opaque and comparable for equality only - not parseable or ordered. Equal versions mean identical content; a changed version means something a consumer can see actually changed."
+        }
+      }
+    },
+
+    "policyReport": {
+      "title": "PolicyReport",
+      "description": "The exclusion policy that was actually applied, echoed into the document so an export is self-describing and a stale or mistyped pattern is visible in the artifact itself rather than only in the build log.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["excludedCollections", "excludedBranches", "unmatchedPatterns"],
+      "properties": {
+        "excludedCollections": {
+          "type": "array",
+          "description": "Collection name patterns that were excluded (shell-style globs, matched case-insensitively).",
+          "items": { "type": "string" }
+        },
+        "excludedBranches": {
+          "type": "array",
+          "description": "Branch patterns that were excluded. A pattern containing `/` matches `<collection>/<branch>`; a bare pattern matches that branch in every collection.",
+          "items": { "type": "string" }
+        },
+        "excludeRemoteCollections": {
+          "type": "boolean",
+          "description": "Whether collections imported from other Figma libraries were excluded. Defaults to true: a real file's remote collections are overwhelmingly unrelated library noise, and their names collide with each other and with local collections."
+        },
+        "unmatchedPatterns": {
+          "type": "array",
+          "description": "Patterns that matched nothing. Reported rather than silently ignored, so a typo never turns into a silent no-op.",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "tokenCollection": {
+      "title": "TokenCollection",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "id",
+        "remote",
+        "defaultMode",
+        "modes",
+        "branches",
+        "dependsOn",
+        "tokens"
+      ],
+      "properties": {
+        "name": { "type": "string", "description": "The collection's Figma name, e.g. \"base\"." },
+        "id": {
+          "type": "string",
+          "description": "The Figma variable collection id. Carried once per collection rather than repeated on every token, and needed because collection *names* are not unique across imported libraries."
+        },
+        "remote": {
+          "type": "boolean",
+          "description": "True when this collection is imported from another Figma library rather than defined locally."
+        },
+        "hidden": {
+          "type": "boolean",
+          "description": "Figma's `hiddenFromPublishing` for the collection."
+        },
+        "defaultMode": {
+          "type": ["string", "null"],
+          "description": "The name of the collection's default mode. Preserved because it encodes designer intent (which mode a single-value consumer should read) and is not recoverable from an alphabetically sorted mode list."
+        },
+        "modes": {
+          "type": "array",
+          "description": "Mode names in Figma's own declared order - NOT sorted. Order is meaningful content here, and sorting it destroys the default/primary-mode signal.",
+          "items": { "type": "string" }
+        },
+        "branches": {
+          "type": "array",
+          "description": "The distinct first path segments present in this collection's tokens (e.g. [\"color\", \"radius\", \"scale\"]), in first-seen order. Observed structure, not a codegen decision - a generator may use it to shape classes, or ignore it.",
+          "items": { "type": "string" }
+        },
+        "dependsOn": {
+          "type": "array",
+          "description": "Names of other collections this collection's tokens alias into, sorted for determinism. The observed alias-edge summary a build-order/graph step can be derived from, without this document itself modelling build order.",
+          "items": { "type": "string" }
+        },
+        "tokens": { "type": "array", "items": { "$ref": "#/$defs/token" } }
+      }
+    },
+
+    "token": {
+      "title": "Token",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "type", "value", "modes"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "The raw Figma variable name, slash-separated, verbatim and unsanitized (e.g. \"color/surface/action/primary/default\"). Identical to the node IR's `TokenValue.token` for the same variable. NOT unique on its own - see the owning collection."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["COLOR", "FLOAT", "STRING", "BOOLEAN"],
+          "description": "Figma's resolvedType for this variable."
+        },
+        "value": {
+          "type": ["string", "number", "boolean", "null"],
+          "description": "The resolved literal for the collection's DEFAULT mode. Colors are `#RRGGBB` or `#RRGGBBAA` hex - the same representation the node IR uses, so the two documents' values for one variable are the same string. `null` means unresolvable in the default mode; the token then also appears in `unresolved`."
+        },
+        "modes": {
+          "type": "object",
+          "description": "Resolved literal per mode name, for every mode the owning collection declares. Always present (even for a single-mode collection) so consumers never have to special-case it.",
+          "additionalProperties": { "type": ["string", "number", "boolean", "null"] }
+        },
+        "alias": { "$ref": "#/$defs/aliasEdges" },
+        "scopes": {
+          "type": "array",
+          "description": "Figma's variable scopes (e.g. [\"CORNER_RADIUS\"], [\"GAP\"], [\"TEXT_FILL\"]). This is how a consumer knows a FLOAT is a radius and not a gap - the intent signal that a bare number loses.",
+          "items": { "type": "string" }
+        },
+        "description": {
+          "type": "string",
+          "description": "The variable's Figma description, verbatim."
+        },
+        "hidden": { "type": "boolean", "description": "Figma's `hiddenFromPublishing`." },
+        "deleted": {
+          "type": "boolean",
+          "description": "Figma's `deletedButReferenced`: the variable is deleted but something still points at it. Emitted (flagged) rather than dropped, so a consumer can decide."
+        },
+        "symbol": {
+          "type": "string",
+          "description": "The Kotlin design-system symbol, derived by evaluating mappings/wiring-rules/wiring-rules.yaml against (collection, path). Omitted when no rule confidently derives one - the normal case, and not an error."
+        },
+        "symbolFrom": {
+          "type": "string",
+          "description": "The id of the wiring rule that produced `symbol`, so any emitted symbol can be traced to the rule and evidence behind it."
+        },
+        "hints": { "$ref": "#/$defs/tokenHints" }
+      }
+    },
+
+    "aliasEdges": {
+      "title": "AliasEdges",
+      "description": "Where this token's value comes from, when it aliases another variable. The alias EDGE is the fact; a resolved literal is only a view of it. Leaf collections routinely have a single mode while aliasing into a multi-mode collection, so a flattened value silently collapses light/dark - preserving the edge is what lets a consumer expand modes correctly instead of reconstructing the graph from values.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["byMode"],
+      "properties": {
+        "byMode": {
+          "type": "object",
+          "description": "Mode name -> the variable this token aliases in that mode. A mode with a literal (non-alias) value is absent.",
+          "additionalProperties": { "$ref": "#/$defs/aliasTarget" }
+        }
+      }
+    },
+
+    "aliasTarget": {
+      "title": "AliasTarget",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["collection", "path"],
+      "properties": {
+        "collection": {
+          "type": ["string", "null"],
+          "description": "Name of the collection the aliased variable belongs to, or null when it could not be read."
+        },
+        "path": {
+          "type": ["string", "null"],
+          "description": "The aliased variable's raw Figma name, or null when the target could not be resolved."
+        },
+        "excluded": {
+          "type": "boolean",
+          "description": "True when the alias points into a collection the policy excluded. The value then falls back to the resolved literal so generated code never references something that was not emitted - the documented behaviour this mirrors from the platform's collections.toml."
+        }
+      }
+    },
+
+    "tokenHints": {
+      "title": "TokenHints",
+      "description": "Non-authoritative signals carried for humans and coding agents. Nothing in the pipeline may RESOLVE against these - they are labelled as hints precisely so that a consumer cannot mistake them for a contract.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "codeSyntax": {
+          "type": "object",
+          "description": "Figma's per-platform `codeSyntax` for this variable (WEB/ANDROID/iOS). Useful as a naming hint when generating code, but deliberately NOT used to derive `symbol`: the platform is moving to a Styles API that will supply the real symbols, at which point these names could diverge.",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+
+    "unresolvedToken": {
+      "title": "UnresolvedToken",
+      "description": "Records a variable that could not be fully represented. Mirrors the node IR's UnresolvedEntry convention: every unresolvable value MUST produce one of these rather than a silent substitution or omission.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["collection", "path", "reason"],
+      "properties": {
+        "collection": { "type": ["string", "null"] },
+        "path": { "type": "string" },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "missing-alias-target",
+            "unresolvable-alias-chain",
+            "excluded-collection-alias",
+            "excluded-by-policy",
+            "unsupported-value"
+          ],
+          "description": "Stable machine-readable reason code. `missing-alias-target`: the aliased variable could not be read at all. `unresolvable-alias-chain`: circular or deeper than the hop limit. `excluded-collection-alias`: resolved, but through a collection the policy excluded (value falls back to the literal). `excluded-by-policy`: the variable itself was excluded. `unsupported-value`: a value shape this schema cannot represent."
+        },
+        "detail": { "type": "string", "description": "Human-readable detail for debugging." }
+      }
+    }
+  }
+}

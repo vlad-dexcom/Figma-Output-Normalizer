@@ -6,7 +6,9 @@ import yaml from "js-yaml";
 import { generateComponentMapJson, generatedFilePath } from "../scripts/generate-map-lib.mjs";
 import {
   componentMap,
+  componentMapCoverage,
   findComponentMapEntry,
+  lookupComponentMapEntry,
   resolveRouting,
   resolveStateValue,
   resolveVariantValue,
@@ -111,5 +113,83 @@ describe("resolveStateValue", () => {
 describe("componentMap", () => {
   it("exposes the parsed figma file metadata", () => {
     expect(componentMap.figma.fileKey).toBe("z4Ns3yQoXwMgjky6H9WYtP");
+  });
+});
+
+describe("lookupComponentMapEntry", () => {
+  const withId = componentMap.entries.find((e) => e.figmaNodeId);
+
+  it("matches on figmaNodeId first, so a rename in Figma does not unmap a component", () => {
+    if (!withId) throw new Error("component-map.yaml has no entry with a figmaNodeId to test");
+
+    const result = lookupComponentMapEntry("Renamed In Figma", withId.figmaNodeId);
+    expect(result.entry).toBe(withId);
+    expect(result.matchedBy).toBe("figmaNodeId");
+    expect(result.nameDrift).toEqual({
+      mapName: withId.figmaComponentSet,
+      figmaName: "Renamed In Figma",
+    });
+  });
+
+  it("reports no drift when the id and the name agree", () => {
+    if (!withId) throw new Error("component-map.yaml has no entry with a figmaNodeId to test");
+    const result = lookupComponentMapEntry(withId.figmaComponentSet, withId.figmaNodeId);
+    expect(result.matchedBy).toBe("figmaNodeId");
+    expect(result.nameDrift).toBeUndefined();
+  });
+
+  it("falls back to the name when no id matches, since entries may have figmaNodeId: null", () => {
+    if (!withId) throw new Error("component-map.yaml has no entry with a figmaNodeId to test");
+    const result = lookupComponentMapEntry(withId.figmaComponentSet, "999:999");
+    expect(result.entry).toBe(withId);
+    expect(result.matchedBy).toBe("name");
+  });
+
+  it("returns a null entry, not a guess, when nothing matches", () => {
+    expect(lookupComponentMapEntry("No Such Component", "0:0")).toEqual({
+      entry: null,
+      matchedBy: null,
+    });
+  });
+});
+
+describe("componentMapCoverage", () => {
+  it("reports coverage counts over the real map", () => {
+    const coverage = componentMapCoverage();
+    expect(coverage.entries).toBeGreaterThan(0);
+    expect(coverage.mappedEntries).toBeLessThanOrEqual(coverage.entries);
+    expect(coverage.mappedVariantValues).toBeLessThanOrEqual(coverage.variantValues);
+  });
+
+  it("counts an unmapped variant value as uncovered", () => {
+    const coverage = componentMapCoverage({
+      version: 1,
+      figma: { fileKey: "k", fileName: "n" },
+      entries: [
+        {
+          figmaComponentSet: "X",
+          figmaNodeId: "1:1",
+          status: "mapped",
+          compose: { component: "AppX", package: "p" },
+          variants: [
+            {
+              figmaProperty: "Style",
+              values: [
+                { figmaValue: "A", composeValue: "A" },
+                { figmaValue: "B", status: "unmapped", reason: "no equivalent" },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(coverage).toEqual({
+      entries: 1,
+      mappedEntries: 1,
+      entriesWithoutNodeId: 0,
+      variantValues: 2,
+      mappedVariantValues: 1,
+    });
   });
 });

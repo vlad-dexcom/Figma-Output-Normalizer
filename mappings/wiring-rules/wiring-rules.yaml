@@ -1,0 +1,68 @@
+# Figma design-token -> Kotlin design-system symbol WIRING RULES.
+#
+# This file replaces the former `token-map/android-*.token-map.json`
+# artifacts: 2371 checked-in rows per product that, between them, expressed
+# exactly ONE derivation rule (246 `base`/`color/*` symbols) plus 2125 rows
+# of `symbol: null` and prose. A materialized view of a pure function goes
+# stale, and it did — see wiring-rules/README.md, "Why this replaced the
+# token-map".
+#
+# Rules are evaluated top to bottom; the FIRST rule whose `match` applies
+# wins. Put specific rules above general ones. A `status: unmapped` rule is
+# how this file says "there is deliberately no symbol here, and here is
+# why" — consumers turn it into `symbol: null` + `reason`, never a guess
+# (the repo-wide convention, see mappings/README.md).
+#
+# Do NOT hand-edit `src/generated/wiring-rules.json` — run
+# `npm run generate:wiring-rules` from mappings/ and commit the diff.
+
+version: 1
+
+rules:
+  - id: base-color
+    status: mapped
+    description: >-
+      The `base` collection's `color` branch is a direct 1:1 alias of
+      AppTheme.semanticColors, so the Kotlin accessor is the Figma path with
+      its leading `color/` segment dropped and each remaining segment
+      camelCased.
+    match:
+      collection: base
+      pathPrefix: color/
+    symbol:
+      prefix: AppTheme.semanticColors
+      dropSegments: 1
+    evidence: >-
+      themedata/DsThemeColors.kt declares
+      `typealias SemanticColors = com.dexcom.platform.design.foundation.token.base.color.Color`
+      — a direct, un-renamed, un-restructured alias of the generated
+      Base.Color class — and AppTheme.kt's `semanticColors` property returns
+      exactly that type. Verified against the generated Color.kt's nested
+      classes (Surface -> Action -> Primary -> default matches
+      color/surface/action/primary/default segment for segment).
+
+  - id: base-other-branches
+    status: unmapped
+    match:
+      collection: base
+    reason: >-
+      Only Base.color is a confirmed 1:1 alias of AppTheme.semanticColors.
+      base's other branches (border-width, effect, opacity, radius, scale,
+      apple) have no confirmed wiring: AppTheme.opacity (AppOpacity),
+      AppTheme.shapes (AppShapes) and AppTheme.dimensions (AppDimensions)
+      are hand-authored data classes in themedata/ with their own field
+      names (AppShapes.radius40, AppDimensions.extraSmall, ...) and
+      hardcoded literal Dp/Float defaults — not typealiases, not generated
+      from Base, and not a 1:1 rename of any Base.* path. Guessing here
+      would very likely be wrong.
+
+  - id: other-collections
+    status: unmapped
+    match: {}
+    reason: >-
+      Collections other than `base` (components, layout, primitives,
+      typography) have not been investigated for Kotlin wiring — color was
+      the explicit priority. Their Figma-side `codeSyntax` hints are carried
+      in the Token IR under `hints.codeSyntax` for humans and coding agents,
+      but are deliberately NOT used to derive a symbol: the platform is
+      moving to a Styles API that will supply the real symbols.

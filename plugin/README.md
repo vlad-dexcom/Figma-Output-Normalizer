@@ -98,70 +98,100 @@ never does; it always uses the computed content hash.
 not an incidental implementation detail — flagged here explicitly for
 review**, since there's no perfect answer available.
 
-## Symbol resolution (token-map)
+## Symbol resolution (wiring rules)
 
 Beyond resolving a variable's raw path and value(s), `resolveVariable`
-(`src/extractor/tokens.ts`) also looks up that path against a bundled
-Figma-token -> Kotlin-symbol map, populating `TokenValue.symbol`/
-`TokenRef.symbol` (the forward-compat field reserved since schema v1 — see
-`schema/README.md`'s "Forward-compat plan" section) when a confirmed
-mapping exists.
+(`src/extractor/tokens.ts`) resolves the **qualified** token identity
+`(collection, path)` against the declarative wiring rules in
+`mappings/wiring-rules/wiring-rules.yaml`, populating
+`TokenValue.symbol`/`TokenRef.symbol` plus `symbolFrom` (which rule
+decided) when a rule confidently derives one.
 
-- **Where the map comes from:** `mappings/token-map/` (see its own
-  `README.md` for the full generation story) produces one flat
-  `<product>.token-map.json` artifact per product/consumer, each entry
-  carrying a Figma variable path plus (where confidently derivable) the
-  exact Kotlin call-site symbol a coding agent should write.
-- **Which one this plugin bundles, and why:** this plugin has no concept of
-  "which product am I exporting for" — it's a single generic export, not
-  product-specific — and nothing else in `plugin/`/`mappings/` establishes
-  one either. Per this repo's README (Android_Avalon is the stated first
-  consumer), `mappings/token-map/android-avalon.token-map.json` is bundled
-  as the sole default. **This is a known limitation, not a permanent
-  design**: if/when multiple product targets are actually in scope, this
-  should grow a real product-selection mechanism (e.g. an export-time
-  choice of which bundled map to consult) instead of guessing — not
-  speculatively built ahead of that need.
-- **How it's bundled:** `mappings/scripts/bundle-token-map.mjs` reads
-  `android-avalon.token-map.json` and writes a trimmed
-  `mappings/src/generated/token-map.json` — a `{ path, symbol }[]` array
-  containing only the entries with a confirmed (non-null) symbol, since an
-  entry with `symbol: null` is treated identically to "no entry at all" by
-  `resolveVariable` (see below). `@figma-normalizator/mappings`'s
-  `findTokenSymbol` builds a `Map<path, symbol>` index over this array once
-  and reuses it for every lookup (O(1) per resolved token, not a per-call
-  linear scan). This mirrors exactly how `component-map.yaml` is compiled
-  to JSON and bundled for the plugin (`mappings/src/generated/
-component-map.json`, imported via `@figma-normalizator/mappings`) — same
-  pattern, same package, no new bundling mechanism.
-- **When `android-avalon.token-map.json` changes:** re-run
-  `npm run bundle:token-map` (from `mappings/`) and commit the diff to
-  `mappings/src/generated/token-map.json`. This is a manual step, same as
-  `generate:map`'s "do not hand-edit, regenerate and commit" convention —
-  there is no cross-repo automation keeping the bundle fresh (out of scope,
-  same as `mappings/token-map/`'s own explicit non-goal of automating
-  cross-repo publishing).
+- **Identity is qualified, always.** `TokenValue.collection` /
+  `TokenRef.collection` carry the owning Figma collection name alongside
+  the path, and lookup takes both. A bare path is ambiguous: sibling
+  collections routinely define the same path with different values. The
+  retired `token-map` bundle was indexed by path alone while two
+  collections shared 324 of 324 paths — see
+  `mappings/wiring-rules/README.md` for the measurements.
+- **An unknown collection is never treated as `base`.** If the owning
+  collection can't be read, `collection` is `null` and only rules with no
+  collection constraint can match. Conservative on purpose: a
+  confidently-wrong symbol is worse than an absent one.
+- **Rules, not a table.** There is no checked-in token->symbol artifact to
+  keep fresh. The rules are evaluated live against whatever the file
+  actually contains, so they cannot go stale the way the 2371-row
+  `android-*.token-map.json` artifacts did.
 - **What ends up populated:** as of this snapshot, only the `base`
-  collection's `color` branch (246 of 2,371 known tokens — see
-  `mappings/token-map/README.md`'s "Result: derivable vs. not, in numbers")
-  has a confirmed symbol. Every other token (`opacity`, `radius`,
-  `border-width`, `typography`, `components`, `layout`, `primitives`, …)
-  resolves with `symbol` simply **absent** — this is the expected, normal
-  state for ~90% of tokens today, not a hygiene problem: no `unresolved[]`
-  entry is raised for it, and none should be added for this case without a
-  concrete, documented reason (see `mappings/token-map/README.md` for why
-  those branches aren't yet confidently derivable).
-- **Same for a path the bundled map doesn't recognize at all** (e.g. from a
-  different Figma file than the one the map was generated from, or a
-  live file that has since diverged from a stale bundled map): `symbol` is
-  left absent, silently — no warning, no `unresolved[]` noise. A missing
-  symbol is the default, unremarkable state; only flip this if a concrete
-  case is found where a missing-but-expected lookup should be surfaced.
+  collection's `color` branch. Every other token (`opacity`, `radius`,
+  `border-width`, `typography`, `components`, `layout`, `primitives`, ...)
+  resolves with `symbol` simply **absent** — the expected, normal state for
+  most tokens, not a hygiene problem. No `unresolved[]` entry is raised for
+  it, and none should be added without a concrete, documented reason.
+- **`codeSyntax` is not a symbol source.** Figma publishes per-platform
+  `codeSyntax` for many variables, and the token export carries it under
+  `hints.codeSyntax`. It is deliberately excluded from symbol resolution:
+  the platform is moving to a Styles API that will supply the real symbols.
+  Hints are for humans and coding agents choosing a name, never something
+  the pipeline resolves against.
 - **Which variable's path gets looked up:** always the outermost/semantic
-  variable's own name (`resolveVariable`'s `token` return value), never an
-  inner primitive it aliases through — consistent with "Variable alias
-  resolution" above, where the emitted `token` is likewise always the
-  outermost variable's name.
+  variable's own `(collection, name)` — never an inner primitive it aliases
+  through. Alias resolution only ever affects `value`/`modes`.
+
+## Token export (file-scoped)
+
+Alongside the selection-scoped IR export, the plugin can export the file's
+**design tokens** as a `TokenDocument` (`schema/tokens/v1/schema.json`) via
+the panel's "Extract tokens" / "Export tokens" buttons
+(`src/extractor/tokenExport.ts`).
+
+The two exports are split by **cadence**, not by subject: tokens are
+file-scoped and change rarely; screens are selection-scoped and change
+constantly. That is why the token buttons sit on their own toolbar row and
+are unaffected by the current selection, and why the token filename
+(`{fileKey}_{version}.tokens.json`) carries no node id.
+
+### Why this runs in the plugin
+
+A raw variables dump cannot resolve its own alias graph. Measured on a real
+production file: 71% of all mode values were aliases, and 327 alias targets
+were dangling — ids referenced by the payload but absent from it, because
+they live in imported libraries. `getVariableByIdAsync` resolves those, so
+the whole failure class disappears on this side. Mode _names_, the default
+mode, and `scopes` are likewise only meaningful here.
+
+### Invariants
+
+1. **No silent drops.** Every in-policy variable is either emitted in
+   `collections` or recorded in `unresolved` with a reason code. Never
+   neither. (The pipeline this replaces silently lost three variables: two
+   aliasing an absent remote library variable, one deleted-but-referenced.)
+2. **Alias edges are facts; resolved literals are a view.** Both are
+   emitted. A single-mode leaf collection aliasing into a light/dark
+   collection has a flattened value that is actively misleading alone.
+3. **Figma's declared order is content.** Mode order is never sorted, and
+   `defaultMode` is always carried.
+4. **Determinism.** The document is serialized through `canonicalStringify`
+   and versioned by a content hash of itself, with no timestamp — so
+   re-exporting unchanged content is byte-identical, not merely deep-equal.
+
+### Policy
+
+Which collections and branches are in scope is controlled by
+`mappings/collections-policy.yaml`, the plugin-side equivalent of the
+platform generator's `configs/collections.toml` (same glob dialect, same
+case-insensitivity, same `<collection>/<branch>` rule). It is bundled at
+build time because the plugin sandbox has no filesystem and no network
+access.
+
+Remote (imported-library) collections are excluded by default: the same
+real file carried 41 collections of which only 6 were local, and the remote
+ones collided by name (five `Primitives`, six `Mode`, five `base`).
+
+The applied policy is echoed into the exported document's `policy` block,
+including `unmatchedPatterns` — a pattern that matches nothing is reported
+rather than silently ignored, because it looks like a working exclusion and
+behaves like a typo.
 
 ## Variable alias resolution
 
