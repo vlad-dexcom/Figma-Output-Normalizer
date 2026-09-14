@@ -73,6 +73,34 @@ function isRgb(raw: unknown): raw is { r: number; g: number; b: number; a?: numb
   return typeof raw === "object" && raw !== null && "r" in raw && "g" in raw && "b" in raw;
 }
 
+/**
+ * Matches the shape Figma's Plugin API returns for a "composed color"
+ * variable — created in the UI by picking a color variable AND applying an
+ * opacity override on top of it (e.g. "palette/slate/300 at 40%"). This is
+ * not in the published `@figma/plugin-typings` (`ExpressionFunction` has no
+ * `COMPOSE_COLOR` member as of writing), but Figma's runtime does emit it in
+ * `valuesByMode` for variables authored that way — read support shipped
+ * ahead of the public types. Detected structurally rather than by `type`
+ * for the same reason: the exact literal `type` tag is unconfirmed, but
+ * `expressionFunction`/`expressionArguments` is the stable part.
+ */
+function isComposeColorExpression(
+  raw: unknown,
+): raw is { expressionFunction: string; expressionArguments: unknown[] } {
+  if (typeof raw !== "object" || raw === null) return false;
+  const obj = raw as Record<string, unknown>;
+  return obj.expressionFunction === "COMPOSE_COLOR" && Array.isArray(obj.expressionArguments);
+}
+
+/** Re-encodes an already-hex-encoded color with its alpha multiplied by `opacity` (0-1). */
+function applyOpacityToHex(hex: string, opacity: number): string {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  const existingA = hex.length > 7 ? parseInt(hex.slice(7, 9), 16) / 255 : 1;
+  return colorToHex({ r, g, b, a: existingA * opacity });
+}
+
 /** A literal `valuesByMode` entry, converted to the schema's value domain. */
 function toLiteral(raw: unknown): string | number | boolean | null {
   if (typeof raw === "number" || typeof raw === "string" || typeof raw === "boolean") return raw;
@@ -150,8 +178,61 @@ async function resolveMode(
   visited: readonly string[],
   firstHop?: ModeResolution["alias"],
 ): Promise<ModeResolution> {
+  if (isComposeColorExpression(raw)) {
+    const [aliasArg, opacityArg] = raw.expressionArguments;
+    // Figma's own opacity slider is 0-100; be defensive since the exact
+    // runtime scale for this unofficial shape isn't confirmed.
+    const opacity =
+      typeof opacityArg === "number" ? (opacityArg > 1 ? opacityArg / 100 : opacityArg) : null;
+
+    if (isVariableAlias(aliasArg) && opacity !== null) {
+      const base = await resolveMode(ctx, aliasArg, modeName, depth, visited, firstHop);
+      if (typeof base.value === "string" && base.value.startsWith("#")) {
+        return { ...base, value: applyOpacityToHex(base.value, opacity) };
+      }
+      return {
+        ...base,
+        value: null,
+        unresolved: base.unresolved ?? {
+          reason: "unsupported-value",
+          detail: `Mode "${modeName}" is a composed-color (alias + opacity) expression whose base alias did not resolve to a color.`,
+        },
+      };
+    }
+
+    return {
+      value: null,
+      ...(firstHop ? { alias: firstHop } : {}),
+      unresolved: {
+        reason: "unsupported-value",
+        detail: `Mode "${modeName}" is a COMPOSE_COLOR expression with an unexpected shape: ${JSON.stringify(raw)}.`,
+      },
+    };
+  }
+
   if (!isVariableAlias(raw)) {
-    return { value: toLiteral(raw), ...(firstHop ? { alias: firstHop } : {}) };
+    const literal = toLiteral(raw);
+    if (literal === null) {
+      // `toLiteral` only returns null for a value it doesn't recognize:
+      // either the mode has no entry at all in `valuesByMode` (sparse mode
+      // coverage — Figma variables aren't always fully populated per mode),
+      // or the raw shape is some other value kind this exporter doesn't
+      // model yet. Either way, silently emitting `null` here is exactly the
+      // "no silent drops" invariant this module exists to uphold — surface
+      // it instead.
+      return {
+        value: null,
+        ...(firstHop ? { alias: firstHop } : {}),
+        unresolved: {
+          reason: "unsupported-value",
+          detail:
+            raw === undefined
+              ? `Mode "${modeName}" has no value at all in this variable's valuesByMode (sparse mode coverage).`
+              : `Mode "${modeName}" has a value shape this exporter does not recognize: ${JSON.stringify(raw)}.`,
+        },
+      };
+    }
+    return { value: literal, ...(firstHop ? { alias: firstHop } : {}) };
   }
 
   if (depth >= MAX_ALIAS_DEPTH || visited.includes(raw.id)) {

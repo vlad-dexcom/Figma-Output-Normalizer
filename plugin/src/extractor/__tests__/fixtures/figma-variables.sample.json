@@ -23,7 +23,10 @@
         "VariableID:32186:162",
         "VariableID:32186:213",
         "VariableID:32186:4",
-        "VariableID:42319:3"
+        "VariableID:42319:3",
+        "VariableID:test:sparse-mode",
+        "VariableID:test:compose-color",
+        "VariableID:test:compose-malformed"
       ]
     },
     "VariableCollectionId:44:2": {
@@ -40,7 +43,10 @@
       "key": "d4dd6254a72827267de4a7c6a51dc778cbae43e8",
       "hiddenFromPublishing": false,
       "isExtension": false,
-      "variableIds": ["VariableID:36383:7", "VariableID:34267:437"]
+      "variableIds": [
+        "VariableID:36383:7",
+        "VariableID:34267:437"
+      ]
     },
     "VariableCollectionId:3:2": {
       "defaultModeId": "3:0",
@@ -91,7 +97,9 @@
       "key": "d3b4173d1119f185bcf0c31dfd1e6b2eafc5ae57",
       "hiddenFromPublishing": false,
       "isExtension": false,
-      "variableIds": ["VariableID:32253:4303"]
+      "variableIds": [
+        "VariableID:32253:4303"
+      ]
     },
     "VariableCollectionId:36305:307": {
       "defaultModeId": "36305:16",
@@ -123,7 +131,10 @@
       "key": "5ec841b86a1ecf65fc8c4c3a187037af0e810266",
       "hiddenFromPublishing": false,
       "isExtension": false,
-      "variableIds": ["VariableID:36292:261", "VariableID:36292:259"]
+      "variableIds": [
+        "VariableID:36292:261",
+        "VariableID:36292:259"
+      ]
     },
     "VariableCollectionId:cde034ea3dd4141c81503bc2035c3661171efb46/4715:156": {
       "defaultModeId": "2:1",
@@ -179,7 +190,9 @@
       "key": "32cfdb8f0449ae5aedd06084a7dc7db25fcec7ba",
       "hiddenFromPublishing": true,
       "isExtension": false,
-      "variableIds": ["VariableID:850bb783aae75b6c01b93c3774e6d9a9b41a48ff/32503:24611"]
+      "variableIds": [
+        "VariableID:850bb783aae75b6c01b93c3774e6d9a9b41a48ff/32503:24611"
+      ]
     }
   },
   "variables": {
@@ -202,7 +215,10 @@
           "id": "VariableID:114:274"
         }
       },
-      "scopes": ["FRAME_FILL", "SHAPE_FILL"],
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL"
+      ],
       "codeSyntax": {}
     },
     "VariableID:114:283": {
@@ -292,7 +308,9 @@
           "id": "VariableID:51:29"
         }
       },
-      "scopes": ["CORNER_RADIUS"],
+      "scopes": [
+        "CORNER_RADIUS"
+      ],
       "codeSyntax": {
         "WEB": "var(--radius-none)"
       }
@@ -311,7 +329,9 @@
         "36292:14": 0,
         "36292:15": 0
       },
-      "scopes": ["CORNER_RADIUS"],
+      "scopes": [
+        "CORNER_RADIUS"
+      ],
       "codeSyntax": {
         "WEB": "var(--radius-none)"
       }
@@ -335,7 +355,9 @@
           "id": "VariableID:36292:261"
         }
       },
-      "scopes": ["ALL_SCOPES"],
+      "scopes": [
+        "ALL_SCOPES"
+      ],
       "codeSyntax": {}
     },
     "VariableID:36292:259": {
@@ -355,7 +377,10 @@
           "a": 1
         }
       },
-      "scopes": ["FRAME_FILL", "SHAPE_FILL"],
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL"
+      ],
       "codeSyntax": {}
     },
     "VariableID:36292:261": {
@@ -375,7 +400,10 @@
           "a": 1
         }
       },
-      "scopes": ["FRAME_FILL", "SHAPE_FILL"],
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL"
+      ],
       "codeSyntax": {}
     },
     "VariableID:42319:3": {
@@ -397,7 +425,9 @@
           "id": "VariableID:42319:2"
         }
       },
-      "scopes": ["TEXT_FILL"],
+      "scopes": [
+        "TEXT_FILL"
+      ],
       "codeSyntax": {},
       "deletedButReferenced": true
     },
@@ -416,7 +446,10 @@
           "id": "VariableID:32186:162"
         }
       },
-      "scopes": ["FRAME_FILL", "SHAPE_FILL"],
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL"
+      ],
       "codeSyntax": {
         "ANDROID": "bannersTypeInformativeColorSurface",
         "iOS": "bannersTypeInformativeColorSurface"
@@ -441,7 +474,10 @@
           "id": "VariableID:124:352"
         }
       },
-      "scopes": ["FRAME_FILL", "SHAPE_FILL"],
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL"
+      ],
       "codeSyntax": {}
     },
     "VariableID:114:270": {
@@ -527,7 +563,9 @@
           "id": "VariableID:850bb783aae75b6c01b93c3774e6d9a9b41a48ff/32503:24611"
         }
       },
-      "scopes": ["WIDTH_HEIGHT"],
+      "scopes": [
+        "WIDTH_HEIGHT"
+      ],
       "codeSyntax": {
         "ANDROID": "progressBarsSizeHeight",
         "iOS": "progressBarsSizeHeight"
@@ -552,7 +590,10 @@
           "id": "VariableID:2215ccc4803b66f1dbf23469e37ef0c6d3848e9a/115:3358"
         }
       },
-      "scopes": ["WIDTH_HEIGHT", "GAP"],
+      "scopes": [
+        "WIDTH_HEIGHT",
+        "GAP"
+      ],
       "codeSyntax": {
         "WEB": "var(--spacing-xs)"
       }
@@ -576,7 +617,9 @@
           "id": "VariableID:115:52"
         }
       },
-      "scopes": ["FONT_SIZE"],
+      "scopes": [
+        "FONT_SIZE"
+      ],
       "codeSyntax": {
         "WEB": "var(--font-size-overline)"
       }
@@ -595,10 +638,89 @@
         "36292:14": 34,
         "36292:15": 34
       },
-      "scopes": ["FONT_SIZE"],
+      "scopes": [
+        "FONT_SIZE"
+      ],
       "codeSyntax": {
         "WEB": "var(--font-size-3xl)"
       }
+    },
+    "VariableID:test:sparse-mode": {
+      "name": "color/border/muted/sparse-test",
+      "id": "VariableID:test:sparse-mode",
+      "remote": false,
+      "key": "test-sparse-mode-key",
+      "variableCollectionId": "VariableCollectionId:32186:2",
+      "resolvedType": "COLOR",
+      "description": "Regression fixture for sparse valuesByMode (missing light entry entirely).",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "32186:0": {
+          "r": 0,
+          "g": 0,
+          "b": 0
+        }
+      },
+      "scopes": [
+        "STROKE_COLOR"
+      ],
+      "codeSyntax": {}
+    },
+    "VariableID:test:compose-color": {
+      "name": "color/border/muted/compose-test",
+      "id": "VariableID:test:compose-color",
+      "remote": false,
+      "key": "test-compose-color-key",
+      "variableCollectionId": "VariableCollectionId:32186:2",
+      "resolvedType": "COLOR",
+      "description": "Regression fixture for a composed-color (alias + opacity) mode value.",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "32186:0": {
+          "r": 1,
+          "g": 1,
+          "b": 1
+        },
+        "32245:0": {
+          "expressionFunction": "COMPOSE_COLOR",
+          "expressionArguments": [
+            {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:32186:141"
+            },
+            40
+          ]
+        }
+      },
+      "scopes": [
+        "STROKE_COLOR"
+      ],
+      "codeSyntax": {}
+    },
+    "VariableID:test:compose-malformed": {
+      "name": "color/border/muted/compose-malformed-test",
+      "id": "VariableID:test:compose-malformed",
+      "remote": false,
+      "key": "test-compose-malformed-key",
+      "variableCollectionId": "VariableCollectionId:32186:2",
+      "resolvedType": "COLOR",
+      "description": "Regression fixture for a COMPOSE_COLOR expression with an unexpected argument shape.",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "32186:0": {
+          "r": 1,
+          "g": 1,
+          "b": 1
+        },
+        "32245:0": {
+          "expressionFunction": "COMPOSE_COLOR",
+          "expressionArguments": []
+        }
+      },
+      "scopes": [
+        "STROKE_COLOR"
+      ],
+      "codeSyntax": {}
     }
   }
 }

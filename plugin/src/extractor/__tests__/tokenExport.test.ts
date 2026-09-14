@@ -336,3 +336,46 @@ describe("token export: determinism and budget", () => {
     );
   });
 });
+
+describe("token export: unsupported value shapes", () => {
+  it("flags a mode with no valuesByMode entry at all, instead of silently emitting null", async () => {
+    // A real bug: a variable whose `valuesByMode` is sparse (one mode was
+    // never authored/synced) previously flattened to `{ value: null }` with
+    // no `unresolved` entry — an invisible data-loss bug that looked
+    // identical to "this mode is intentionally absent".
+    const { document } = await exportTokens();
+    const token = findToken(document, "base", "color/border/muted/sparse-test");
+
+    expect(token?.modes).toEqual({ light: null, dark: "#000000" });
+    const entry = document.unresolved.find(
+      (u) => u.path === "color/border/muted/sparse-test" && u.detail?.includes('Mode "light"'),
+    );
+    expect(entry?.reason).toBe("unsupported-value");
+    expect(entry?.detail).toContain("no value at all");
+  });
+
+  it("resolves a composed-color (alias + opacity) expression to a merged hex value", async () => {
+    // Figma lets a variable's mode value be "another variable's color, at
+    // reduced opacity" (COMPOSE_COLOR). This isn't in the published plugin
+    // typings, but the exporter should still merge it into a proper hex
+    // color rather than dropping it.
+    const { document } = await exportTokens();
+    const token = findToken(document, "base", "color/border/muted/compose-test");
+
+    // light: COMPOSE_COLOR(alias -> "#2E2D3E", 40%) => alpha 0.4 (0x66).
+    expect(token?.modes.light).toBe("#2E2D3E66");
+    expect(token?.modes.dark).toBe("#FFFFFF");
+  });
+
+  it("flags a COMPOSE_COLOR-shaped value with an unexpected argument list", async () => {
+    const { document } = await exportTokens();
+    const token = findToken(document, "base", "color/border/muted/compose-malformed-test");
+
+    expect(token?.modes.light).toBeNull();
+    const entry = document.unresolved.find(
+      (u) => u.path === "color/border/muted/compose-malformed-test" && u.detail?.includes('Mode "light"'),
+    );
+    expect(entry?.reason).toBe("unsupported-value");
+    expect(entry?.detail).toContain("COMPOSE_COLOR");
+  });
+});
