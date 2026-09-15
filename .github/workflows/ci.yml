@@ -23,3 +23,17 @@ jobs:
       - run: npm run build
       - run: npm test
       - run: npm run verify:generated
+      # Smoke-tests the actual CLI (arg parsing, unresolved triage, --check
+      # disk comparison) against the real-world fixture, using the same
+      # frozen output already reviewed as testdata/golden/real-world/ (see
+      # codegen/tokens/src/golden.config.ts). vitest already covers this at
+      # the emitter level; this step covers the CLI entry point itself.
+      - name: codegen-tokens --check (real-world fixture)
+        run: |
+          npm run cli --workspace=@figma-normalizator/codegen-tokens -- \
+            --input ../../fixtures/src/real-world/gPHx1sqQHIfMs8706VDGM1_c1-88d0431a4019ec4b.tokens.json \
+            --output ../../codegen/tokens/testdata/golden/real-world \
+            --package com.dexcom.tokens \
+            --exclude-mode "[iI][oO][sS]" \
+            --on-unresolved unsupported-value=warn \
+            --check
