@@ -107,16 +107,59 @@ edge itself is still present on the token, flagged `excluded: true`.
   API which will supply real symbols; if codegen started depending on
   `codeSyntax` those two would silently diverge.
 
-## Open item before migrating
+## Settled before migrating: the light/dark inversion
+
+> Resolved 2026-09-15. Recorded because the original open item told the
+> migration to stop until this was answered, and the answer changes what the
+> migration should carry.
 
 The retired `token-map` artifact disagreed with a later export of the same
 file on 111 colour values, **7 of them exact light/dark inversions** (e.g.
-`apple/color/systemBlack` stored as `light: #FFFFFF, dark: #000000` where
-the file says the opposite).
+`apple/color/systemBlack` stored as `light: #FFFFFF, dark: #000000` where a
+later export says the opposite).
 
-This is not yet root-caused. One plausible mechanism is alphabetically
-sorted mode _names_ being zipped against declared-order mode _values_ — the
-old artifact did alphabetize modes. If that is real, the current generator
-has been silently inverting colours in generated Kotlin, and the bug would
-be carried into the migration along with the data. **Settle this before
-migrating**, not after.
+The suspected mechanism was alphabetically sorted mode _names_ being zipped
+against declared-order mode _values_. **That hypothesis is wrong, and there
+is no pipeline bug to carry into the migration.**
+
+What the evidence shows:
+
+1. Re-resolving the raw REST dump independently — walking `valuesByMode`
+   keyed strictly by `modeId`, with no reference to the old generator's code
+   — reproduces the old `tokens.json` exactly: **238 of 238 colour tokens in
+   `base` agree, 0 disagree.** The old resolver was faithful to its input.
+2. The inverted values were inverted **in the Figma file itself**. In the
+   dump, `apple/color/systemBlue` resolves `light` (mode `32245:0`) to the
+   primitive `apple-color/blu-dark`, and `dark` (mode `32186:0`) to
+   `apple-color/blue`. The primitives' own names record the mistake. The
+   file has since been rewired, which is the entire difference.
+3. All 7 inversions sit in the `apple/color/*` branch, consistent with one
+   wrongly-wired group rather than a systematic transform.
+
+So the two artifacts were never comparable in the first place: they are
+snapshots of the same file taken at different times, and nothing recorded
+in either said so.
+
+Evidence files (`tools/figma-tokens/json/figma-raw.json` and `tokens.json`)
+were removed from the tree in the same change that settled this; recover
+them with `git show d3331da:tools/figma-tokens/json/figma-raw.json`.
+
+### What was real
+
+Mode **order** was genuinely being destroyed, just not in the values.
+`classify_collections` built `CollectionMeta.modes` as `sorted(set(...))`,
+so `base` became `["dark", "light"]`. Values stayed correctly keyed by mode
+name, but the sorted list is what fed `compute_theme_modes`, so generated
+builders emitted `dark` as the first theme and had no way to know `light`
+was the default — `defaultMode` did not exist downstream at all. Token IR
+supplies both `modes` in declared order and `defaultMode`, so this is fixed
+by construction rather than by a fix.
+
+### What this costs the migration
+
+Nothing to repair, but one habit to adopt: **compare exports by
+`envelope.version`, not by assuming two files describe the same file
+state.** This whole question existed only because two artifacts captured
+weeks apart were diffed as though they were contemporaneous. The version
+hash exists precisely to make that mistake impossible, and the generator
+should record the `envelope.version` it generated from.

@@ -1,3 +1,10 @@
 dist
 node_modules
 coverage
+
+# Captured plugin exports, kept byte-for-byte as the plugin wrote them.
+# The plugin serializes canonically and content-hashes the result into
+# `envelope.version`, so reformatting these would make the committed file
+# stop being the artifact it claims to be — and would silently disarm any
+# test asserting that a re-export is byte-identical.
+fixtures/src/real-world
