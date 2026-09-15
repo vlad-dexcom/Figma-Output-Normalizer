@@ -1,11 +1,12 @@
 # Token IR → generator contract
 
-How the platform's `tools/figma-tokens` pipeline changes when it reads a
-Token IR document (`schema/tokens/v1/schema.json`) instead of a raw Figma
-variables dump.
-
-This document is the **contract**, not the migration itself: the generator
-lives in another repository.
+**Status: migration complete.** `codegen/tokens` (`@figma-normalizator/codegen-tokens`,
+in this repository, npm workspaces) now reads Token IR documents
+(`schema/tokens/v1/schema.json`) directly and emits Kotlin; the Python
+`tools/figma-tokens` pipeline this document originally described has been
+removed. This document remains the **contract**: the field-mapping table
+below is what `codegen/tokens`'s `input/` layer was built against, and stays
+the reference for what a Token IR document guarantees a generator.
 
 ## The shape of the change
 

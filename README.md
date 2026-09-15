@@ -38,6 +38,8 @@ mappings/   # Figma component set -> design system component map,
             # collection/branch exclusion policy
 fixtures/   # captured real-screen node data + expected IR snapshots, used
             # in tests
+codegen/tokens/  # TypeScript generator that turns a *.tokens.json document
+            # into Kotlin data classes + factory functions (CLI: codegen-tokens)
 scripts/    # repo-wide checks (verify-generated.mjs)
 ```
 
@@ -72,24 +74,27 @@ This is an npm workspaces monorepo. Each package has its own
 - [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — step-by-step walkthrough
   of the whole pipeline: the export lifecycle inside the plugin, layout/token/
   instance/list/overlay/asset resolution, the IR v1 schema, the mappings
-  packages, the Python token generator, and measurements taken against a real
-  exported screen.
+  packages, the `codegen/tokens` Kotlin generator, and measurements taken
+  against a real exported screen.
 - [`docs/BACKLOG.md`](./docs/BACKLOG.md) — known gaps, limitations, and
   improvement ideas, grouped by severity.
 
 Both documents are written in Russian, matching the team working on this
 repository. Per-package READMEs (`plugin/README.md`, `schema/README.md`,
-`mappings/README.md`, `mappings/wiring-rules/README.md`, `fixtures/README.md`)
-remain the authoritative reference for each package's own design decisions.
+`mappings/README.md`, `mappings/wiring-rules/README.md`, `fixtures/README.md`,
+`codegen/tokens/README.md`) remain the authoritative reference for each
+package's own design decisions.
 
 ## Status: Stage 1
 
-This repository is being built in stages. **Stage 1 (this stage) covers only
-Figma-side extraction**: producing a correct, well-typed IR from a Figma
-document. It does _not_ include:
+This repository is being built in stages. **Stage 1 (this stage) covers
+Figma-side extraction** (a correct, well-typed IR + token document from a
+Figma document) **plus the Kotlin token generator** (`codegen/tokens`, turns
+the token document into Kotlin data classes). It does _not_ include:
 
 - An MCP server for exposing the IR to external tools/agents.
-- Any code generation (e.g. Jetpack Compose).
+- Code generation for the node IR (e.g. Jetpack Compose screens/components).
+- A Swift token generator (deferred; see `docs/BACKLOG.md`).
 - Any LLM assistance inside the plugin itself.
 
 Those are later stages, built on top of the IR produced here.
@@ -106,8 +111,11 @@ npm run generate          # regenerate schema types, component-map, wiring-rules
 ```
 
 CI (`.github/workflows/ci.yml`) runs install, lint, typecheck,
-verify:generated, build, and test on every push and pull request — a
-commit that changes `schema/ir/v1/schema.json`, `schema/tokens/v1/schema.json`,
+verify:generated, build, test, verify:generated again, and a
+`codegen-tokens --check` smoke test (the CLI regenerating Kotlin for the
+real-world fixture and comparing it to `codegen/tokens/testdata/golden/real-world/`)
+on every push and pull request — a commit that changes
+`schema/ir/v1/schema.json`, `schema/tokens/v1/schema.json`,
 `mappings/component-map.yaml`, `mappings/wiring-rules/wiring-rules.yaml`,
 `mappings/collections-policy.yaml`, or extractor behavior without also
 regenerating and committing the derived artifacts (`schema/src/generated/ir.ts`,
