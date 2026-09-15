@@ -5,3 +5,4 @@
 // handling), the codegen model (classification, mode expansion, dependency
 // graph), and the Kotlin emitter.
 export * from "./input/index.js";
+export * from "./model/index.js";
