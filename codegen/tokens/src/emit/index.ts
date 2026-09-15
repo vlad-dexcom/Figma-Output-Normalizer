@@ -29,7 +29,9 @@ export {
   MissingDependencyParamError,
   UnrepresentableTokenValueError,
   generateCollectionKotlinFile,
+  generateCollectionLegacyKotlinFiles,
   generateKotlinFiles,
+  generateLegacyKotlinFiles,
   type KotlinEmitOptions,
   type KotlinFile,
 } from "./kotlin.js";

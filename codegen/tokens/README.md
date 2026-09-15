@@ -44,15 +44,19 @@ alias graph (see git history for `codegen/tokens/_legacy-python/`).
    (from `mappings/wiring-rules`), it's surfaced as a KDoc provenance
    comment — never used to derive a name.
 
-   **v1 emits one file per collection only.** No root class aggregates every
-   collection into one app-level tree; wiring `primitivesValue()` →
-   `baseLight(primitives)` → … in the right order is left to hand-written
-   Android code. This was a deliberate scope decision, not an oversight.
+   **v1 emits one file per collection only, by default.** No root class
+   aggregates every collection into one app-level tree; wiring
+   `primitivesValue()` → `baseLight(primitives)` → … in the right order is
+   left to hand-written Android code. This was a deliberate scope
+   decision, not an oversight. `--layout legacy` (see below) exists as a
+   bridge for consumers still coupled to the old generator's per-branch
+   package layout — see `docs/BACKLOG.md` G13 for why, and why it's not
+   the default.
 
 4. **`src/cli/`** — the `codegen-tokens` CLI: `--input`, `--output`,
    `--package`, `--prefix`, `--exclude-mode <regex>`,
-   `--on-unresolved <reason>=<action>` (repeatable), `--dry-run`, `--check`,
-   `--help`.
+   `--on-unresolved <reason>=<action>` (repeatable), `--layout <flat|legacy>`,
+   `--dry-run`, `--check`, `--help`.
 
 ## Running the CLI
 
@@ -71,6 +75,15 @@ npm run cli --workspace=@figma-normalizator/codegen-tokens -- \
 
 Add `--check` to fail (without writing) if the output directory is stale, or
 `--dry-run` to preview which files would be written.
+
+Add `--layout legacy` to restore the old generator's per-branch/subpackage
+file layout (e.g. `<package>.base.color.Color`) instead of the default
+one-file-per-collection layout — useful only for a consumer whose existing
+hand-written code still references that package shape. Factory functions
+still take the whole upstream collection as their parameter (e.g.
+`colorLight(primitives: Primitives)`), not the narrower per-branch
+parameters the old generator used, so migrating a consumer onto this layout
+still requires updating those call sites. See `docs/BACKLOG.md` G13.
 
 ## Golden-output tests
 

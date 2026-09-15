@@ -10,7 +10,7 @@ import { loadTokenDocument } from "../input/load.js";
 import { assertPolicyFresh, warnAboutUnmatchedPolicyPatterns } from "../input/policy.js";
 import { assertNoUnresolvedFailures } from "../input/unresolved.js";
 import { buildTokenModel } from "../model/build.js";
-import { generateKotlinFiles, type KotlinFile } from "../emit/kotlin.js";
+import { generateKotlinFiles, generateLegacyKotlinFiles, type KotlinFile } from "../emit/kotlin.js";
 import { CliArgError, HELP_TEXT, parseArgs, type CliOptions } from "./args.js";
 
 export interface CliIo {
@@ -43,11 +43,15 @@ export async function runCli(argv: readonly string[], io: CliIo = defaultIo): Pr
     assertNoUnresolvedFailures(document.unresolved, options.onUnresolved, io.stderr);
 
     const model = buildTokenModel(document);
-    const files = generateKotlinFiles(model, {
+    const emitOptions = {
       packageName: options.packageName,
       excludeModePattern: options.excludeMode,
       classPrefix: options.prefix,
-    });
+    };
+    const files =
+      options.layout === "legacy"
+        ? generateLegacyKotlinFiles(model, emitOptions)
+        : generateKotlinFiles(model, emitOptions);
 
     if (options.check) {
       return await checkAgainstDisk(files, options.output, io);

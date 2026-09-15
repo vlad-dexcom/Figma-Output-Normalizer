@@ -29,6 +29,7 @@ import {
   formatKotlinLiteral,
 } from "./naming.js";
 import { branchChildren, buildPropertyTree, leafChildren, type PropertyTreeNode } from "./tree.js";
+import { toFolderName } from "./naming.js";
 import { resolveDependsOn } from "../model/graph.js";
 import type { TokenModel } from "../model/types.js";
 
@@ -302,5 +303,178 @@ export function generateKotlinFiles(model: TokenModel, options: KotlinEmitOption
     }
   }
 
+  return files;
+}
+
+// --- Legacy (per-branch, multi-file) layout ---
+//
+// A bridge, not the target design (see docs/BACKLOG.md G13): restores the
+// old generator's *structural* shape -- one file per top-level branch, in
+// its own subpackage under the collection's own subpackage (e.g.
+// "<pkg>.base.color.Color") -- because real downstream consumers
+// (Android_Stelo) still hard-reference that package layout (e.g.
+// `typealias SemanticColors = <pkg>.base.color.Color`). It deliberately
+// does NOT port the old generator's per-branch dependency narrowing
+// (`colorLight(palette: Palette)`) or its mode-collapsing-when-constant
+// optimization: every factory here takes the same whole-collection
+// dependency parameters as `generateCollectionKotlinFile` does
+// (`colorLight(primitives: Primitives)`), and every branch gets a factory
+// per mode unconditionally. Callers migrating off the old generator need to
+// update call sites to the new (still narrower, still collection-wide)
+// parameter shape; see the backlog entry for the reasoning.
+
+/** The Kotlin package a collection's own root file/subpackage lives under. */
+function collectionPackage(packageName: string, collectionName: string): string {
+  return `${packageName}.${toFolderName(collectionName)}`;
+}
+
+/** The fully-qualified Kotlin class name for a collection, as referenced from another collection's package. */
+function collectionClassFqn(
+  packageName: string,
+  collectionName: string,
+  classNameFor: (name: string) => string,
+): string {
+  return `${collectionPackage(packageName, collectionName)}.${classNameFor(collectionName)}`;
+}
+
+/** Emits a root collection's data class: branch properties reference their own subpackage's class by FQN (no nested body). */
+function emitLegacyRootDataClass(
+  node: PropertyTreeNode,
+  className: string,
+  lines: string[],
+  modes: readonly string[],
+  branchTypeFqn: (branchName: string) => string,
+): void {
+  const leaves = leafChildren(node);
+  const branches = branchChildren(node);
+
+  lines.push(
+    ...kdocBlock(
+      leaves.map((l) => [safeKotlinProperty(l.name), docFor(l.token as Token)] as const),
+      "",
+    ),
+  );
+  lines.push("@androidx.compose.runtime.Immutable");
+  lines.push(`data class ${className}(`);
+  for (const leaf of leaves) {
+    const token = leaf.token as Token;
+    const type = kotlinType(token.type, isNullableLeaf(token, modes));
+    lines.push(`    val ${safeKotlinProperty(leaf.name)}: ${type},`);
+  }
+  for (const branch of branches) {
+    lines.push(`    val ${safeKotlinProperty(branch.name)}: ${branchTypeFqn(branch.name)},`);
+  }
+  lines.push(")");
+}
+
+/**
+ * Generates the legacy-layout files for one collection: a root file (data
+ * class with FQN-typed branch properties + one factory per mode) plus one
+ * file per top-level branch (full nested data class + one factory per
+ * mode). Returns an empty array for an empty collection.
+ */
+export function generateCollectionLegacyKotlinFiles(
+  model: TokenModel,
+  collection: TokenCollection,
+  options: KotlinEmitOptions,
+): KotlinFile[] {
+  if (collection.tokens.length === 0) return [];
+
+  const classNameFor = (name: string) => `${options.classPrefix ?? ""}${toPascalCase(name)}`;
+  const rootClassName = classNameFor(collection.name);
+  const pkg = collectionPackage(options.packageName, collection.name);
+  const tree = buildPropertyTree(collection.tokens, sanitizePath);
+
+  const dependencies = resolveDependsOn(model, collection);
+  const depParamByName = new Map(dependencies.map((d) => [d.name, toCamelCase(d.name)]));
+  const params = dependencies
+    .map(
+      (d) =>
+        `${depParamByName.get(d.name)}: ${collectionClassFqn(options.packageName, d.name, classNameFor)}`,
+    )
+    .join(", ");
+
+  const filteredModes = options.excludeModePattern
+    ? collection.modes.filter((m) => !options.excludeModePattern?.test(m))
+    : collection.modes;
+  const modesToEmit = filteredModes.length > 0 ? filteredModes : collection.modes;
+
+  const leaves = leafChildren(tree);
+  const branches = branchChildren(tree);
+  const files: KotlinFile[] = [];
+
+  // One file per top-level branch: full nested data class + one factory per mode.
+  for (const branch of branches) {
+    const branchClassName = classNameFor(branch.name);
+    const branchPkg = `${pkg}.${toFolderName(branch.name)}`;
+    const lines: string[] = [kotlinGeneratedHeader(), `package ${branchPkg}`, ""];
+    emitDataClass(branch, branchClassName, 0, lines, modesToEmit);
+    lines.push("");
+    for (const mode of modesToEmit) {
+      const fnName = `${toCamelCase(branch.name)}${toPascalCase(mode)}`;
+      const expr = emitConstructorExpr(collection, branch, branchClassName, 1, mode, depParamByName);
+      lines.push(`fun ${fnName}(${params}): ${branchClassName} =`);
+      lines.push(`    ${expr}`);
+      lines.push("");
+    }
+    files.push({
+      relativePath: `${branchPkg.split(".").join("/")}/${branchClassName}.kt`,
+      contents: `${lines
+        .join("\n")
+        .replace(/\n{3,}/g, "\n\n")
+        .trimEnd()}\n`,
+    });
+  }
+
+  // The root file: data class referencing each branch by FQN, plus one factory per mode.
+  const rootLines: string[] = [kotlinGeneratedHeader(), `package ${pkg}`, ""];
+  emitLegacyRootDataClass(
+    tree,
+    rootClassName,
+    rootLines,
+    modesToEmit,
+    (branchName) => `${pkg}.${toFolderName(branchName)}.${classNameFor(branchName)}`,
+  );
+  rootLines.push("");
+  for (const mode of modesToEmit) {
+    const fnName = `${toCamelCase(collection.name)}${toPascalCase(mode)}`;
+    const args: string[] = [];
+    for (const leaf of leaves) {
+      const value = valueExpressionFor(collection, leaf.token as Token, mode, depParamByName);
+      args.push(`${safeKotlinProperty(leaf.name)} = ${value}`);
+    }
+    for (const branch of branches) {
+      const branchFnName = `${toCamelCase(branch.name)}${toPascalCase(mode)}`;
+      args.push(`${safeKotlinProperty(branch.name)} = ${branchFnName}(${dependencies.map((d) => depParamByName.get(d.name)).join(", ")})`);
+    }
+    rootLines.push(`fun ${fnName}(${params}): ${rootClassName} = ${rootClassName}(`);
+    for (const arg of args) rootLines.push(`    ${arg},`);
+    rootLines.push(")");
+    rootLines.push("");
+  }
+  files.push({
+    relativePath: `${pkg.split(".").join("/")}/${rootClassName}.kt`,
+    contents: `${rootLines
+      .join("\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trimEnd()}\n`,
+  });
+
+  return files;
+}
+
+/**
+ * Generates the legacy-layout files for every non-empty collection in
+ * `model`, in the model's own declared order. See
+ * {@link generateCollectionLegacyKotlinFiles}.
+ */
+export function generateLegacyKotlinFiles(
+  model: TokenModel,
+  options: KotlinEmitOptions,
+): KotlinFile[] {
+  const files: KotlinFile[] = [];
+  for (const collection of model.collections) {
+    files.push(...generateCollectionLegacyKotlinFiles(model, collection, options));
+  }
   return files;
 }
