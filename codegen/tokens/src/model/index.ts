@@ -7,3 +7,16 @@ export {
   type ExpandedTokenModes,
   type TokenLiteral,
 } from "./modes.js";
+export {
+  classifyCollections,
+  type ClassificationReport,
+  type CollectionClassification,
+  type CollectionRole,
+} from "./classify.js";
+export {
+  AmbiguousThemeSourceError,
+  computeBuilderChain,
+  computeThemeModes,
+  type ThemeModeOptions,
+  type ThemeModeVariant,
+} from "./graph.js";
