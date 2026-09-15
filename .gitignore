@@ -4,3 +4,19 @@ coverage
 *.log
 .DS_Store
 .idea/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Plugin exports dropped into the tree while working. Real Figma data is
+# large (a token document runs to ~1.5 MB) and is not a repository artifact
+# unless it has been deliberately curated as a fixture. Committing one by
+# accident is how `tools/figma-tokens/json/` ended up carrying 3.5 MB of
+# stale dumps, so the default is "ignored" and fixtures opt in explicitly.
+*.ir.json
+*.tokens.json
+!fixtures/src/real-world/*.ir.json
+!fixtures/src/real-world/*.tokens.json
+!fixtures/src/corpus/**/*.ir.json
+!codegen/tokens/testdata/minimal.tokens.json
+!schema/fixtures/*.json

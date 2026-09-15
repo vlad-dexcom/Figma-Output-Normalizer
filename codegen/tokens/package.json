@@ -1,0 +1,24 @@
+{
+  "name": "@figma-normalizator/codegen-tokens",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Kotlin design-token code generator that reads schema/tokens/v1 Token IR (no Figma access of its own)",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "cli": "tsx src/cli/index.ts",
+    "golden:update": "tsx scripts/update-golden.ts"
+  },
+  "dependencies": {
+    "@figma-normalizator/mappings": "*",
+    "@figma-normalizator/schema": "*",
+    "ajv": "^8.20.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "tsx": "^4.19.2"
+  }
+}

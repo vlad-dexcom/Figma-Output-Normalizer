@@ -1,0 +1,100 @@
+# codegen/tokens
+
+`@figma-normalizator/codegen-tokens` turns a Token IR document
+(`schema/tokens/v1/schema.json`, `*.tokens.json`, produced by
+`plugin/src/extractor/tokenExport.ts`'s `extractTokens()`) into Kotlin design
+tokens for the Android platform.
+
+It has **no Figma access of its own** — no REST client, no plugin sandbox
+dependency. Every alias, mode, exclusion policy, and symbol has already been
+resolved by the plugin at export time; this package only reads the resulting
+document and emits code. See `../../schema/tokens/MIGRATION.md` for the full
+contract this package was built against, and `docs/ARCHITECTURE.md` §6 for
+how it fits into the rest of the pipeline. This package replaces the retired
+Python generator that fetched from the Figma REST API and resolved its own
+alias graph (see git history for `codegen/tokens/_legacy-python/`).
+
+## Pipeline
+
+1. **`src/input/`** — loads and validates a token document (ajv against
+   `schema/tokens/v1/schema.json`), checks `mappings/collections-policy.json`
+   hasn't drifted (`assertPolicyFresh`), warns about policy patterns that
+   matched nothing, and triages `unresolved[]` entries by reason
+   (`excluded-by-policy` / `excluded-collection-alias` /
+   `missing-alias-target` / `unresolvable-alias-chain` / `unsupported-value`)
+   into `silent` / `warn` / `fail`. The default triage **fails** the run on
+   any genuinely-unresolvable value rather than silently generating a
+   partial/wrong file; override per-reason with `--on-unresolved`.
+2. **`src/model/`** — builds a `TokenModel`: expands aliases across every
+   mode (`modes.ts`), classifies collections and computes the dependency
+   graph without hardcoding collection names (`classify.ts`, `graph.ts`),
+   and computes a builder chain / theme modes (`graph.ts`'s
+   `computeBuilderChain` / `computeThemeModes`) that the CLI does not use yet
+   (see "Possible improvements" below).
+3. **`src/emit/`** — the Kotlin emitter: nested `@Immutable data class`es per
+   collection, one factory function per mode
+   (`primitivesValue()`, `baseLight(primitives)`, `baseDark(primitives)`, …).
+   `COLOR/FLOAT/STRING/BOOLEAN` map to
+   `androidx.compose.ui.graphics.Color` / `Float` / `String` / `Boolean`.
+   A token that is `null` with no alias in every emitted mode (legitimate —
+   an unresolvable Figma expression, tagged `unsupported-value`) gets a
+   nullable Kotlin type instead of failing generation. Property/class names
+   are camelCased/PascalCased per path segment and backtick-escaped when
+   they collide with a Kotlin keyword. When a token carries `token.symbol`
+   (from `mappings/wiring-rules`), it's surfaced as a KDoc provenance
+   comment — never used to derive a name.
+
+   **v1 emits one file per collection only.** No root class aggregates every
+   collection into one app-level tree; wiring `primitivesValue()` →
+   `baseLight(primitives)` → … in the right order is left to hand-written
+   Android code. This was a deliberate scope decision, not an oversight.
+
+4. **`src/cli/`** — the `codegen-tokens` CLI: `--input`, `--output`,
+   `--package`, `--prefix`, `--exclude-mode <regex>`,
+   `--on-unresolved <reason>=<action>` (repeatable), `--dry-run`, `--check`,
+   `--help`.
+
+## Running the CLI
+
+There is no working compiled `bin` entry point in this monorepo: sibling
+workspace packages resolve via `"main": "src/index.ts"` (TypeScript source),
+which a plain `node` cannot load — only `tsx` (or `vitest`) can. Run it via:
+
+```bash
+npm run cli --workspace=@figma-normalizator/codegen-tokens -- \
+  --input path/to/export.tokens.json \
+  --output path/to/output/dir \
+  --package com.example.tokens \
+  --exclude-mode "[iI][oO][sS]" \
+  --on-unresolved unsupported-value=warn
+```
+
+Add `--check` to fail (without writing) if the output directory is stale, or
+`--dry-run` to preview which files would be written.
+
+## Golden-output tests
+
+`src/golden.config.ts` lists every golden case (currently `minimal`, a small
+hand-authored fixture, and `real-world`, the real production export under
+`fixtures/src/real-world/`), each paired with the `KotlinEmitOptions` used to
+generate it. `src/__tests__/golden.test.ts` regenerates each case and
+compares it byte-for-byte against the frozen `testdata/golden/<case>/`
+files.
+
+To freeze new output after a deliberate emitter change, review the diff
+before committing:
+
+```bash
+npm run golden:update --workspace=@figma-normalizator/codegen-tokens
+git diff -- codegen/tokens/testdata/golden
+```
+
+CI additionally runs the real CLI (not just the emitter function) against
+the `real-world` case in `--check` mode, using the same frozen output as its
+target — see `.github/workflows/ci.yml`.
+
+## What's out of scope for v1
+
+- **Swift.** The legacy Python tool had a `SwiftGenerator`; this package
+  does not port it. Deferred, see `docs/BACKLOG.md`.
+- **A root aggregator.** See "v1 emits one file per collection only" above.

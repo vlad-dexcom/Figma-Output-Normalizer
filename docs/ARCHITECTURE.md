@@ -1,6 +1,7 @@
 # Figma-Normalizator — как оно работает (по шагам)
 
-Состояние на коммит `f2cb9e7`. Все 173 теста проходят (`npx vitest run`, 26 файлов).
+Состояние: миграция `codegen/tokens` на TS-генератор из документа токенов
+завершена (см. `schema/tokens/MIGRATION.md`). Все 388 тестов проходят (`npm test`).
 
 ---
 
@@ -17,25 +18,32 @@ Figma **Plugin API** (работающий внутри самой Figma) вид
 Representation), который потом сможет потреблять кодогенератор, не зная ничего
 о внутренней модели документа Figma.
 
-**Stage 1** (текущий) = только извлечение на стороне Figma. Нет MCP-сервера, нет
-кодогенерации в Compose, нет LLM внутри плагина.
+**Stage 1** = извлечение на стороне Figma (IR узлов + документ токенов). С
+миграцией `codegen/tokens` (см. §6) добавилась и первая кодогенерация: Kotlin
+data class'ы из документа токенов. MCP-сервера и LLM внутри плагина по-прежнему
+нет.
 
 ---
 
 ## 1. Структура монорепозитория
 
-npm workspaces, 4 пакета + один внешний Python-инструмент:
+npm workspaces, 5 пакетов, всё на TypeScript — внешнего Python-инструмента
+больше нет (см. §6, ранее `tools/figma-tokens`, затем
+`codegen/tokens/_legacy-python/`, удалён этой миграцией):
 
 ```
-schema/     @figma-normalizator/schema    — JSON Schema IR v1 + сгенерированные TS-типы
-plugin/     @figma-normalizator/plugin    — сам плагин Figma (extractor + UI-панель)
-mappings/   @figma-normalizator/mappings  — component-map.yaml + token-map (Figma → Kotlin)
-fixtures/   @figma-normalizator/fixtures  — корпус мок-сценариев + замороженные снапшоты IR
-tools/figma-tokens/                       — Python-генератор токенов (скопирован, НЕ в workspaces)
+schema/         @figma-normalizator/schema         — JSON Schema (IR v1 + Token v1) + сгенерированные TS-типы
+plugin/         @figma-normalizator/plugin         — сам плагин Figma (extractor + UI-панель), отдаёт IR-документ и документ токенов
+mappings/       @figma-normalizator/mappings       — component-map.yaml, wiring-rules (токен → Kotlin-символ), collections-policy
+fixtures/       @figma-normalizator/fixtures       — корпус мок-сценариев + real-world-фикстуры + замороженные снапшоты IR
+codegen/tokens/ @figma-normalizator/codegen-tokens — TS-генератор Kotlin data class'ов из документа токенов (*.tokens.json), CLI `codegen-tokens`
 ```
 
-CI (`.github/workflows/ci.yml`): `npm install` → `lint` → `typecheck` → `build` → `test`
-на каждый push в main и на каждый PR. Node 20.
+CI (`.github/workflows/ci.yml`): `npm install` → `lint` → `typecheck` →
+`verify:generated` → `build` → `test` → `verify:generated` →
+`codegen-tokens --check` (смок-тест реального CLI против замороженного
+`codegen/tokens/testdata/golden/real-world/`, см. §6) на каждый push в main и
+на каждый PR. Node 20.
 
 ---
 
@@ -43,24 +51,34 @@ CI (`.github/workflows/ci.yml`): `npm install` → `lint` → `typecheck` → `b
 
 ```mermaid
 flowchart TD
-    A["Figma-файл<br/>(выделенный фрейм)"] --> B["code.ts<br/>(plugin sandbox)"]
-    B --> C["extractSelection()<br/>рекурсивный обход"]
+    A["Figma-файл"] --> B["code.ts<br/>(plugin sandbox)"]
+    B --> C["extractSelection()<br/>рекурсивный обход выделения"]
     C --> D["IR-дерево<br/>{nodes, unresolved, version}"]
+    B --> C2["extractTokens()<br/>обход variable collections файла"]
+    C2 --> D2["Документ токенов<br/>*.tokens.json<br/>{collections, unresolved, version}"]
     D --> E["ui.ts (iframe)<br/>превью + warnings"]
-    E --> F["*.ir.json<br/>файл / буфер обмена"]
+    D2 --> E
+    E --> F1["*.ir.json<br/>файл / буфер обмена"]
+    E --> F2["*.tokens.json<br/>файл / буфер обмена"]
 
     M1["mappings/component-map.yaml"] -.-> C
-    M2["mappings/token-map<br/>(android-avalon)"] -.-> C
-    T["tools/figma-tokens<br/>(Python, отдельно)"] -->|"tokens.json"| G["generate-token-map.mjs"]
-    G --> M2
-    T -->|"codegen"| K["Kotlin/Swift<br/>design tokens"]
+    M2["mappings/wiring-rules.yaml"] -.-> C2
+    M3["mappings/collections-policy.yaml"] -.-> C2
+
+    F2 --> G["codegen/tokens<br/>(TS CLI, читает только *.tokens.json)"]
+    G --> K["Kotlin data class'ы<br/>+ фабрики на режим<br/>(один файл на коллекцию)"]
 ```
 
 Ключевая мысль: **две независимые ветки**, которые сходятся только в поле
-`TokenValue.symbol`:
+`token.symbol` (проставляется во время экспорта токенов, см. §5.2):
 
 - ветка «структура экрана» — плагин → IR;
-- ветка «дизайн-токены» — Python-генератор → tokens.json → token-map → symbol.
+- ветка «дизайн-токены» — плагин → документ токенов → `codegen/tokens` → Kotlin.
+
+`codegen/tokens` работает **только** с уже резолвленным IR-документом токенов;
+он не знает про Figma REST/Plugin API и не ходит в сеть — вся резолюция
+(алиасы, режимы, политика исключений, символы) уже произошла на стороне
+плагина.
 
 ---
 
@@ -166,7 +184,8 @@ GROUP/BOOLEAN_OPERATION/SECTION
 - `modes` = `{ имя_режима → значение }` из `valuesByMode` + имена режимов коллекции
   (эмитится только если режимов > 1);
 - `value` = значение режима по умолчанию коллекции;
-- `symbol` = `findTokenSymbol(variable.name)` из бандла token-map.
+- `symbol` = `resolveTokenSymbol(collection, variable.name)` из скомпилированных
+  `mappings/wiring-rules.yaml` (см. §5.2).
 
 **Резолв алиасов** (`resolveModeValue`) — самая нетривиальная часть:
 
@@ -347,72 +366,102 @@ Info Box, Tags, Switch), 3 unmapped (Checkbox, Radio Button, Accordions).
 YAML компилируется в `src/generated/component-map.json` скриптом `generate-map.mjs`
 (руками не править — регенерировать и коммитить).
 
-### 5.2. token-map
+### 5.2. wiring-rules (было: token-map)
 
-`generate-token-map.mjs --input <tokens.json> --name <product>` читает
-`collections[name].tokens` из интермедиата Python-генератора и выдаёт плоский
-`token-map/<product>.token-map.json`:
+`mappings/wiring-rules.yaml` — декларативные правила, сопоставляющие
+**квалифицированный** токен `(collection, path)` (например, `base` +
+`color/surface/action/primary/default`) с Kotlin call-site символом
+(`AppTheme.semanticColors.surface.action.primary.default`). Компилируются в
+`src/generated/wiring-rules.json` скриптом `generate-wiring-rules.mjs` и
+применяются **во время экспорта токенов плагином** (`extractTokens()`, не в
+`codegen/tokens`): каждый токен документа получает `token.symbol` +
+`token.symbolFrom` (имя сработавшего правила) или остаётся `symbol: null` с
+причиной — резолюция никогда не угадывает.
 
-```jsonc
-{
-  "collection": "base",
-  "path": "color/surface/action/primary/default",   // == IR TokenValue.token
-  "type": "COLOR",
-  "values": { "light": "#2B2855", "dark": "#ACA8E3" },
-  "alias": { "path": null, "byMode": {...}, "source": "primitives" },
-  "description": "...",
-  "symbol": "AppTheme.semanticColors.surface.action.primary.default", // или null
-  "symbolReason": "..."   // присутствует только когда symbol === null
-}
-```
+Единственное подтверждённое 1:1-правило — `base-color`: ветка `color/`
+коллекции `base` совпадает с `DsThemeColors.kt`'s
+`typealias SemanticColors = ...token.base.color.Color` посегментно. Остальные
+ветки `base` (`opacity`, `radius`, `border-width`, `effect`, `scale`, `apple`)
+и все прочие коллекции (`components`, `layout`, `primitives`, `typography`,
+…) — не выводятся механически (`themedata/`-классы не 1:1 переименование) и
+остаются `symbol: null`.
 
-**Главный результат исследования** (см. `mappings/token-map/README.md`): путь в IR и
-путь в `tokens.json` — **одна и та же строка** (обе стороны читают `variable.name`
-сырым), реконсиляция не нужна. Sanitize происходит только в Kotlin-кодогене.
+Это заменило прежний `token-map` — плоский артефакт **2371 строки**,
+сгенерированный один раз из даунстрим-снапшота и вручную забандленный: из них
+только 246 строк реально несли символ (и все 246 — от одного и того же
+правила), треть забандленных строк к моменту аудита ссылалась на удалённые
+токены, а lookup по одному `path` был структурно неоднозначен (`base` и
+`stelo` разделяли 324 из 324 путей). Подробности и цифры — в
+`mappings/wiring-rules/README.md`.
 
-Из **2371** токена символ выводится уверенно только для **246** — это ветка
-`color/` коллекции `base`, потому что `DsThemeColors.kt` объявляет
-`typealias SemanticColors = ...token.base.color.Color`, то есть 1:1 к сгенерированному
-классу. Остальное (`opacity`, `radius`, `border-width`, `typography`, `components`,
-`layout`, `primitives`, …) — руками написанные data class'ы в `themedata/`, вывести
-механически нельзя → `symbol: null` + `symbolReason`.
-
-`bundle-token-map.mjs` берёт `android-avalon.token-map.json`, выбрасывает записи с
-`symbol: null` и пишет `src/generated/token-map.json` — плоский `{path, symbol}[]`
-(~246 записей). `findTokenSymbol()` строит `Map` один раз и даёт O(1).
+Путь в узле IR (`TokenValue.token`), путь в документе токенов (`token.path`)
+и `pathPrefix` в `wiring-rules.yaml` — **одна и та же** сырая, несанированная
+строка (`variable.name` без трансформаций); реконсиляция не нужна. Sanitize
+по сегментам происходит только внутри Kotlin-кодогена (`codegen/tokens`,
+см. §6).
 
 ---
 
-## 6. tools/figma-tokens (Python) — соседняя половина пайплайна
+## 6. codegen/tokens — генератор Kotlin из документа токенов
 
-CLI `figma-tokens` (click), Python ≥3.9, зависимости click + requests.
+`@figma-normalizator/codegen-tokens` — TypeScript-пакет, читающий **только**
+`*.tokens.json` (документ токенов, `schema/tokens/v1`, уже полностью
+резолвленный плагином — алиасы, режимы, политика исключений, символы). Он не
+знает про Figma REST/Plugin API и не делает сетевых запросов; это разница с
+прежним Python-инструментом (`tools/figma-tokens`, затем скопированным как
+`codegen/tokens/_legacy-python/` для рефренса на время миграции и удалённым
+в этой же миграции), который сам резолвил алиасы из сырого REST-дампа и
+терял на этом данные (см. `schema/tokens/MIGRATION.md` — контракт замены).
 
-Поток: **Figma Variables API → resolver → enricher → graph → codegen**.
+Пайплайн, `src/`:
 
-1. Конфиг (TOML/JSON) + флаги CLI; токен из `--token`/`--token-file`/`FIGMA_TOKEN`.
-2. `FigmaClient.get_local_variables()` → сырой `json/figma-raw.json`.
-3. `TokenResolver.resolve()` — `VARIABLE_ALIAS` → `alias:<id>`, рекурсивный резолв
-   по режимам; `alias_path` схлопывается только если **все** режимы алиасят одну цель,
-   иначе сохраняется `alias_by_mode`. Отбрасывает самоссылки и алиасы на родительские пути.
-4. `TokenEnricher.enrich()` — достраивает алиасы сопоставлением значений (в основном цвета).
-5. `graph/collections.py` — классификация коллекций **без хардкода имён**:
-   primitive (один режим, нет внешних зависимостей) / product (структурно
-   идентичная группа, ≥90% пересечения путей) / semantic (база = максимум токенов) /
-   leaf (≥2 upstream-зависимости). Плюс `branch_owners`, циклы, product groups.
-6. `compute_theme_modes()` — для Kotlin выбрасываются режимы со словом `ios`,
-   для Swift — с `android`; предпочитаются имена вида light/dark/default/inverted.
-7. Исключения из `configs/collections.toml` (`exclude`, `exclude-branches`): коллекция
-   выкидывается, а алиасы в неё **деградируют до литералов**, чтобы код не ссылался
-   на несуществующий класс.
-8. Кодоген: `KotlinGenerator` / `SwiftGenerator` — вложенные data class'ы, фабрики
-   на режим, билдеры на продукт.
-   Типы: `COLOR/FLOAT/STRING/BOOLEAN` → Kotlin `Color/Float/String/Boolean`,
-   Swift `Color/CGFloat/String/Bool`.
-   Имена: `to_camel_case` для свойств, `to_pascal_case` для классов, экранирование
-   ключевых слов бэктиками; Swift дополнительно разруливает затенение типов через
-   `_TypeAliases.swift`.
-9. Всегда пишется интермедиат `json/tokens.json` (`schema_version: 1`, `tree`,
-   `collections`, `graph`, `builders`) — это и есть вход для `generate-token-map.mjs`.
+1. **`input/`** — загрузка и валидация документа токенов (ajv по
+   `schema/tokens/v1/schema.json`), проверка свежести `collections-policy.json`
+   (`assertPolicyFresh`), предупреждение о неиспользованных паттернах
+   политики, триаж `unresolved[]` по причине
+   (`excluded-by-policy`/`excluded-collection-alias`/`missing-alias-target`/
+   `unresolvable-alias-chain`/`unsupported-value` → `silent`/`warn`/`fail`,
+   настраивается через `--on-unresolved <reason>=<action>`).
+2. **`model/`** — строит `TokenModel`: раскрывает алиасы по режимам
+   (`modes.ts`), классифицирует коллекции и считает граф зависимостей
+   (`classify.ts`, `graph.ts`, порт классификации без хардкода имён из
+   Python-версии), вычисляет цепочку билдеров/режимы темы
+   (`computeBuilderChain`/`computeThemeModes`, пока не используются CLI — см.
+   §10 «улучшения»).
+3. **`emit/`** — Kotlin-кодоген: вложенные `data class`'ы на коллекцию,
+   фабричные функции на режим (`primitivesValue()`, `baseLight(primitives)`,
+   `baseDark(primitives)`, …), типы `COLOR/FLOAT/STRING/BOOLEAN` →
+   `androidx.compose.ui.graphics.Color/Float/String/Boolean`, `@Immutable` на
+   каждом data class. Токен, который во всех emitted-режимах `null` без
+   алиаса (легитимный случай — Figma-выражение, которое ещё не умеем
+   резолвить, тег `unsupported-value`), получает nullable-тип вместо падения.
+   Имена сегментов кэмелкейсятся и экранируются бэктиками при совпадении с
+   Kotlin-ключевыми словами (порт `to_camel_case`/`to_pascal_case` из
+   Python-версии). При наличии `token.symbol` (см. §5.2) он попадает в KDoc
+   как аннотация происхождения, но не используется для наименования.
+   **v1 генерирует только файлы на коллекцию** — корневой класс,
+   агрегирующий все коллекции в одно дерево приложения, сознательно не
+   генерируется (решение согласовано с пользователем на этапе 7); сборка
+   финального дерева токенов — задача написанного вручную Android-кода.
+4. **`cli/`** — `--input`, `--output`, `--package`, `--prefix`,
+   `--exclude-mode <regex>`, `--on-unresolved`, `--dry-run`, `--check`.
+   Запуск: `npm run cli --workspace=@figma-normalizator/codegen-tokens --
+<args>` (через `tsx`; скомпилированный `bin` не работает в этом
+   монорепо — соседние пакеты резолвятся по `main: src/index.ts`, который
+   голый `node` не умеет грузить, см. комментарий в `src/cli/index.ts`).
+5. **`testdata/golden/`** — замороженный Kotlin-вывод для маленькой ручной
+   фикстуры (`testdata/minimal.tokens.json`) и для реального экспорта
+   (`fixtures/src/real-world/*.tokens.json`), обновляется вручную через
+   `npm run golden:update -w @figma-normalizator/codegen-tokens` с ревью
+   диффа. CI прогоняет тот же реальный экспорт через CLI в режиме `--check`
+   против этой же заморозки (см. §1) — это дополнительный смок-тест самого
+   CLI поверх юнит-тестов эмиттера.
+
+Что **осталось** только в кодогене (не в IR, это решения таргет-языка, а не
+факты Figma): имя корневого класса, пакет, префикс класса, разбиение по
+файлам, порядок факторных функций.
+
+Swift-генератор Python-версии в v1 не портирован — отложен (этап 11).
 
 ---
 
@@ -426,8 +475,12 @@ CLI `figma-tokens` (click), Python ≥3.9, зависимости click + reques
   каждый = мок-дерево + **замороженный** `expected.ir.json` (реальный вывод экстрактора).
   `snapshot.test.ts` ловит любой дрейф; `schema-validation.test.ts` валидирует ajv'ем.
   Обновление только вручную: `npm run fixtures:update -w fixtures` с ревью диффа.
-- **mappings**: тесты лукапов, генерации token-map и бандла.
+- **mappings**: тесты компиляции YAML → JSON (component-map, wiring-rules,
+  collections-policy) и резолюции символов (`wiring.test.ts`).
 - **schema**: `ir-schema.test.ts` валидирует `schema/fixtures/*.json`.
+- **codegen/tokens**: input-валидация, построение модели, классификация
+  коллекций/граф зависимостей, Kotlin-эмиттер, CLI и golden-тесты Kotlin-вывода
+  (`testdata/golden/`, см. §6) — все под `codegen/tokens/src/**/__tests__/`.
 
 Важно: все «экраны» в корпусе — **синтетические моки**, а не захваты реальной Figma
 (в CI нет доступа к Figma API).
@@ -464,15 +517,20 @@ CLI `figma-tokens` (click), Python ≥3.9, зависимости click + reques
 npm install                      # корень, все workspaces
 npm run lint                     # eslint по всему репо
 npm run typecheck                # tsc --noEmit в каждом пакете
-npm test                         # vitest run (173 теста)
+npm test                         # vitest run (388 тестов)
 npm run build                    # сборка всех пакетов
 npm run format / format:check    # prettier
+npm run verify:generated         # падает, если закоммиченный сгенерированный файл разошёлся с источником
 
-npm run build -w plugin          # → plugin/dist/{code.js,ui.html}
-npm run generate:map -w mappings         # component-map.yaml → JSON
-npm run generate:token-map -w mappings   # tokens.json → token-map/*.json
-npm run bundle:token-map -w mappings     # token-map → src/generated/token-map.json
-npm run fixtures:update -w fixtures      # перезапись замороженных снапшотов
+npm run build -w plugin                    # → plugin/dist/{code.js,ui.html}
+npm run generate:map -w mappings           # component-map.yaml → JSON
+npm run generate:wiring-rules -w mappings  # wiring-rules.yaml → JSON
+npm run generate:collections-policy -w mappings  # collections-policy.yaml → JSON
+npm run fixtures:update -w fixtures        # перезапись замороженных снапшотов IR
+
+npm run cli --workspace=@figma-normalizator/codegen-tokens -- --input <tokens.json> --output <dir> --package <pkg>
+                                            # генерация Kotlin из документа токенов (см. §6)
+npm run golden:update -w @figma-normalizator/codegen-tokens  # перезапись замороженного golden Kotlin-вывода
 
 # Загрузка в Figma: Plugins → Development → Import plugin from manifest…
 #                   → выбрать plugin/manifest.json
