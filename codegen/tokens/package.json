@@ -9,7 +9,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "tsc",
-    "cli": "tsx src/cli/index.ts"
+    "cli": "tsx src/cli/index.ts",
+    "golden:update": "tsx scripts/update-golden.ts"
   },
   "dependencies": {
     "@figma-normalizator/mappings": "*",

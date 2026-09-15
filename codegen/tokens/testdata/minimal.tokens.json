@@ -1,0 +1,74 @@
+{
+  "envelope": {
+    "schemaVersion": 1,
+    "kind": "tokens",
+    "fileKey": "testdata-minimal",
+    "version": "golden-fixture-v1"
+  },
+  "policy": {
+    "excludedCollections": [],
+    "excludedBranches": [],
+    "excludeRemoteCollections": true,
+    "unmatchedPatterns": []
+  },
+  "collections": [
+    {
+      "name": "primitives",
+      "id": "col-primitives",
+      "remote": false,
+      "defaultMode": "Value",
+      "modes": ["Value"],
+      "branches": ["color", "spacing"],
+      "dependsOn": [],
+      "tokens": [
+        {
+          "path": "color/red",
+          "type": "COLOR",
+          "value": "#FF0000",
+          "modes": { "Value": "#FF0000" },
+          "description": "Primitive red, used directly by base's surface color."
+        },
+        {
+          "path": "spacing/small",
+          "type": "FLOAT",
+          "value": 8,
+          "modes": { "Value": 8 }
+        }
+      ]
+    },
+    {
+      "name": "base",
+      "id": "col-base",
+      "remote": false,
+      "defaultMode": "light",
+      "modes": ["light", "dark"],
+      "branches": ["color", "layout"],
+      "dependsOn": ["primitives"],
+      "tokens": [
+        {
+          "path": "color/surface",
+          "type": "COLOR",
+          "value": "#FF0000",
+          "modes": { "light": "#FF0000", "dark": "#FF0000" },
+          "alias": {
+            "byMode": {
+              "light": { "collection": "primitives", "path": "color/red" },
+              "dark": { "collection": "primitives", "path": "color/red" }
+            }
+          },
+          "description": "Semantic surface color, aliases primitives/color/red in every mode.",
+          "symbol": "AppTheme.color.surface",
+          "symbolFrom": "base-color"
+        },
+        {
+          "path": "layout/is",
+          "type": "BOOLEAN",
+          "value": true,
+          "modes": { "light": true, "dark": false },
+          "description": "Deliberately named 'is' to exercise Kotlin keyword escaping."
+        }
+      ]
+    }
+  ],
+  "unresolved": []
+}

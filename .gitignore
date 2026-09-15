@@ -18,4 +18,5 @@ __pycache__/
 !fixtures/src/real-world/*.ir.json
 !fixtures/src/real-world/*.tokens.json
 !fixtures/src/corpus/**/*.ir.json
+!codegen/tokens/testdata/minimal.tokens.json
 !schema/fixtures/*.json
