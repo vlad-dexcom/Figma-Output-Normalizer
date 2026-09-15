@@ -87,7 +87,7 @@ export class UnresolvedTokensError extends Error {
       ...shown,
       ...more,
       "",
-      "Use --on-unresolved=<reason>=<silent|warn|fail> to override the default action for a reason " +
+      "Use --on-unresolved <reason>=<silent|warn|fail> to override the default action for a reason " +
         "code if this run genuinely expects it.",
     ].join("\n");
   }

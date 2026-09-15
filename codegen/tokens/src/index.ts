@@ -7,3 +7,5 @@
 export * from "./input/index.js";
 export * from "./model/index.js";
 export * from "./emit/index.js";
+export * from "./cli/args.js";
+export * from "./cli/run.js";

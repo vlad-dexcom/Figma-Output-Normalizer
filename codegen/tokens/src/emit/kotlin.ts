@@ -44,6 +44,13 @@ export interface KotlinEmitOptions {
    * collection is a config mistake this module won't silently swallow).
    */
   excludeModePattern?: RegExp;
+  /**
+   * Prepended to every generated root class name (e.g. "DT" -> "DTBase",
+   * "DTPrimitives"), mirroring the old generator's `--prefix`. Applied
+   * uniformly, so a dependency's class name as seen from a constructor
+   * parameter type gets the same prefix as its own generated file.
+   */
+  classPrefix?: string;
 }
 
 export interface KotlinFile {
@@ -235,7 +242,8 @@ export function generateCollectionKotlinFile(
 ): KotlinFile | undefined {
   if (collection.tokens.length === 0) return undefined;
 
-  const rootClassName = toPascalCase(collection.name);
+  const classNameFor = (name: string) => `${options.classPrefix ?? ""}${toPascalCase(name)}`;
+  const rootClassName = classNameFor(collection.name);
   const tree = buildPropertyTree(collection.tokens, sanitizePath);
 
   const dependencies = resolveDependsOn(model, collection);
@@ -251,7 +259,7 @@ export function generateCollectionKotlinFile(
   lines.push("");
 
   const params = dependencies
-    .map((d) => `${depParamByName.get(d.name)}: ${toPascalCase(d.name)}`)
+    .map((d) => `${depParamByName.get(d.name)}: ${classNameFor(d.name)}`)
     .join(", ");
   for (const mode of modesToEmit) {
     const fnName = `${toCamelCase(collection.name)}${toPascalCase(mode)}`;
