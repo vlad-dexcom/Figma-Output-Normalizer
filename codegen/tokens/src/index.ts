@@ -6,3 +6,4 @@
 // graph), and the Kotlin emitter.
 export * from "./input/index.js";
 export * from "./model/index.js";
+export * from "./emit/index.js";

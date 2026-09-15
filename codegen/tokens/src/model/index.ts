@@ -17,6 +17,7 @@ export {
   AmbiguousThemeSourceError,
   computeBuilderChain,
   computeThemeModes,
+  resolveDependsOn,
   type ThemeModeOptions,
   type ThemeModeVariant,
 } from "./graph.js";

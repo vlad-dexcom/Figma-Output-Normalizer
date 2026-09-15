@@ -18,7 +18,10 @@ import type { ClassificationReport } from "./classify.js";
 import type { TokenModel } from "./types.js";
 
 /** Resolves a collection's `dependsOn` (names) to the `TokenCollection`s they refer to. */
-function resolveDependsOn(model: TokenModel, collection: TokenCollection): TokenCollection[] {
+export function resolveDependsOn(
+  model: TokenModel,
+  collection: TokenCollection,
+): TokenCollection[] {
   return collection.dependsOn.map((depName) => {
     const ids = model.idsByName.get(depName) ?? [];
     if (ids.length !== 1) {
