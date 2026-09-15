@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": ".",
+    "allowJs": true
+  },
+  "include": ["src", "bin"],
+  "exclude": ["node_modules", "dist", "_legacy-python", "testdata"]
+}

@@ -4,6 +4,9 @@ coverage
 *.log
 .DS_Store
 .idea/
+__pycache__/
+*.pyc
+.pytest_cache/
 
 # Plugin exports dropped into the tree while working. Real Figma data is
 # large (a token document runs to ~1.5 MB) and is not a repository artifact
