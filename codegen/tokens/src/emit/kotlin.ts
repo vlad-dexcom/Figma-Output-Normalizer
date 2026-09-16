@@ -128,7 +128,21 @@ function valueExpressionFor(
     if (!depParam) {
       throw new MissingDependencyParamError(collection.name, token.path, aliasTarget.collection);
     }
-    return `${depParam}.${kotlinPropertyPath(aliasTarget.path)}`;
+    const base = `${depParam}.${kotlinPropertyPath(aliasTarget.path)}`;
+
+    // COMPOSE_COLOR: the color is aliased AND the opacity applied to it is
+    // itself a named variable (not a bare number baked into the literal).
+    // Emit a live `.copy(alpha = ...)` reference instead of a frozen hex, so
+    // both source tokens stay wired up in generated code.
+    const opacity = aliasTarget.opacity;
+    if (opacity && !opacity.excluded && opacity.collection && opacity.path) {
+      const opacityParam = depParamByName.get(opacity.collection);
+      if (!opacityParam) {
+        throw new MissingDependencyParamError(collection.name, token.path, opacity.collection);
+      }
+      return `${base}.copy(alpha = ${opacityParam}.${kotlinPropertyPath(opacity.path)})`;
+    }
+    return base;
   }
   if (!(mode in token.modes)) {
     throw new UnrepresentableTokenValueError(token.path, mode);

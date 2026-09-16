@@ -110,6 +110,153 @@ describe("generateCollectionKotlinFile — synthetic", () => {
     expect(file.contents).not.toContain("#FF0000");
   });
 
+  it("emits a live .copy(alpha = ...) reference for a COMPOSE_COLOR alias with an alias-typed opacity", () => {
+    const primitives = collection({
+      id: "p",
+      name: "primitives",
+      modes: ["value"],
+      tokens: [
+        token({ path: "color/red", modes: { value: "#FF0000" } }),
+        token({ path: "opacity/40", type: "FLOAT", modes: { value: 0.4 } }),
+      ],
+    });
+    const base = collection({
+      id: "b",
+      name: "base",
+      modes: ["light"],
+      dependsOn: ["primitives"],
+      tokens: [
+        token({
+          path: "color/surface",
+          modes: { light: "#FF000066" },
+          alias: {
+            byMode: {
+              light: {
+                collection: "primitives",
+                path: "color/red",
+                opacity: { collection: "primitives", path: "opacity/40" },
+              },
+            },
+          },
+        }),
+      ],
+    });
+    const model = buildTokenModel(document([primitives, base]));
+    const file = generateCollectionKotlinFile(model, base, { packageName: "com.test" })!;
+    expect(file.contents).toContain(
+      "surface = primitives.color.red.copy(alpha = primitives.opacity._40),",
+    );
+    expect(file.contents).not.toContain("#FF000066");
+  });
+
+  it("resolves the opacity edge against its own collection's dependency param when it differs from the color's", () => {
+    const palette = collection({
+      id: "pal",
+      name: "palette",
+      modes: ["value"],
+      tokens: [token({ path: "slate/300", modes: { value: "#FF0000" } })],
+    });
+    const opacityLib = collection({
+      id: "op",
+      name: "opacity",
+      modes: ["value"],
+      tokens: [token({ path: "40", type: "FLOAT", modes: { value: 0.4 } })],
+    });
+    const base = collection({
+      id: "b",
+      name: "base",
+      modes: ["light"],
+      dependsOn: ["palette", "opacity"],
+      tokens: [
+        token({
+          path: "color/surface",
+          modes: { light: "#FF000066" },
+          alias: {
+            byMode: {
+              light: {
+                collection: "palette",
+                path: "slate/300",
+                opacity: { collection: "opacity", path: "40" },
+              },
+            },
+          },
+        }),
+      ],
+    });
+    const model = buildTokenModel(document([palette, opacityLib, base]));
+    const file = generateCollectionKotlinFile(model, base, { packageName: "com.test" })!;
+    expect(file.contents).toContain("surface = palette.slate._300.copy(alpha = opacity._40),");
+  });
+
+  it("throws MissingDependencyParamError when the opacity edge names a collection absent from dependsOn", () => {
+    const palette = collection({
+      id: "pal",
+      name: "palette",
+      modes: ["value"],
+      tokens: [token({ path: "slate/300", modes: { value: "#FF0000" } })],
+    });
+    const base = collection({
+      id: "b",
+      name: "base",
+      modes: ["light"],
+      // Deliberately missing "opacity" in dependsOn, despite the opacity alias below.
+      dependsOn: ["palette"],
+      tokens: [
+        token({
+          path: "color/surface",
+          modes: { light: "#FF000066" },
+          alias: {
+            byMode: {
+              light: {
+                collection: "palette",
+                path: "slate/300",
+                opacity: { collection: "opacity", path: "40" },
+              },
+            },
+          },
+        }),
+      ],
+    });
+    const model = buildTokenModel(document([palette, base]));
+    expect(() => generateCollectionKotlinFile(model, base, { packageName: "com.test" })).toThrow(
+      MissingDependencyParamError,
+    );
+  });
+
+  it("falls back to the base color reference (no .copy) when the opacity edge was excluded by policy", () => {
+    const primitives = collection({
+      id: "p",
+      name: "primitives",
+      modes: ["value"],
+      tokens: [token({ path: "color/red", modes: { value: "#FF0000" } })],
+    });
+    const base = collection({
+      id: "b",
+      name: "base",
+      modes: ["light"],
+      dependsOn: ["primitives"],
+      tokens: [
+        token({
+          path: "color/surface",
+          modes: { light: "#FF000066" },
+          alias: {
+            byMode: {
+              light: {
+                collection: "primitives",
+                path: "color/red",
+                opacity: { collection: "excluded-lib", path: "opacity/40", excluded: true },
+              },
+            },
+          },
+        }),
+      ],
+    });
+    const model = buildTokenModel(document([primitives, base]));
+    const file = generateCollectionKotlinFile(model, base, { packageName: "com.test" })!;
+    expect(file.contents).toContain("surface = primitives.color.red,");
+    expect(file.contents).not.toContain(".copy(alpha");
+  });
+
   it("falls back to a baked literal when the alias target was excluded by policy", () => {
     const primitives = collection({ id: "p", name: "primitives", modes: ["value"] });
     const base = collection({

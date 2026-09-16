@@ -163,6 +163,25 @@ export interface AliasTarget {
    * True when the alias points into a collection the policy excluded. The value then falls back to the resolved literal so generated code never references something that was not emitted - the documented behaviour this mirrors from the platform's collections.toml.
    */
   excluded?: boolean;
+  opacity?: AliasTarget1;
+}
+/**
+ * Set when this alias is a Figma "composed color" (a color variable with an opacity variable applied on top, e.g. "palette/slate/300 at 40%") AND the opacity itself is a named variable, not a bare literal - i.e. there is a second, real alias edge worth preserving, not just a number to bake into the resolved literal. Never itself carries a nested `opacity` (Figma does not support composing a composed color).
+ */
+export interface AliasTarget1 {
+  /**
+   * Name of the collection the aliased variable belongs to, or null when it could not be read.
+   */
+  collection: string | null;
+  /**
+   * The aliased variable's raw Figma name, or null when the target could not be resolved.
+   */
+  path: string | null;
+  /**
+   * True when the alias points into a collection the policy excluded. The value then falls back to the resolved literal so generated code never references something that was not emitted - the documented behaviour this mirrors from the platform's collections.toml.
+   */
+  excluded?: boolean;
+  opacity?: AliasTarget1;
 }
 /**
  * Non-authoritative signals carried for humans and coding agents. Nothing in the pipeline may RESOLVE against these - they are labelled as hints precisely so that a consumer cannot mistake them for a contract.

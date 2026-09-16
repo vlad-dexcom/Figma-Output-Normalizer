@@ -26,7 +26,8 @@
         "VariableID:42319:3",
         "VariableID:test:sparse-mode",
         "VariableID:test:compose-color",
-        "VariableID:test:compose-malformed"
+        "VariableID:test:compose-malformed",
+        "VariableID:test:compose-alias-opacity"
       ]
     },
     "VariableCollectionId:44:2": {
@@ -76,7 +77,8 @@
         "VariableID:114:283",
         "VariableID:124:352",
         "VariableID:51:29",
-        "VariableID:115:52"
+        "VariableID:115:52",
+        "VariableID:test:opacity-40"
       ]
     },
     "VariableCollectionId:32253:4138": {
@@ -715,6 +717,55 @@
         "32245:0": {
           "expressionFunction": "COMPOSE_COLOR",
           "expressionArguments": []
+        }
+      },
+      "scopes": [
+        "STROKE_COLOR"
+      ],
+      "codeSyntax": {}
+    },
+    "VariableID:test:opacity-40": {
+      "name": "opacity/40",
+      "id": "VariableID:test:opacity-40",
+      "remote": false,
+      "key": "test-opacity-40-key",
+      "variableCollectionId": "VariableCollectionId:3:2",
+      "resolvedType": "FLOAT",
+      "description": "Regression fixture: a named opacity variable used as the second COMPOSE_COLOR argument.",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "3:0": 0.4
+      },
+      "scopes": [],
+      "codeSyntax": {}
+    },
+    "VariableID:test:compose-alias-opacity": {
+      "name": "color/border/muted/compose-alias-opacity-test",
+      "id": "VariableID:test:compose-alias-opacity",
+      "remote": false,
+      "key": "test-compose-alias-opacity-key",
+      "variableCollectionId": "VariableCollectionId:32186:2",
+      "resolvedType": "COLOR",
+      "description": "Regression fixture for a composed-color expression whose opacity argument is ITSELF a named variable, not a bare number.",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "32186:0": {
+          "r": 1,
+          "g": 1,
+          "b": 1
+        },
+        "32245:0": {
+          "expressionFunction": "COMPOSE_COLOR",
+          "expressionArguments": [
+            {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:32186:141"
+            },
+            {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:test:opacity-40"
+            }
+          ]
         }
       },
       "scopes": [

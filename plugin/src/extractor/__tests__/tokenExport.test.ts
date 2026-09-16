@@ -378,4 +378,31 @@ describe("token export: unsupported value shapes", () => {
     expect(entry?.reason).toBe("unsupported-value");
     expect(entry?.detail).toContain("COMPOSE_COLOR");
   });
+
+  it("resolves a composed-color whose opacity is ITSELF a named variable to a merged hex value AND preserves both alias edges", async () => {
+    // The real-world case this was missing: unlike the plain-number-opacity
+    // case above, the opacity argument here is a second VARIABLE_ALIAS (a
+    // real, named "opacity/40" token), not a bare number -- codegen needs
+    // that edge preserved (not just baked into the literal) to emit a live
+    // `base.copy(alpha = opacity._40)` reference instead of a frozen hex.
+    const { document } = await exportTokens();
+    const token = findToken(document, "base", "color/border/muted/compose-alias-opacity-test");
+
+    // 0.4 alpha => 0x66, same merged literal as the plain-number case.
+    expect(token?.modes.light).toBe("#2E2D3E66");
+    expect(token?.modes.dark).toBe("#FFFFFF");
+    expect(token?.alias?.byMode.light).toEqual({
+      collection: "base",
+      path: "color/surface/action/primary/default",
+      opacity: { collection: "primitives", path: "opacity/40" },
+    });
+    // No unresolved entry: this is now fully representable, not a data loss.
+    expect(
+      document.unresolved.some((u) => u.path === "color/border/muted/compose-alias-opacity-test"),
+    ).toBe(false);
+    // The opacity edge's collection ("primitives") counts toward "base"'s
+    // dependsOn, same as the color edge's collection would.
+    const base = document.collections.find((c) => c.name === "base");
+    expect(base?.dependsOn).toContain("primitives");
+  });
 });

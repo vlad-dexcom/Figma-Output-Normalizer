@@ -219,6 +219,26 @@ one-time migration of Android_Stelo's consumers to the compact
 one-file-per-collection format once it's proven out, rather than
 maintaining the legacy multi-file layout indefinitely.
 
+**G14. `COMPOSE_COLOR` with an alias-typed opacity was silently falling back to
+`unsupported-value` — fixed.** Figma's `COMPOSE_COLOR` variable expression
+(color variable + opacity override, built via the Figma UI) has two
+independent arguments: a color `VARIABLE_ALIAS` and an opacity argument that
+can be either a bare number *or itself* a `VARIABLE_ALIAS` to a named opacity
+token. `tokenExport.ts` only handled the bare-number case; when opacity was
+also an alias it fell through to the generic "unexpected shape"
+`unsupported-value` path. On the real-world fixture this was **all 168** of
+its `unsupported-value` entries — not a rare edge case.
+
+Fixed by adding a self-referential `opacity` field to `aliasTarget` in the
+`tokens/v1` schema, resolving the opacity alias recursively in
+`resolveMode`, and threading `edge.opacity.collection` through the
+`dependsOn` computation the same way `edge.collection` already was. The
+Kotlin emitter (`valueExpressionFor` in `kotlin.ts`) now emits a live
+`base.copy(alpha = opacity._40)` reference instead of a baked hex literal
+when this edge is present (falls back to the old flattened-literal behavior
+if the opacity edge was itself excluded by policy). Covered by tests in
+`tokenExport.test.ts` and `kotlin.test.ts`.
+
 ## 🟡 Качество и производительность
 
 **Q1. ✅ (исправлено) `structuralSignature` — O(n²) по поддереву.** Раньше для

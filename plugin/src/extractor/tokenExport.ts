@@ -148,10 +148,26 @@ async function getCollection(
   return resolved;
 }
 
+interface AliasHop {
+  collection: string | null;
+  path: string | null;
+  excluded?: boolean;
+  /**
+   * Set when this hop is a Figma "composed color" (a color variable with an
+   * opacity variable applied on top) AND the opacity itself is a named
+   * variable, not a bare literal — a second, real alias edge worth
+   * preserving so codegen can emit a live reference (e.g.
+   * `palette.slate._300.copy(alpha = opacity._40)`) instead of a baked hex
+   * literal. Absent when the opacity was a plain number, or there was no
+   * composed-color expression at all.
+   */
+  opacity?: { collection: string | null; path: string | null; excluded?: boolean };
+}
+
 interface ModeResolution {
   value: string | number | boolean | null;
   /** The first alias hop, i.e. what this token *points at* — not the end of the chain. */
-  alias?: { collection: string | null; path: string | null; excluded?: boolean };
+  alias?: AliasHop;
   unresolved?: { reason: UnresolvedToken["reason"]; detail: string };
 }
 
@@ -180,13 +196,26 @@ async function resolveMode(
 ): Promise<ModeResolution> {
   if (isComposeColorExpression(raw)) {
     const [aliasArg, opacityArg] = raw.expressionArguments;
-    // Figma's own opacity slider is 0-100; be defensive since the exact
-    // runtime scale for this unofficial shape isn't confirmed.
-    const opacity =
-      typeof opacityArg === "number" ? (opacityArg > 1 ? opacityArg / 100 : opacityArg) : null;
 
-    if (isVariableAlias(aliasArg) && opacity !== null) {
-      const base = await resolveMode(ctx, aliasArg, modeName, depth, visited, firstHop);
+    if (!isVariableAlias(aliasArg)) {
+      return {
+        value: null,
+        ...(firstHop ? { alias: firstHop } : {}),
+        unresolved: {
+          reason: "unsupported-value",
+          detail: `Mode "${modeName}" is a COMPOSE_COLOR expression with an unexpected shape: ${JSON.stringify(raw)}.`,
+        },
+      };
+    }
+
+    const base = await resolveMode(ctx, aliasArg, modeName, depth, visited, firstHop);
+
+    // Plain numeric opacity (Figma's own opacity slider, 0-100; be
+    // defensive since the exact runtime scale for this unofficial shape
+    // isn't confirmed): there is no separate opacity variable to preserve
+    // as an edge, so bake it into the resolved literal as before.
+    if (typeof opacityArg === "number") {
+      const opacity = opacityArg > 1 ? opacityArg / 100 : opacityArg;
       if (typeof base.value === "string" && base.value.startsWith("#")) {
         return { ...base, value: applyOpacityToHex(base.value, opacity) };
       }
@@ -197,6 +226,43 @@ async function resolveMode(
           reason: "unsupported-value",
           detail: `Mode "${modeName}" is a composed-color (alias + opacity) expression whose base alias did not resolve to a color.`,
         },
+      };
+    }
+
+    // The opacity argument is itself a named variable (e.g. "opacity/40")
+    // rather than a bare number — representable as a genuine second alias
+    // edge, not just a number to bake into the resolved literal.
+    if (isVariableAlias(opacityArg)) {
+      const opacityRes = await resolveMode(ctx, opacityArg, modeName, depth, visited);
+      const rawOpacityValue = typeof opacityRes.value === "number" ? opacityRes.value : null;
+      const normalizedOpacity =
+        rawOpacityValue !== null
+          ? rawOpacityValue > 1
+            ? rawOpacityValue / 100
+            : rawOpacityValue
+          : null;
+
+      if (
+        typeof base.value === "string" &&
+        base.value.startsWith("#") &&
+        normalizedOpacity !== null &&
+        opacityRes.alias
+      ) {
+        return {
+          value: applyOpacityToHex(base.value, normalizedOpacity),
+          alias: { ...(base.alias ?? firstHop ?? { collection: null, path: null }), opacity: opacityRes.alias },
+        };
+      }
+
+      return {
+        value: null,
+        ...(base.alias ? { alias: base.alias } : firstHop ? { alias: firstHop } : {}),
+        unresolved:
+          base.unresolved ??
+          opacityRes.unresolved ?? {
+            reason: "unsupported-value",
+            detail: `Mode "${modeName}" is a composed-color (alias + opacity-alias) expression whose base color or opacity alias did not resolve.`,
+          },
       };
     }
 
@@ -317,10 +383,7 @@ async function buildToken(
 ): Promise<{ token: Token; unresolved: UnresolvedToken[] }> {
   const unresolved: UnresolvedToken[] = [];
   const modes: Record<string, string | number | boolean | null> = {};
-  const aliasByMode: Record<
-    string,
-    { collection: string | null; path: string | null; excluded?: boolean }
-  > = {};
+  const aliasByMode: Record<string, AliasHop> = {};
 
   for (const mode of collection.modes) {
     const raw = variable.valuesByMode[mode.modeId];
@@ -468,6 +531,17 @@ export async function extractTokens(
         // not appear in the build-order summary.
         if (edge.collection && edge.collection !== collectionName && !edge.excluded) {
           dependsOn.add(edge.collection);
+        }
+        // A composed-color's opacity edge names a (possibly different)
+        // collection too -- e.g. "base" aliasing a color in "primitives"
+        // while its opacity comes from "primitives/opacity" -- so it must
+        // count toward the same build-order/dependsOn contract.
+        if (
+          edge.opacity?.collection &&
+          edge.opacity.collection !== collectionName &&
+          !edge.opacity.excluded
+        ) {
+          dependsOn.add(edge.opacity.collection);
         }
       }
     }

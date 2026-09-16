@@ -42,7 +42,10 @@ alias graph (see git history for `codegen/tokens/_legacy-python/`).
    are camelCased/PascalCased per path segment and backtick-escaped when
    they collide with a Kotlin keyword. When a token carries `token.symbol`
    (from `mappings/wiring-rules`), it's surfaced as a KDoc provenance
-   comment — never used to derive a name.
+   comment — never used to derive a name. A `COMPOSE_COLOR` alias whose
+   opacity argument is itself a named variable (not a bare number) is
+   emitted as a live `base.copy(alpha = opacity._40)` reference rather than
+   a baked hex literal (see `docs/BACKLOG.md` G14).
 
    **v1 emits one file per collection only, by default.** No root class
    aggregates every collection into one app-level tree; wiring
