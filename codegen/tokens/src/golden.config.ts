@@ -27,7 +27,7 @@ export const GOLDEN_CASES: readonly GoldenCase[] = [
     name: "real-world",
     inputPath: path.join(
       PACKAGE_ROOT,
-      "../../fixtures/src/real-world/gPHx1sqQHIfMs8706VDGM1_c1-88d0431a4019ec4b.tokens.json",
+      "../../fixtures/src/real-world/gPHx1sqQHIfMs8706VDGM1_c1-4228e256df698463.tokens.json",
     ),
     options: { packageName: "com.dexcom.tokens", excludeModePattern: /ios/i },
   },

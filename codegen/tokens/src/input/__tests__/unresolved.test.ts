@@ -11,7 +11,7 @@ import {
 
 const REAL_WORLD_TOKENS_PATH = path.join(
   import.meta.dirname,
-  "../../../../../fixtures/src/real-world/gPHx1sqQHIfMs8706VDGM1_c1-88d0431a4019ec4b.tokens.json",
+  "../../../../../fixtures/src/real-world/gPHx1sqQHIfMs8706VDGM1_c1-4228e256df698463.tokens.json",
 );
 
 function entry(reason: UnresolvedToken["reason"], path_ = "a/b"): UnresolvedToken {
@@ -85,10 +85,14 @@ describe("against the real-world fixture", () => {
 
     const { warnings, failures } = triageUnresolved(doc.unresolved);
 
-    // README.md: unresolved 190 (unsupported-value 168, excluded-collection-alias 22).
-    expect(failures.filter((f) => f.reason === "unsupported-value")).toHaveLength(168);
+    // README.md: unresolved 22 (unsupported-value 0, excluded-collection-alias 22).
+    // The 168 unsupported-value entries this fixture used to carry were all
+    // COMPOSE_COLOR expressions with an alias-typed opacity (BACKLOG G14);
+    // this fixture was re-exported with the plugin fix applied, so none
+    // remain.
+    expect(failures.filter((f) => f.reason === "unsupported-value")).toHaveLength(0);
     expect(warnings.filter((w) => w.reason === "excluded-collection-alias")).toHaveLength(22);
-    expect(failures).toHaveLength(168);
+    expect(failures).toHaveLength(0);
     expect(warnings).toHaveLength(22);
   });
 });

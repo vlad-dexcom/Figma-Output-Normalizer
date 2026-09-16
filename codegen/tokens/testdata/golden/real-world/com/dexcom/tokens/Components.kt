@@ -5303,18 +5303,9 @@ data class Components(
             @androidx.compose.runtime.Immutable
             data class Color(
                 val surface: androidx.compose.ui.graphics.Color,
-                val icon: Icon,
                 val text: Text,
+                val icon: Icon,
             ) {
-                /**
-                 * @property leading search bars: color › icon › leading. Applies to all variants.
-                 * @property trailing search bars: color › icon › trailing. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Icon(
-                    val leading: androidx.compose.ui.graphics.Color,
-                    val trailing: androidx.compose.ui.graphics.Color,
-                )
                 /**
                  * @property placeholder search bars: color › text › placeholder. Applies to all variants.
                  * @property input search bars: color › text › input. Applies to all variants.
@@ -5323,6 +5314,15 @@ data class Components(
                 data class Text(
                     val placeholder: androidx.compose.ui.graphics.Color,
                     val input: androidx.compose.ui.graphics.Color,
+                )
+                /**
+                 * @property leading search bars: color › icon › leading. Applies to all variants.
+                 * @property trailing search bars: color › icon › trailing. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Icon(
+                    val leading: androidx.compose.ui.graphics.Color,
+                    val trailing: androidx.compose.ui.graphics.Color,
                 )
             }
             /**
@@ -8666,7 +8666,7 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         ),
                         unselected = Components.Chips.Type.Primary.State.Unselected(
                             color = Components.Chips.Type.Primary.State.Unselected.Color(
-                                surface = base.color.surface.action.secondary.strong.default,
+                                surface = base.color.surface.action.secondary.emphasized.default,
                                 text = Components.Chips.Type.Primary.State.Unselected.Color.Text(
                                     label = base.color.text.emphasis.default,
                                 ),
@@ -8707,7 +8707,7 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         ),
                         unselected = Components.Chips.Type.Secondary.State.Unselected(
                             color = Components.Chips.Type.Secondary.State.Unselected.Color(
-                                surface = base.color.surface.action.secondary.strong.default,
+                                surface = base.color.surface.action.secondary.emphasized.default,
                                 icon = base.color.icon.muted.default,
                                 text = Components.Chips.Type.Secondary.State.Unselected.Color.Text(
                                     label = base.color.text.muted.default,
@@ -9626,13 +9626,13 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
             base = Components.SearchBars.Base(
                 color = Components.SearchBars.Base.Color(
                     surface = base.color.surface.tone.muted,
-                    icon = Components.SearchBars.Base.Color.Icon(
-                        leading = base.color.icon.muted.default,
-                        trailing = base.color.icon.muted.default,
-                    ),
                     text = Components.SearchBars.Base.Color.Text(
                         placeholder = base.color.text.muted.default,
                         input = base.color.text.base.default,
+                    ),
+                    icon = Components.SearchBars.Base.Color.Icon(
+                        leading = base.color.icon.muted.default,
+                        trailing = base.color.icon.muted.default,
                     ),
                 ),
                 typography = Components.SearchBars.Base.Typography(
@@ -9870,7 +9870,7 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                     state = Components.SegmentedControls.Type.Secondary.State(
                         selected = Components.SegmentedControls.Type.Secondary.State.Selected(
                             color = Components.SegmentedControls.Type.Secondary.State.Selected.Color(
-                                surface = base.color.surface.action.secondary.strong.default,
+                                surface = base.color.surface.action.secondary.emphasized.default,
                                 text = Components.SegmentedControls.Type.Secondary.State.Selected.Color.Text(
                                     label = base.color.text.base.default,
                                 ),
@@ -10343,7 +10343,7 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
             state = Components.Tiles.State(
                 default = Components.Tiles.State.Default(
                     color = Components.Tiles.State.Default.Color(
-                        surface = base.color.surface.action.secondary.strong.default,
+                        surface = base.color.surface.action.secondary.emphasized.default,
                     ),
                 ),
                 selected = Components.Tiles.State.Selected(

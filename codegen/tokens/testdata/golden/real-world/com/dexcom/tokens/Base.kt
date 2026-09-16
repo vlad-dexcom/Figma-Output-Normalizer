@@ -56,8 +56,8 @@ data class Base(
                 data class Primary(
                     val default: androidx.compose.ui.graphics.Color,
                     val hover: androidx.compose.ui.graphics.Color,
-                    val pressed: androidx.compose.ui.graphics.Color?,
-                    val disabled: androidx.compose.ui.graphics.Color?,
+                    val pressed: androidx.compose.ui.graphics.Color,
+                    val disabled: androidx.compose.ui.graphics.Color,
                 )
                 /**
                  * @property default Semantic surface color — action/secondary/default. Resolves to #262532. (symbol: `AppTheme.semanticColors.surface.action.secondary.default`, via wiring rule `base-color`)
@@ -69,22 +69,22 @@ data class Base(
                 data class Secondary(
                     val default: androidx.compose.ui.graphics.Color,
                     val hover: androidx.compose.ui.graphics.Color,
-                    val pressed: androidx.compose.ui.graphics.Color?,
-                    val disabled: androidx.compose.ui.graphics.Color?,
-                    val strong: Strong,
+                    val pressed: androidx.compose.ui.graphics.Color,
+                    val disabled: androidx.compose.ui.graphics.Color,
+                    val emphasized: Emphasized,
                 ) {
                     /**
-                     * @property default Semantic surface color — action/secondary/strong/default. Resolves to #2E2D3E. (symbol: `AppTheme.semanticColors.surface.action.secondary.strong.default`, via wiring rule `base-color`)
-                     * @property hover Semantic surface color — action/secondary/strong/hover. Resolves to #424151. (symbol: `AppTheme.semanticColors.surface.action.secondary.strong.hover`, via wiring rule `base-color`)
-                     * @property pressed Semantic surface color — action/secondary/strong/hover. Resolves to #424151. (symbol: `AppTheme.semanticColors.surface.action.secondary.strong.pressed`, via wiring rule `base-color`)
-                     * @property disabled Semantic surface color — action/secondary/strong/hover. Resolves to #424151. (symbol: `AppTheme.semanticColors.surface.action.secondary.strong.disabled`, via wiring rule `base-color`)
+                     * @property default Semantic surface color — action/secondary/strong/default. Resolves to #2E2D3E. (symbol: `AppTheme.semanticColors.surface.action.secondary.emphasized.default`, via wiring rule `base-color`)
+                     * @property hover Semantic surface color — action/secondary/strong/hover. Resolves to #424151. (symbol: `AppTheme.semanticColors.surface.action.secondary.emphasized.hover`, via wiring rule `base-color`)
+                     * @property pressed Semantic surface color — action/secondary/strong/hover. Resolves to #424151. (symbol: `AppTheme.semanticColors.surface.action.secondary.emphasized.pressed`, via wiring rule `base-color`)
+                     * @property disabled Semantic surface color — action/secondary/strong/hover. Resolves to #424151. (symbol: `AppTheme.semanticColors.surface.action.secondary.emphasized.disabled`, via wiring rule `base-color`)
                      */
                     @androidx.compose.runtime.Immutable
-                    data class Strong(
+                    data class Emphasized(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                 }
                 /**
@@ -97,8 +97,8 @@ data class Base(
                 data class Destructive(
                     val default: androidx.compose.ui.graphics.Color,
                     val hover: androidx.compose.ui.graphics.Color,
-                    val pressed: androidx.compose.ui.graphics.Color?,
-                    val disabled: androidx.compose.ui.graphics.Color?,
+                    val pressed: androidx.compose.ui.graphics.Color,
+                    val disabled: androidx.compose.ui.graphics.Color,
                 )
             }
             /**
@@ -286,8 +286,8 @@ data class Base(
             data class Base(
                 val default: androidx.compose.ui.graphics.Color,
                 val hover: androidx.compose.ui.graphics.Color,
-                val pressed: androidx.compose.ui.graphics.Color?,
-                val disabled: androidx.compose.ui.graphics.Color?,
+                val pressed: androidx.compose.ui.graphics.Color,
+                val disabled: androidx.compose.ui.graphics.Color,
             )
             /**
              * @property default Semantic text color — base/default. Resolves to #F1F0EB. (symbol: `AppTheme.semanticColors.text.strong.default`, via wiring rule `base-color`)
@@ -299,8 +299,8 @@ data class Base(
             data class Strong(
                 val default: androidx.compose.ui.graphics.Color,
                 val hover: androidx.compose.ui.graphics.Color,
-                val pressed: androidx.compose.ui.graphics.Color?,
-                val disabled: androidx.compose.ui.graphics.Color?,
+                val pressed: androidx.compose.ui.graphics.Color,
+                val disabled: androidx.compose.ui.graphics.Color,
             )
             /**
              * @property default Semantic text color — emphasis/default. Resolves to #E5E0D4. (symbol: `AppTheme.semanticColors.text.emphasis.default`, via wiring rule `base-color`)
@@ -312,8 +312,8 @@ data class Base(
             data class Emphasis(
                 val default: androidx.compose.ui.graphics.Color,
                 val hover: androidx.compose.ui.graphics.Color,
-                val pressed: androidx.compose.ui.graphics.Color?,
-                val disabled: androidx.compose.ui.graphics.Color?,
+                val pressed: androidx.compose.ui.graphics.Color,
+                val disabled: androidx.compose.ui.graphics.Color,
             )
             /**
              * @property default Semantic text color — muted/default. Resolves to #96959F. (symbol: `AppTheme.semanticColors.text.muted.default`, via wiring rule `base-color`)
@@ -325,8 +325,8 @@ data class Base(
             data class Muted(
                 val default: androidx.compose.ui.graphics.Color,
                 val hover: androidx.compose.ui.graphics.Color,
-                val pressed: androidx.compose.ui.graphics.Color?,
-                val disabled: androidx.compose.ui.graphics.Color?,
+                val pressed: androidx.compose.ui.graphics.Color,
+                val disabled: androidx.compose.ui.graphics.Color,
             )
             /**
              * @property default Semantic text color — subtle/default. Resolves to #6D6C79. (symbol: `AppTheme.semanticColors.text.subtle.default`, via wiring rule `base-color`)
@@ -338,8 +338,8 @@ data class Base(
             data class Subtle(
                 val default: androidx.compose.ui.graphics.Color,
                 val hover: androidx.compose.ui.graphics.Color,
-                val pressed: androidx.compose.ui.graphics.Color?,
-                val disabled: androidx.compose.ui.graphics.Color?,
+                val pressed: androidx.compose.ui.graphics.Color,
+                val disabled: androidx.compose.ui.graphics.Color,
             )
             /**
              * @property default Semantic text color — link/default. Resolves to #ACA8E3. (symbol: `AppTheme.semanticColors.text.link.default`, via wiring rule `base-color`)
@@ -351,8 +351,8 @@ data class Base(
             data class Link(
                 val default: androidx.compose.ui.graphics.Color,
                 val hover: androidx.compose.ui.graphics.Color,
-                val pressed: androidx.compose.ui.graphics.Color?,
-                val disabled: androidx.compose.ui.graphics.Color?,
+                val pressed: androidx.compose.ui.graphics.Color,
+                val disabled: androidx.compose.ui.graphics.Color,
                 val emphasized: Emphasized,
                 val subtle: Subtle,
             ) {
@@ -366,8 +366,8 @@ data class Base(
                 data class Emphasized(
                     val default: androidx.compose.ui.graphics.Color,
                     val hover: androidx.compose.ui.graphics.Color,
-                    val pressed: androidx.compose.ui.graphics.Color?,
-                    val disabled: androidx.compose.ui.graphics.Color?,
+                    val pressed: androidx.compose.ui.graphics.Color,
+                    val disabled: androidx.compose.ui.graphics.Color,
                 )
                 /**
                  * @property default Semantic text color — link/subtle/default. Resolves to #96959F. (symbol: `AppTheme.semanticColors.text.link.subtle.default`, via wiring rule `base-color`)
@@ -379,8 +379,8 @@ data class Base(
                 data class Subtle(
                     val default: androidx.compose.ui.graphics.Color,
                     val hover: androidx.compose.ui.graphics.Color,
-                    val pressed: androidx.compose.ui.graphics.Color?,
-                    val disabled: androidx.compose.ui.graphics.Color?,
+                    val pressed: androidx.compose.ui.graphics.Color,
+                    val disabled: androidx.compose.ui.graphics.Color,
                 )
             }
             @androidx.compose.runtime.Immutable
@@ -398,8 +398,8 @@ data class Base(
                 data class Emphasized(
                     val default: androidx.compose.ui.graphics.Color,
                     val hover: androidx.compose.ui.graphics.Color,
-                    val pressed: androidx.compose.ui.graphics.Color?,
-                    val disabled: androidx.compose.ui.graphics.Color?,
+                    val pressed: androidx.compose.ui.graphics.Color,
+                    val disabled: androidx.compose.ui.graphics.Color,
                 )
                 /**
                  * @property default Semantic text color — accent/subtle/default. Resolves to #ACA8E3. (symbol: `AppTheme.semanticColors.text.accent.subtle.default`, via wiring rule `base-color`)
@@ -411,8 +411,8 @@ data class Base(
                 data class Subtle(
                     val default: androidx.compose.ui.graphics.Color,
                     val hover: androidx.compose.ui.graphics.Color,
-                    val pressed: androidx.compose.ui.graphics.Color?,
-                    val disabled: androidx.compose.ui.graphics.Color?,
+                    val pressed: androidx.compose.ui.graphics.Color,
+                    val disabled: androidx.compose.ui.graphics.Color,
                 )
             }
             /**
@@ -425,8 +425,8 @@ data class Base(
             data class OnAccent(
                 val default: androidx.compose.ui.graphics.Color,
                 val hover: androidx.compose.ui.graphics.Color,
-                val pressed: androidx.compose.ui.graphics.Color?,
-                val disabled: androidx.compose.ui.graphics.Color?,
+                val pressed: androidx.compose.ui.graphics.Color,
+                val disabled: androidx.compose.ui.graphics.Color,
             )
             /**
              * @property info Semantic text color — status/info. Resolves to #F5F4EA. (symbol: `AppTheme.semanticColors.text.status.info`, via wiring rule `base-color`)
@@ -479,8 +479,8 @@ data class Base(
                     data class Base(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                     /**
                      * @property default Semantic text color — danger/emphasized/default. Resolves to #40110B. (symbol: `AppTheme.semanticColors.text.status.danger.emphasized.default`, via wiring rule `base-color`)
@@ -492,8 +492,8 @@ data class Base(
                     data class Emphasized(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                     /**
                      * @property default Semantic text color — status/error. Resolves to #E18476. (symbol: `AppTheme.semanticColors.text.status.danger.muted.default`, via wiring rule `base-color`)
@@ -505,8 +505,8 @@ data class Base(
                     data class Muted(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                     /**
                      * @property default Semantic text color — status/error. Resolves to #E18476. (symbol: `AppTheme.semanticColors.text.status.danger.subtle.default`, via wiring rule `base-color`)
@@ -518,8 +518,8 @@ data class Base(
                     data class Subtle(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                 }
                 @androidx.compose.runtime.Immutable
@@ -539,8 +539,8 @@ data class Base(
                     data class Base(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                     /**
                      * @property default Semantic text color — danger/emphasized/default. Resolves to #40110B. (symbol: `AppTheme.semanticColors.text.status.attention.emphasized.default`, via wiring rule `base-color`)
@@ -552,8 +552,8 @@ data class Base(
                     data class Emphasized(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                     /**
                      * @property default Semantic text color — status/error. Resolves to #E18476. (symbol: `AppTheme.semanticColors.text.status.attention.muted.default`, via wiring rule `base-color`)
@@ -565,8 +565,8 @@ data class Base(
                     data class Muted(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                     /**
                      * @property default Semantic text color — status/error. Resolves to #E18476. (symbol: `AppTheme.semanticColors.text.status.attention.subtle.default`, via wiring rule `base-color`)
@@ -578,8 +578,8 @@ data class Base(
                     data class Subtle(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                 }
                 /**
@@ -633,8 +633,8 @@ data class Base(
             data class Base(
                 val default: androidx.compose.ui.graphics.Color,
                 val hover: androidx.compose.ui.graphics.Color,
-                val pressed: androidx.compose.ui.graphics.Color?,
-                val disabled: androidx.compose.ui.graphics.Color?,
+                val pressed: androidx.compose.ui.graphics.Color,
+                val disabled: androidx.compose.ui.graphics.Color,
             )
             /**
              * @property default Semantic icon color — emphasis/default. Resolves to #FDC7A9. (symbol: `AppTheme.semanticColors.icon.strong.default`, via wiring rule `base-color`)
@@ -646,8 +646,8 @@ data class Base(
             data class Strong(
                 val default: androidx.compose.ui.graphics.Color,
                 val hover: androidx.compose.ui.graphics.Color,
-                val pressed: androidx.compose.ui.graphics.Color?,
-                val disabled: androidx.compose.ui.graphics.Color?,
+                val pressed: androidx.compose.ui.graphics.Color,
+                val disabled: androidx.compose.ui.graphics.Color,
             )
             /**
              * @property default Semantic icon color — emphasis/default. Resolves to #FDC7A9. (symbol: `AppTheme.semanticColors.icon.emphasis.default`, via wiring rule `base-color`)
@@ -659,8 +659,8 @@ data class Base(
             data class Emphasis(
                 val default: androidx.compose.ui.graphics.Color,
                 val hover: androidx.compose.ui.graphics.Color,
-                val pressed: androidx.compose.ui.graphics.Color?,
-                val disabled: androidx.compose.ui.graphics.Color?,
+                val pressed: androidx.compose.ui.graphics.Color,
+                val disabled: androidx.compose.ui.graphics.Color,
             )
             /**
              * @property default Semantic icon color — muted/default. Resolves to #96959F. (symbol: `AppTheme.semanticColors.icon.muted.default`, via wiring rule `base-color`)
@@ -672,8 +672,8 @@ data class Base(
             data class Muted(
                 val default: androidx.compose.ui.graphics.Color,
                 val hover: androidx.compose.ui.graphics.Color,
-                val pressed: androidx.compose.ui.graphics.Color?,
-                val disabled: androidx.compose.ui.graphics.Color?,
+                val pressed: androidx.compose.ui.graphics.Color,
+                val disabled: androidx.compose.ui.graphics.Color,
             )
             /**
              * @property default Semantic text color — subtle/default. Resolves to #6D6C79. (symbol: `AppTheme.semanticColors.icon.subtle.default`, via wiring rule `base-color`)
@@ -685,8 +685,8 @@ data class Base(
             data class Subtle(
                 val default: androidx.compose.ui.graphics.Color,
                 val hover: androidx.compose.ui.graphics.Color,
-                val pressed: androidx.compose.ui.graphics.Color?,
-                val disabled: androidx.compose.ui.graphics.Color?,
+                val pressed: androidx.compose.ui.graphics.Color,
+                val disabled: androidx.compose.ui.graphics.Color,
             )
             /**
              * @property default Semantic text color — link/default. Resolves to #ACA8E3. (symbol: `AppTheme.semanticColors.icon.link.default`, via wiring rule `base-color`)
@@ -698,8 +698,8 @@ data class Base(
             data class Link(
                 val default: androidx.compose.ui.graphics.Color,
                 val hover: androidx.compose.ui.graphics.Color,
-                val pressed: androidx.compose.ui.graphics.Color?,
-                val disabled: androidx.compose.ui.graphics.Color?,
+                val pressed: androidx.compose.ui.graphics.Color,
+                val disabled: androidx.compose.ui.graphics.Color,
                 val emphasized: Emphasized,
                 val subtle: Subtle,
             ) {
@@ -713,8 +713,8 @@ data class Base(
                 data class Emphasized(
                     val default: androidx.compose.ui.graphics.Color,
                     val hover: androidx.compose.ui.graphics.Color,
-                    val pressed: androidx.compose.ui.graphics.Color?,
-                    val disabled: androidx.compose.ui.graphics.Color?,
+                    val pressed: androidx.compose.ui.graphics.Color,
+                    val disabled: androidx.compose.ui.graphics.Color,
                 )
                 /**
                  * @property default Semantic text color — link/subtle/default. Resolves to #96959F. (symbol: `AppTheme.semanticColors.icon.link.subtle.default`, via wiring rule `base-color`)
@@ -726,8 +726,8 @@ data class Base(
                 data class Subtle(
                     val default: androidx.compose.ui.graphics.Color,
                     val hover: androidx.compose.ui.graphics.Color,
-                    val pressed: androidx.compose.ui.graphics.Color?,
-                    val disabled: androidx.compose.ui.graphics.Color?,
+                    val pressed: androidx.compose.ui.graphics.Color,
+                    val disabled: androidx.compose.ui.graphics.Color,
                 )
             }
             @androidx.compose.runtime.Immutable
@@ -745,8 +745,8 @@ data class Base(
                 data class Emphasized(
                     val default: androidx.compose.ui.graphics.Color,
                     val hover: androidx.compose.ui.graphics.Color,
-                    val pressed: androidx.compose.ui.graphics.Color?,
-                    val disabled: androidx.compose.ui.graphics.Color?,
+                    val pressed: androidx.compose.ui.graphics.Color,
+                    val disabled: androidx.compose.ui.graphics.Color,
                 )
                 /**
                  * @property default Semantic icon color — accent/subtle/default. Resolves to #ACA8E3. (symbol: `AppTheme.semanticColors.icon.accent.subtle.default`, via wiring rule `base-color`)
@@ -758,8 +758,8 @@ data class Base(
                 data class Subtle(
                     val default: androidx.compose.ui.graphics.Color,
                     val hover: androidx.compose.ui.graphics.Color,
-                    val pressed: androidx.compose.ui.graphics.Color?,
-                    val disabled: androidx.compose.ui.graphics.Color?,
+                    val pressed: androidx.compose.ui.graphics.Color,
+                    val disabled: androidx.compose.ui.graphics.Color,
                 )
             }
             /**
@@ -772,8 +772,8 @@ data class Base(
             data class OnAccent(
                 val default: androidx.compose.ui.graphics.Color,
                 val hover: androidx.compose.ui.graphics.Color,
-                val pressed: androidx.compose.ui.graphics.Color?,
-                val disabled: androidx.compose.ui.graphics.Color?,
+                val pressed: androidx.compose.ui.graphics.Color,
+                val disabled: androidx.compose.ui.graphics.Color,
             )
             /**
              * @property accent (symbol: `AppTheme.semanticColors.icon.brand.accent`, via wiring rule `base-color`)
@@ -814,8 +814,8 @@ data class Base(
                     data class Base(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                     /**
                      * @property default Semantic text color — danger/emphasized/default. Resolves to #40110B. (symbol: `AppTheme.semanticColors.icon.status.danger.emphasized.default`, via wiring rule `base-color`)
@@ -827,8 +827,8 @@ data class Base(
                     data class Emphasized(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                     /**
                      * @property default Semantic icon color — status/error. Resolves to #E18476. (symbol: `AppTheme.semanticColors.icon.status.danger.muted.default`, via wiring rule `base-color`)
@@ -840,8 +840,8 @@ data class Base(
                     data class Muted(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                     /**
                      * @property default Semantic icon color — status/error. Resolves to #E18476. (symbol: `AppTheme.semanticColors.icon.status.danger.subtle.default`, via wiring rule `base-color`)
@@ -853,8 +853,8 @@ data class Base(
                     data class Subtle(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                 }
                 /**
@@ -892,8 +892,8 @@ data class Base(
                     data class Base(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                     /**
                      * @property default Semantic text color — danger/emphasized/default. Resolves to #40110B. (symbol: `AppTheme.semanticColors.icon.status.attention.emphasized.default`, via wiring rule `base-color`)
@@ -905,8 +905,8 @@ data class Base(
                     data class Emphasized(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                     /**
                      * @property default Semantic icon color — status/error. Resolves to #E18476. (symbol: `AppTheme.semanticColors.icon.status.attention.muted.default`, via wiring rule `base-color`)
@@ -918,8 +918,8 @@ data class Base(
                     data class Muted(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                     /**
                      * @property default Semantic icon color — status/error. Resolves to #E18476. (symbol: `AppTheme.semanticColors.icon.status.attention.subtle.default`, via wiring rule `base-color`)
@@ -931,8 +931,8 @@ data class Base(
                     data class Subtle(
                         val default: androidx.compose.ui.graphics.Color,
                         val hover: androidx.compose.ui.graphics.Color,
-                        val pressed: androidx.compose.ui.graphics.Color?,
-                        val disabled: androidx.compose.ui.graphics.Color?,
+                        val pressed: androidx.compose.ui.graphics.Color,
+                        val disabled: androidx.compose.ui.graphics.Color,
                     )
                 }
             }
@@ -1595,26 +1595,26 @@ fun baseLight(primitives: Primitives): Base =
                     primary = Base.Color.Surface.Action.Primary(
                         default = primitives.palette.halo._500,
                         hover = primitives.palette.halo._400,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.halo._500.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.halo._500.copy(alpha = primitives.opacity._20),
                     ),
                     secondary = Base.Color.Surface.Action.Secondary(
                         default = primitives.palette.neutral.white,
                         hover = primitives.palette.neutral.white,
-                        pressed = null,
-                        disabled = null,
-                        strong = Base.Color.Surface.Action.Secondary.Strong(
+                        pressed = primitives.palette.neutral.white.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.neutral.white.copy(alpha = primitives.opacity._20),
+                        emphasized = Base.Color.Surface.Action.Secondary.Emphasized(
                             default = primitives.palette.slate._300,
                             hover = primitives.palette.slate._200,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.slate._300.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.slate._300.copy(alpha = primitives.opacity._20),
                         ),
                     ),
                     destructive = Base.Color.Surface.Action.Destructive(
                         default = primitives.palette.coral._700,
                         hover = primitives.palette.coral._800,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.coral._700.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.coral._700.copy(alpha = primitives.opacity._20),
                     ),
                 ),
                 accent = Base.Color.Surface.Accent(
@@ -1691,70 +1691,70 @@ fun baseLight(primitives: Primitives): Base =
                 base = Base.Color.Text.Base(
                     default = primitives.palette.midnight._900,
                     hover = primitives.palette.midnight._800,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.midnight._900.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.midnight._900.copy(alpha = primitives.opacity._20),
                 ),
                 strong = Base.Color.Text.Strong(
                     default = primitives.palette.midnight._600,
                     hover = primitives.palette.midnight._500,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.midnight._600.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.midnight._600.copy(alpha = primitives.opacity._20),
                 ),
                 emphasis = Base.Color.Text.Emphasis(
                     default = primitives.palette.midnight._500,
                     hover = primitives.palette.midnight._400,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.midnight._500.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.midnight._500.copy(alpha = primitives.opacity._20),
                 ),
                 muted = Base.Color.Text.Muted(
                     default = primitives.palette.midnight._400,
                     hover = primitives.palette.halo._300,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.midnight._400.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.midnight._400.copy(alpha = primitives.opacity._20),
                 ),
                 subtle = Base.Color.Text.Subtle(
                     default = primitives.palette.halo._200,
                     hover = primitives.palette.halo._300,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.halo._200.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.halo._200.copy(alpha = primitives.opacity._20),
                 ),
                 link = Base.Color.Text.Link(
                     default = primitives.palette.lavender._700,
                     hover = primitives.palette.lavender._600,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.lavender._700.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.lavender._700.copy(alpha = primitives.opacity._20),
                     emphasized = Base.Color.Text.Link.Emphasized(
                         default = primitives.palette.lime._700,
                         hover = primitives.palette.lime._600,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.lime._700.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.lime._700.copy(alpha = primitives.opacity._20),
                     ),
                     subtle = Base.Color.Text.Link.Subtle(
                         default = primitives.palette.halo._400,
                         hover = primitives.palette.halo._300,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.halo._400.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.halo._400.copy(alpha = primitives.opacity._20),
                     ),
                 ),
                 accent = Base.Color.Text.Accent(
                     emphasized = Base.Color.Text.Accent.Emphasized(
                         default = primitives.palette.lavender._700,
                         hover = primitives.palette.lavender._600,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.lavender._700.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.lavender._700.copy(alpha = primitives.opacity._20),
                     ),
                     subtle = Base.Color.Text.Accent.Subtle(
                         default = primitives.palette.lavender._700,
                         hover = primitives.palette.lavender._600,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.lavender._700.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.lavender._700.copy(alpha = primitives.opacity._20),
                     ),
                 ),
                 onAccent = Base.Color.Text.OnAccent(
                     default = primitives.palette.neutral.white,
                     hover = primitives.palette.neutral.white90,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.neutral.white.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.neutral.white.copy(alpha = primitives.opacity._20),
                 ),
                 status = Base.Color.Text.Status(
                     info = primitives.palette.halo._700,
@@ -1772,52 +1772,52 @@ fun baseLight(primitives: Primitives): Base =
                         base = Base.Color.Text.Status.Danger.Base(
                             default = primitives.palette.coral._700,
                             hover = primitives.palette.coral._600,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._700.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._700.copy(alpha = primitives.opacity._20),
                         ),
                         emphasized = Base.Color.Text.Status.Danger.Emphasized(
                             default = primitives.palette.coral._300,
                             hover = primitives.palette.coral._200,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._300.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._300.copy(alpha = primitives.opacity._20),
                         ),
                         muted = Base.Color.Text.Status.Danger.Muted(
                             default = primitives.palette.coral._700,
                             hover = primitives.palette.coral._600,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._700.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._700.copy(alpha = primitives.opacity._20),
                         ),
                         subtle = Base.Color.Text.Status.Danger.Subtle(
                             default = primitives.palette.coral._700,
                             hover = primitives.palette.coral._600,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._700.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._700.copy(alpha = primitives.opacity._20),
                         ),
                     ),
                     attention = Base.Color.Text.Status.Attention(
                         base = Base.Color.Text.Status.Attention.Base(
                             default = primitives.palette.coral._700,
                             hover = primitives.palette.coral._600,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._700.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._700.copy(alpha = primitives.opacity._20),
                         ),
                         emphasized = Base.Color.Text.Status.Attention.Emphasized(
                             default = primitives.palette.lavender._900,
                             hover = primitives.palette.lavender._800,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.lavender._900.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.lavender._900.copy(alpha = primitives.opacity._20),
                         ),
                         muted = Base.Color.Text.Status.Attention.Muted(
                             default = primitives.palette.lavender._700,
                             hover = primitives.palette.lavender._600,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.lavender._700.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.lavender._700.copy(alpha = primitives.opacity._20),
                         ),
                         subtle = Base.Color.Text.Status.Attention.Subtle(
                             default = primitives.palette.coral._700,
                             hover = primitives.palette.coral._600,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._700.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._700.copy(alpha = primitives.opacity._20),
                         ),
                     ),
                     high = Base.Color.Text.Status.High(
@@ -1837,70 +1837,70 @@ fun baseLight(primitives: Primitives): Base =
                 base = Base.Color.Icon.Base(
                     default = primitives.palette.midnight._900,
                     hover = primitives.palette.midnight._800,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.midnight._900.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.midnight._900.copy(alpha = primitives.opacity._20),
                 ),
                 strong = Base.Color.Icon.Strong(
                     default = primitives.palette.coral._600,
                     hover = primitives.palette.coral._500,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.coral._600.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.coral._600.copy(alpha = primitives.opacity._40),
                 ),
                 emphasis = Base.Color.Icon.Emphasis(
                     default = primitives.palette.apricot._700,
                     hover = primitives.palette.apricot._600,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.apricot._700.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.apricot._700.copy(alpha = primitives.opacity._20),
                 ),
                 muted = Base.Color.Icon.Muted(
                     default = primitives.palette.halo._400,
                     hover = primitives.palette.halo._300,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.halo._400.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.halo._400.copy(alpha = primitives.opacity._20),
                 ),
                 subtle = Base.Color.Icon.Subtle(
                     default = primitives.palette.halo._300,
                     hover = primitives.palette.halo._200,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.halo._300.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.halo._300.copy(alpha = primitives.opacity._20),
                 ),
                 link = Base.Color.Icon.Link(
                     default = primitives.palette.lavender._700,
                     hover = primitives.palette.lavender._600,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.lavender._700.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.lavender._700.copy(alpha = primitives.opacity._20),
                     emphasized = Base.Color.Icon.Link.Emphasized(
                         default = primitives.palette.lime._700,
                         hover = primitives.palette.lime._600,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.lime._700.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.lime._700.copy(alpha = primitives.opacity._20),
                     ),
                     subtle = Base.Color.Icon.Link.Subtle(
                         default = primitives.palette.halo._400,
                         hover = primitives.palette.halo._300,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.halo._400.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.halo._400.copy(alpha = primitives.opacity._20),
                     ),
                 ),
                 accent = Base.Color.Icon.Accent(
                     emphasized = Base.Color.Icon.Accent.Emphasized(
                         default = primitives.palette.lavender._700,
                         hover = primitives.palette.lavender._600,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.lavender._700.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.lavender._700.copy(alpha = primitives.opacity._20),
                     ),
                     subtle = Base.Color.Icon.Accent.Subtle(
                         default = primitives.palette.lavender._700,
                         hover = primitives.palette.lavender._600,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.lavender._700.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.lavender._700.copy(alpha = primitives.opacity._20),
                     ),
                 ),
                 onAccent = Base.Color.Icon.OnAccent(
                     default = primitives.palette.neutral.white,
                     hover = primitives.palette.neutral.white90,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.neutral.white.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.neutral.white.copy(alpha = primitives.opacity._20),
                 ),
                 brand = Base.Color.Icon.Brand(
                     accent = primitives.palette.lime._700,
@@ -1913,26 +1913,26 @@ fun baseLight(primitives: Primitives): Base =
                         base = Base.Color.Icon.Status.Danger.Base(
                             default = primitives.palette.coral._700,
                             hover = primitives.palette.coral._600,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._700.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._700.copy(alpha = primitives.opacity._20),
                         ),
                         emphasized = Base.Color.Icon.Status.Danger.Emphasized(
                             default = primitives.palette.coral._800,
                             hover = primitives.palette.coral._700,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._800.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._800.copy(alpha = primitives.opacity._20),
                         ),
                         muted = Base.Color.Icon.Status.Danger.Muted(
                             default = primitives.palette.coral._600,
                             hover = primitives.palette.coral._500,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._600.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._600.copy(alpha = primitives.opacity._20),
                         ),
                         subtle = Base.Color.Icon.Status.Danger.Subtle(
                             default = primitives.palette.coral._700,
                             hover = primitives.palette.coral._600,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._700.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._700.copy(alpha = primitives.opacity._20),
                         ),
                     ),
                     success = Base.Color.Icon.Status.Success(
@@ -1947,26 +1947,26 @@ fun baseLight(primitives: Primitives): Base =
                         base = Base.Color.Icon.Status.Attention.Base(
                             default = primitives.palette.coral._700,
                             hover = primitives.palette.coral._600,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._700.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._700.copy(alpha = primitives.opacity._20),
                         ),
                         emphasized = Base.Color.Icon.Status.Attention.Emphasized(
                             default = primitives.palette.coral._800,
                             hover = primitives.palette.coral._700,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._800.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._800.copy(alpha = primitives.opacity._20),
                         ),
                         muted = Base.Color.Icon.Status.Attention.Muted(
                             default = primitives.palette.coral._600,
                             hover = primitives.palette.coral._500,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._600.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._600.copy(alpha = primitives.opacity._20),
                         ),
                         subtle = Base.Color.Icon.Status.Attention.Subtle(
                             default = primitives.palette.coral._700,
                             hover = primitives.palette.coral._600,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._700.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._700.copy(alpha = primitives.opacity._20),
                         ),
                     ),
                 ),
@@ -2258,26 +2258,26 @@ fun baseDark(primitives: Primitives): Base =
                     primary = Base.Color.Surface.Action.Primary(
                         default = primitives.palette.lavender._500,
                         hover = primitives.palette.lavender._400,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.lavender._500.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.lavender._500.copy(alpha = primitives.opacity._20),
                     ),
                     secondary = Base.Color.Surface.Action.Secondary(
                         default = primitives.palette.halo._600,
                         hover = primitives.palette.halo._500,
-                        pressed = null,
-                        disabled = null,
-                        strong = Base.Color.Surface.Action.Secondary.Strong(
+                        pressed = primitives.palette.halo._600.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.halo._600.copy(alpha = primitives.opacity._20),
+                        emphasized = Base.Color.Surface.Action.Secondary.Emphasized(
                             default = primitives.palette.halo._500,
                             hover = primitives.palette.halo._400,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.halo._500.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.halo._500.copy(alpha = primitives.opacity._20),
                         ),
                     ),
                     destructive = Base.Color.Surface.Action.Destructive(
                         default = primitives.palette.coral._500,
                         hover = primitives.palette.coral._400,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.coral._500.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.coral._500.copy(alpha = primitives.opacity._20),
                     ),
                 ),
                 accent = Base.Color.Surface.Accent(
@@ -2354,70 +2354,70 @@ fun baseDark(primitives: Primitives): Base =
                 base = Base.Color.Text.Base(
                     default = primitives.palette.tan._200,
                     hover = primitives.palette.tan._100,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.tan._200.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.tan._200.copy(alpha = primitives.opacity._20),
                 ),
                 strong = Base.Color.Text.Strong(
                     default = primitives.palette.tan._100,
                     hover = primitives.palette.neutral.white,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.tan._100.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.tan._100.copy(alpha = primitives.opacity._20),
                 ),
                 emphasis = Base.Color.Text.Emphasis(
                     default = primitives.palette.tan._400,
                     hover = primitives.palette.tan._300,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.tan._400.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.tan._400.copy(alpha = primitives.opacity._20),
                 ),
                 muted = Base.Color.Text.Muted(
                     default = primitives.palette.halo._100,
                     hover = primitives.palette.halo._200,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.halo._100.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.halo._100.copy(alpha = primitives.opacity._20),
                 ),
                 subtle = Base.Color.Text.Subtle(
                     default = primitives.palette.halo._200,
                     hover = primitives.palette.halo._100,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.halo._200.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.halo._200.copy(alpha = primitives.opacity._20),
                 ),
                 link = Base.Color.Text.Link(
                     default = primitives.palette.lavender._500,
                     hover = primitives.palette.lavender._400,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.lavender._500.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.lavender._500.copy(alpha = primitives.opacity._20),
                     emphasized = Base.Color.Text.Link.Emphasized(
                         default = primitives.palette.lime._400,
                         hover = primitives.palette.lime._300,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.lime._400.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.lime._400.copy(alpha = primitives.opacity._20),
                     ),
                     subtle = Base.Color.Text.Link.Subtle(
                         default = primitives.palette.halo._100,
                         hover = primitives.palette.halo._200,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.halo._100.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.halo._100.copy(alpha = primitives.opacity._20),
                     ),
                 ),
                 accent = Base.Color.Text.Accent(
                     emphasized = Base.Color.Text.Accent.Emphasized(
                         default = primitives.palette.lavender._400,
                         hover = primitives.palette.lavender._300,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.lavender._400.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.lavender._400.copy(alpha = primitives.opacity._20),
                     ),
                     subtle = Base.Color.Text.Accent.Subtle(
                         default = primitives.palette.lavender._500,
                         hover = primitives.palette.lavender._400,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.lavender._500.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.lavender._500.copy(alpha = primitives.opacity._20),
                     ),
                 ),
                 onAccent = Base.Color.Text.OnAccent(
                     default = primitives.palette.halo._900,
                     hover = primitives.palette.halo._800,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.halo._900.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.halo._900.copy(alpha = primitives.opacity._20),
                 ),
                 status = Base.Color.Text.Status(
                     info = primitives.palette.tan._300,
@@ -2435,52 +2435,52 @@ fun baseDark(primitives: Primitives): Base =
                         base = Base.Color.Text.Status.Danger.Base(
                             default = primitives.palette.coral._600,
                             hover = primitives.palette.coral._500,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._600.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._600.copy(alpha = primitives.opacity._20),
                         ),
                         emphasized = Base.Color.Text.Status.Danger.Emphasized(
                             default = primitives.palette.coral._900,
                             hover = primitives.palette.coral._800,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._900.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._900.copy(alpha = primitives.opacity._20),
                         ),
                         muted = Base.Color.Text.Status.Danger.Muted(
                             default = primitives.palette.coral._500,
                             hover = primitives.palette.coral._400,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._500.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._500.copy(alpha = primitives.opacity._20),
                         ),
                         subtle = Base.Color.Text.Status.Danger.Subtle(
                             default = primitives.palette.coral._400,
                             hover = primitives.palette.coral._300,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._400.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._400.copy(alpha = primitives.opacity._20),
                         ),
                     ),
                     attention = Base.Color.Text.Status.Attention(
                         base = Base.Color.Text.Status.Attention.Base(
                             default = primitives.palette.coral._600,
                             hover = primitives.palette.coral._500,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._600.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._600.copy(alpha = primitives.opacity._20),
                         ),
                         emphasized = Base.Color.Text.Status.Attention.Emphasized(
                             default = primitives.palette.coral._900,
                             hover = primitives.palette.coral._800,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._900.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._900.copy(alpha = primitives.opacity._20),
                         ),
                         muted = Base.Color.Text.Status.Attention.Muted(
                             default = primitives.palette.lavender._500,
                             hover = primitives.palette.lavender._400,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.lavender._500.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.lavender._500.copy(alpha = primitives.opacity._20),
                         ),
                         subtle = Base.Color.Text.Status.Attention.Subtle(
                             default = primitives.palette.coral._400,
                             hover = primitives.palette.coral._300,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._400.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._400.copy(alpha = primitives.opacity._20),
                         ),
                     ),
                     high = Base.Color.Text.Status.High(
@@ -2500,70 +2500,70 @@ fun baseDark(primitives: Primitives): Base =
                 base = Base.Color.Icon.Base(
                     default = primitives.palette.tan._200,
                     hover = primitives.palette.tan._100,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.tan._200.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.tan._200.copy(alpha = primitives.opacity._20),
                 ),
                 strong = Base.Color.Icon.Strong(
                     default = primitives.palette.coral._500,
                     hover = primitives.palette.coral._400,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.coral._500.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.coral._500.copy(alpha = primitives.opacity._40),
                 ),
                 emphasis = Base.Color.Icon.Emphasis(
                     default = primitives.palette.apricot._400,
                     hover = primitives.palette.apricot._300,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.apricot._400.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.apricot._400.copy(alpha = primitives.opacity._20),
                 ),
                 muted = Base.Color.Icon.Muted(
                     default = primitives.palette.halo._100,
                     hover = primitives.palette.halo._200,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.halo._100.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.halo._100.copy(alpha = primitives.opacity._20),
                 ),
                 subtle = Base.Color.Icon.Subtle(
                     default = primitives.palette.halo._200,
                     hover = primitives.palette.halo._100,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.halo._200.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.halo._200.copy(alpha = primitives.opacity._20),
                 ),
                 link = Base.Color.Icon.Link(
                     default = primitives.palette.lavender._500,
                     hover = primitives.palette.lavender._400,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.lavender._500.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.lavender._500.copy(alpha = primitives.opacity._20),
                     emphasized = Base.Color.Icon.Link.Emphasized(
                         default = primitives.palette.lime._400,
                         hover = primitives.palette.lime._300,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.lime._400.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.lime._400.copy(alpha = primitives.opacity._20),
                     ),
                     subtle = Base.Color.Icon.Link.Subtle(
                         default = primitives.palette.halo._100,
                         hover = primitives.palette.halo._200,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.halo._100.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.halo._100.copy(alpha = primitives.opacity._20),
                     ),
                 ),
                 accent = Base.Color.Icon.Accent(
                     emphasized = Base.Color.Icon.Accent.Emphasized(
                         default = primitives.palette.lavender._400,
                         hover = primitives.palette.lavender._300,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.lavender._400.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.lavender._400.copy(alpha = primitives.opacity._20),
                     ),
                     subtle = Base.Color.Icon.Accent.Subtle(
                         default = primitives.palette.lavender._500,
                         hover = primitives.palette.lavender._400,
-                        pressed = null,
-                        disabled = null,
+                        pressed = primitives.palette.lavender._500.copy(alpha = primitives.opacity._40),
+                        disabled = primitives.palette.lavender._500.copy(alpha = primitives.opacity._20),
                     ),
                 ),
                 onAccent = Base.Color.Icon.OnAccent(
                     default = primitives.palette.lavender._900,
                     hover = primitives.palette.lavender._800,
-                    pressed = null,
-                    disabled = null,
+                    pressed = primitives.palette.lavender._900.copy(alpha = primitives.opacity._40),
+                    disabled = primitives.palette.lavender._900.copy(alpha = primitives.opacity._20),
                 ),
                 brand = Base.Color.Icon.Brand(
                     accent = primitives.palette.lime._500,
@@ -2576,26 +2576,26 @@ fun baseDark(primitives: Primitives): Base =
                         base = Base.Color.Icon.Status.Danger.Base(
                             default = primitives.palette.coral._600,
                             hover = primitives.palette.coral._500,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._600.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._600.copy(alpha = primitives.opacity._20),
                         ),
                         emphasized = Base.Color.Icon.Status.Danger.Emphasized(
                             default = primitives.palette.coral._900,
                             hover = primitives.palette.coral._800,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._900.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._900.copy(alpha = primitives.opacity._20),
                         ),
                         muted = Base.Color.Icon.Status.Danger.Muted(
                             default = primitives.palette.coral._500,
                             hover = primitives.palette.coral._400,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._500.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._500.copy(alpha = primitives.opacity._20),
                         ),
                         subtle = Base.Color.Icon.Status.Danger.Subtle(
                             default = primitives.palette.coral._400,
                             hover = primitives.palette.coral._300,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._400.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._400.copy(alpha = primitives.opacity._20),
                         ),
                     ),
                     success = Base.Color.Icon.Status.Success(
@@ -2610,26 +2610,26 @@ fun baseDark(primitives: Primitives): Base =
                         base = Base.Color.Icon.Status.Attention.Base(
                             default = primitives.palette.coral._600,
                             hover = primitives.palette.coral._500,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._600.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._600.copy(alpha = primitives.opacity._20),
                         ),
                         emphasized = Base.Color.Icon.Status.Attention.Emphasized(
                             default = primitives.palette.coral._900,
                             hover = primitives.palette.coral._800,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._900.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._900.copy(alpha = primitives.opacity._20),
                         ),
                         muted = Base.Color.Icon.Status.Attention.Muted(
                             default = primitives.palette.coral._500,
                             hover = primitives.palette.coral._400,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._500.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._500.copy(alpha = primitives.opacity._20),
                         ),
                         subtle = Base.Color.Icon.Status.Attention.Subtle(
                             default = primitives.palette.coral._400,
                             hover = primitives.palette.coral._300,
-                            pressed = null,
-                            disabled = null,
+                            pressed = primitives.palette.coral._400.copy(alpha = primitives.opacity._40),
+                            disabled = primitives.palette.coral._400.copy(alpha = primitives.opacity._20),
                         ),
                     ),
                 ),

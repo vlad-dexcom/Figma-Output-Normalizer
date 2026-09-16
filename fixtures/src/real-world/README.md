@@ -37,9 +37,9 @@ write, from before the `.prettierignore` entry above existed. It is
 therefore no longer byte-identical to the plugin's output, and must not be
 used to test byte-level export determinism.
 
-## `gPHx1sqQHIfMs8706VDGM1_c1-88d0431a4019ec4b.tokens.json` — token IR
+## `gPHx1sqQHIfMs8706VDGM1_c1-4228e256df698463.tokens.json` — token IR
 
-A real `*.tokens.json` export (1.5 MB), captured 2026-09-15 as the
+A real `*.tokens.json` export (1.4 MB), captured 2026-09-16 as the
 reference input for migrating the token generator off the Figma REST API
 and onto Token IR (see `schema/tokens/MIGRATION.md`).
 
@@ -47,12 +47,19 @@ Captured after the envelope stabilized, so unlike the IR fixture it
 validates as a whole `tokenDocument` — see
 `../__tests__/real-world-tokens.test.ts`.
 
+This supersedes an earlier capture (`..._c1-88d0431a4019ec4b.tokens.json`,
+2026-09-15, still recoverable from git history) of the same production
+file, re-exported once the plugin picked up the `COMPOSE_COLOR`
+alias-typed-opacity fix (BACKLOG G14): the earlier capture's 168
+`unsupported-value` entries were all instances of that bug and are gone
+from this one.
+
 |                    |                                                              |
 | ------------------ | ------------------------------------------------------------ |
-| `envelope.version` | `c1-88d0431a4019ec4b`                                        |
+| `envelope.version` | `c1-4228e256df698463`                                        |
 | Collections        | 5 (`primitives`, `components`, `base`, `typography`, `layout`) |
 | Tokens             | 2030                                                         |
-| `unresolved`       | 190 (`unsupported-value` 168, `excluded-collection-alias` 22) |
+| `unresolved`       | 22 (`excluded-collection-alias` 22)                           |
 
 It is the reference input for the new generator specifically because it is
 awkward in ways a mock would not be:
@@ -64,8 +71,6 @@ awkward in ways a mock would not be:
   actively wrong — the mode expansion the new generator has to perform.
 - 22 alias edges point into the excluded `figma-only` collection and fall
   back to literals, flagged `excluded`.
-- 168 values are `COMPOSE_COLOR` variable expressions that the schema
-  cannot represent and that are reported rather than dropped.
 - `base`/`typography`/`primitives` all declare modes in a non-alphabetical
   order (`light,dark` / `ios,android` / `Value,iOS,Android`) whose first
   element is the default — the signal the previous generator destroyed by
