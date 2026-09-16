@@ -6,7 +6,9 @@ import { buildTokenModel } from "../../model/build.js";
 import {
   DuplicateClassNameError,
   generateCollectionKotlinFile,
+  generateCollectionLegacyKotlinFiles,
   generateKotlinFiles,
+  generateLegacyKotlinFiles,
   MissingDependencyParamError,
   UnrepresentableTokenValueError,
 } from "../kotlin.js";
@@ -106,6 +108,153 @@ describe("generateCollectionKotlinFile — synthetic", () => {
     expect(file.contents).toContain("fun baseLight(primitives: Primitives): Base =");
     expect(file.contents).toContain("surface = primitives.color.red,");
     expect(file.contents).not.toContain("#FF0000");
+  });
+
+  it("emits a live .copy(alpha = ...) reference for a COMPOSE_COLOR alias with an alias-typed opacity", () => {
+    const primitives = collection({
+      id: "p",
+      name: "primitives",
+      modes: ["value"],
+      tokens: [
+        token({ path: "color/red", modes: { value: "#FF0000" } }),
+        token({ path: "opacity/40", type: "FLOAT", modes: { value: 0.4 } }),
+      ],
+    });
+    const base = collection({
+      id: "b",
+      name: "base",
+      modes: ["light"],
+      dependsOn: ["primitives"],
+      tokens: [
+        token({
+          path: "color/surface",
+          modes: { light: "#FF000066" },
+          alias: {
+            byMode: {
+              light: {
+                collection: "primitives",
+                path: "color/red",
+                opacity: { collection: "primitives", path: "opacity/40" },
+              },
+            },
+          },
+        }),
+      ],
+    });
+    const model = buildTokenModel(document([primitives, base]));
+    const file = generateCollectionKotlinFile(model, base, { packageName: "com.test" })!;
+    expect(file.contents).toContain(
+      "surface = primitives.color.red.copy(alpha = primitives.opacity._40),",
+    );
+    expect(file.contents).not.toContain("#FF000066");
+  });
+
+  it("resolves the opacity edge against its own collection's dependency param when it differs from the color's", () => {
+    const palette = collection({
+      id: "pal",
+      name: "palette",
+      modes: ["value"],
+      tokens: [token({ path: "slate/300", modes: { value: "#FF0000" } })],
+    });
+    const opacityLib = collection({
+      id: "op",
+      name: "opacity",
+      modes: ["value"],
+      tokens: [token({ path: "40", type: "FLOAT", modes: { value: 0.4 } })],
+    });
+    const base = collection({
+      id: "b",
+      name: "base",
+      modes: ["light"],
+      dependsOn: ["palette", "opacity"],
+      tokens: [
+        token({
+          path: "color/surface",
+          modes: { light: "#FF000066" },
+          alias: {
+            byMode: {
+              light: {
+                collection: "palette",
+                path: "slate/300",
+                opacity: { collection: "opacity", path: "40" },
+              },
+            },
+          },
+        }),
+      ],
+    });
+    const model = buildTokenModel(document([palette, opacityLib, base]));
+    const file = generateCollectionKotlinFile(model, base, { packageName: "com.test" })!;
+    expect(file.contents).toContain("surface = palette.slate._300.copy(alpha = opacity._40),");
+  });
+
+  it("throws MissingDependencyParamError when the opacity edge names a collection absent from dependsOn", () => {
+    const palette = collection({
+      id: "pal",
+      name: "palette",
+      modes: ["value"],
+      tokens: [token({ path: "slate/300", modes: { value: "#FF0000" } })],
+    });
+    const base = collection({
+      id: "b",
+      name: "base",
+      modes: ["light"],
+      // Deliberately missing "opacity" in dependsOn, despite the opacity alias below.
+      dependsOn: ["palette"],
+      tokens: [
+        token({
+          path: "color/surface",
+          modes: { light: "#FF000066" },
+          alias: {
+            byMode: {
+              light: {
+                collection: "palette",
+                path: "slate/300",
+                opacity: { collection: "opacity", path: "40" },
+              },
+            },
+          },
+        }),
+      ],
+    });
+    const model = buildTokenModel(document([palette, base]));
+    expect(() => generateCollectionKotlinFile(model, base, { packageName: "com.test" })).toThrow(
+      MissingDependencyParamError,
+    );
+  });
+
+  it("falls back to the base color reference (no .copy) when the opacity edge was excluded by policy", () => {
+    const primitives = collection({
+      id: "p",
+      name: "primitives",
+      modes: ["value"],
+      tokens: [token({ path: "color/red", modes: { value: "#FF0000" } })],
+    });
+    const base = collection({
+      id: "b",
+      name: "base",
+      modes: ["light"],
+      dependsOn: ["primitives"],
+      tokens: [
+        token({
+          path: "color/surface",
+          modes: { light: "#FF000066" },
+          alias: {
+            byMode: {
+              light: {
+                collection: "primitives",
+                path: "color/red",
+                opacity: { collection: "excluded-lib", path: "opacity/40", excluded: true },
+              },
+            },
+          },
+        }),
+      ],
+    });
+    const model = buildTokenModel(document([primitives, base]));
+    const file = generateCollectionKotlinFile(model, base, { packageName: "com.test" })!;
+    expect(file.contents).toContain("surface = primitives.color.red,");
+    expect(file.contents).not.toContain(".copy(alpha");
   });
 
   it("falls back to a baked literal when the alias target was excluded by policy", () => {
@@ -229,6 +378,92 @@ describe("generateKotlinFiles — synthetic", () => {
   });
 });
 
+describe("generateCollectionLegacyKotlinFiles — synthetic", () => {
+  it("returns an empty array for an empty collection", () => {
+    const primitives = collection({ id: "p", name: "primitives", modes: ["value"] });
+    const model = buildTokenModel(document([primitives]));
+    expect(
+      generateCollectionLegacyKotlinFiles(model, primitives, { packageName: "com.test" }),
+    ).toEqual([]);
+  });
+
+  it("splits a collection into one file per top-level branch, in its own subpackage, plus a root aggregator file", () => {
+    const primitives = collection({
+      id: "p",
+      name: "primitives",
+      modes: ["value"],
+      tokens: [token({ path: "color/red", modes: { value: "#FF0000" } })],
+    });
+    const base = collection({
+      id: "b",
+      name: "base",
+      modes: ["light", "dark"],
+      dependsOn: ["primitives"],
+      tokens: [
+        token({
+          path: "color/surface",
+          modes: { light: "#FF0000", dark: "#00FF00" },
+          alias: { byMode: { light: { collection: "primitives", path: "color/red" } } },
+        }),
+        token({ path: "scale/base", type: "FLOAT", modes: { light: 4, dark: 4 } }),
+      ],
+    });
+    const model = buildTokenModel(document([primitives, base]));
+    const files = generateCollectionLegacyKotlinFiles(model, base, { packageName: "com.test" });
+    const byPath = new Map(files.map((f) => [f.relativePath, f]));
+
+    // Root file: restores the "com.test.base" subpackage (the flat emitter
+    // puts collection root classes directly under "com.test").
+    const root = byPath.get("com/test/base/Base.kt")!;
+    expect(root).toBeDefined();
+    expect(root.contents).toContain("package com.test.base");
+    expect(root.contents).toContain(
+      "val color: com.test.base.color.Color,",
+    );
+    expect(root.contents).toContain(
+      "val scale: com.test.base.scale.Scale,",
+    );
+    expect(root.contents).not.toContain("data class Color(");
+    expect(root.contents).toContain(
+      "fun baseLight(primitives: com.test.primitives.Primitives): Base = Base(",
+    );
+    expect(root.contents).toContain("color = colorLight(primitives),");
+    expect(root.contents).toContain("scale = scaleLight(primitives),");
+
+    // Branch file: full nested data class + per-mode factory, restoring
+    // the old "token.base.color.Color" package shape.
+    const colorFile = byPath.get("com/test/base/color/Color.kt")!;
+    expect(colorFile).toBeDefined();
+    expect(colorFile.contents).toContain("package com.test.base.color");
+    expect(colorFile.contents).toContain("data class Color(");
+    expect(colorFile.contents).toContain(
+      "fun colorLight(primitives: com.test.primitives.Primitives): Color =",
+    );
+    expect(colorFile.contents).toContain("surface = primitives.color.red,");
+    expect(colorFile.contents).toContain(
+      "fun colorDark(primitives: com.test.primitives.Primitives): Color =",
+    );
+  });
+});
+
+describe("generateLegacyKotlinFiles — synthetic", () => {
+  it("generates legacy-layout files for every non-empty collection in the model", () => {
+    const primitives = collection({
+      id: "p",
+      name: "primitives",
+      modes: ["value"],
+      tokens: [token({ path: "color/red", modes: { value: "#FF0000" } })],
+    });
+    const layout = collection({ id: "l", name: "layout", modes: ["value"] });
+    const model = buildTokenModel(document([primitives, layout]));
+    const files = generateLegacyKotlinFiles(model, { packageName: "com.test" });
+    expect(files.map((f) => f.relativePath)).toEqual([
+      "com/test/primitives/color/Color.kt",
+      "com/test/primitives/Primitives.kt",
+    ]);
+  });
+});
+
 describe("generateKotlinFiles — real-world fixture", () => {
   it("generates valid output for every null-free collection, and a nullable field for base's known null-valued token", async () => {
     const doc = await loadTokenDocument(REAL_WORLD_TOKENS_PATH);
@@ -263,5 +498,19 @@ describe("generateKotlinFiles — real-world fixture", () => {
     expect(() => generateCollectionKotlinFile(model, base, { packageName: "com.test" })).toThrow(
       UnrepresentableTokenValueError,
     );
+  });
+
+  it("legacy layout also generates valid, non-throwing output for every null-free collection", async () => {
+    const doc = await loadTokenDocument(REAL_WORLD_TOKENS_PATH);
+    const model = buildTokenModel(doc);
+    const files = generateLegacyKotlinFiles(model, {
+      packageName: "com.dexcom.tokens",
+      excludeModePattern: /ios/i,
+    });
+    const byPath = new Map(files.map((f) => [f.relativePath, f]));
+    // Restores the old "token.base.color.Color" package shape.
+    expect(byPath.has("com/dexcom/tokens/base/color/Color.kt")).toBe(true);
+    expect(byPath.has("com/dexcom/tokens/base/Base.kt")).toBe(true);
+    expect(byPath.has("com/dexcom/tokens/primitives/Primitives.kt")).toBe(true);
   });
 });

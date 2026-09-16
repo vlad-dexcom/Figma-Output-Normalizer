@@ -10,6 +10,7 @@ describe("parseArgs", () => {
       packageName: "com.test",
       prefix: undefined,
       excludeMode: undefined,
+      layout: "flat",
       dryRun: false,
       check: false,
       onUnresolved: {},
@@ -97,5 +98,25 @@ describe("parseArgs", () => {
 
   it("--help throws the help text itself, not an error condition", () => {
     expect(() => parseArgs(["--help"])).toThrow(HELP_TEXT);
+  });
+
+  it("parses --layout legacy", () => {
+    const options = parseArgs([
+      "--input",
+      "i",
+      "--output",
+      "o",
+      "--package",
+      "p",
+      "--layout",
+      "legacy",
+    ]);
+    expect(options.layout).toBe("legacy");
+  });
+
+  it("throws for an unknown --layout value", () => {
+    expect(() =>
+      parseArgs(["--input", "i", "--output", "o", "--package", "p", "--layout", "bogus"]),
+    ).toThrow(/--layout expects/);
   });
 });

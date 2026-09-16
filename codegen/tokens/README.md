@@ -42,23 +42,30 @@ alias graph (see git history for `codegen/tokens/_legacy-python/`).
    are camelCased/PascalCased per path segment and backtick-escaped when
    they collide with a Kotlin keyword. When a token carries `token.symbol`
    (from `mappings/wiring-rules`), it's surfaced as a KDoc provenance
-   comment — never used to derive a name.
+   comment — never used to derive a name. A `COMPOSE_COLOR` alias whose
+   opacity argument is itself a named variable (not a bare number) is
+   emitted as a live `base.copy(alpha = opacity._40)` reference rather than
+   a baked hex literal (see `docs/BACKLOG.md` G14).
 
-   **v1 emits one file per collection only.** No root class aggregates every
-   collection into one app-level tree; wiring `primitivesValue()` →
-   `baseLight(primitives)` → … in the right order is left to hand-written
-   Android code. This was a deliberate scope decision, not an oversight.
+   **v1 emits one file per collection only, by default.** No root class
+   aggregates every collection into one app-level tree; wiring
+   `primitivesValue()` → `baseLight(primitives)` → … in the right order is
+   left to hand-written Android code. This was a deliberate scope
+   decision, not an oversight. `--layout legacy` (see below) exists as a
+   bridge for consumers still coupled to the old generator's per-branch
+   package layout — see `docs/BACKLOG.md` G13 for why, and why it's not
+   the default.
 
 4. **`src/cli/`** — the `codegen-tokens` CLI: `--input`, `--output`,
    `--package`, `--prefix`, `--exclude-mode <regex>`,
-   `--on-unresolved <reason>=<action>` (repeatable), `--dry-run`, `--check`,
-   `--help`.
+   `--on-unresolved <reason>=<action>` (repeatable), `--layout <flat|legacy>`,
+   `--dry-run`, `--check`, `--help`.
 
 ## Running the CLI
 
-There is no working compiled `bin` entry point in this monorepo: sibling
-workspace packages resolve via `"main": "src/index.ts"` (TypeScript source),
-which a plain `node` cannot load — only `tsx` (or `vitest`) can. Run it via:
+Sibling workspace packages resolve via `"main": "src/index.ts"` (TypeScript
+source), which a plain `node` cannot load directly — only `tsx` (or
+`vitest`) can. During development, run the CLI via:
 
 ```bash
 npm run cli --workspace=@figma-normalizator/codegen-tokens -- \
@@ -71,6 +78,41 @@ npm run cli --workspace=@figma-normalizator/codegen-tokens -- \
 
 Add `--check` to fail (without writing) if the output directory is stale, or
 `--dry-run` to preview which files would be written.
+
+Add `--layout legacy` to restore the old generator's per-branch/subpackage
+file layout (e.g. `<package>.base.color.Color`) instead of the default
+one-file-per-collection layout — useful only for a consumer whose existing
+hand-written code still references that package shape. Factory functions
+still take the whole upstream collection as their parameter (e.g.
+`colorLight(primitives: Primitives)`), not the narrower per-branch
+parameters the old generator used, so migrating a consumer onto this layout
+still requires updating those call sites. See `docs/BACKLOG.md` G13.
+
+### Building a standalone bundle
+
+For external consumers that don't want to `npm install` or check out the
+whole monorepo (e.g. the DexFigmaPlugin IDE plugin), build a single
+dependency-free file with esbuild:
+
+```bash
+npm run bundle --workspace=@figma-normalizator/codegen-tokens
+```
+
+This writes `codegen/tokens/dist/codegen-tokens.cjs`, which bundles the CLI
+together with the `schema` and `mappings` workspace sources (and `ajv`) so
+it needs nothing beyond a plain Node.js runtime — no `npm install`, no
+workspace resolution, no TypeScript loader. Run it exactly like the CLI,
+just via `node` instead of `npm run cli --workspace=...`:
+
+```bash
+node codegen/tokens/dist/codegen-tokens.cjs \
+  --input path/to/export.tokens.json \
+  --output path/to/output/dir \
+  --package com.example.tokens
+```
+
+`dist/` is gitignored (a build artifact, not source); rebuild the bundle
+after pulling changes to this package or its workspace dependencies.
 
 ## Golden-output tests
 

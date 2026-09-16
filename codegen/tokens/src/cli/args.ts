@@ -17,6 +17,14 @@ export interface CliOptions {
   excludeMode?: RegExp;
   /** Per-reason overrides for the default unresolved-token triage. */
   onUnresolved: UnresolvedActionOverrides;
+  /**
+   * "flat" (default): one file per collection, branches nested as inner
+   * classes. "legacy": one file per top-level branch in its own
+   * subpackage plus a root aggregator file per collection, matching the
+   * old (retired) generator's structural shape -- for consumers that
+   * still depend on that package layout (see docs/BACKLOG.md G13).
+   */
+  layout: "flat" | "legacy";
   /** Generate into memory and report what would be written, without touching disk. */
   dryRun: boolean;
   /** Generate into memory and diff against --output; exits non-zero on any difference, writes nothing. */
@@ -73,6 +81,7 @@ export function parseArgs(argv: readonly string[]): CliOptions {
   let excludeMode: RegExp | undefined;
   let dryRun = false;
   let check = false;
+  let layout: "flat" | "legacy" = "flat";
   const onUnresolved: UnresolvedActionOverrides = {};
 
   const next = (flag: string, i: number): string => {
@@ -112,6 +121,14 @@ export function parseArgs(argv: readonly string[]): CliOptions {
       case "--check":
         check = true;
         break;
+      case "--layout": {
+        const value = next(arg, i++);
+        if (value !== "flat" && value !== "legacy") {
+          throw new CliArgError(`--layout expects "flat" or "legacy", got ${JSON.stringify(value)}`);
+        }
+        layout = value;
+        break;
+      }
       case "--help":
       case "-h":
         throw new CliArgError(HELP_TEXT);
@@ -138,6 +155,7 @@ export function parseArgs(argv: readonly string[]): CliOptions {
     prefix,
     excludeMode,
     onUnresolved,
+    layout,
     dryRun,
     check,
   };
@@ -160,6 +178,11 @@ Options:
   --on-unresolved <reason>=<silent|warn|fail>
                           Override the default triage action for one
                           unresolved-token reason code. Repeatable.
+  --layout <flat|legacy>  "flat" (default): one file per collection.
+                          "legacy": one file per top-level branch plus a
+                          root aggregator per collection, matching the old
+                          (retired) generator's package layout, for
+                          consumers still coupled to it.
   --dry-run               Report what would be generated without writing.
   --check                 Generate into memory and diff against --output;
                           exits non-zero on any difference, writes nothing.

@@ -165,6 +165,80 @@ README.md` всё ещё ссылается на неё как на «репоз
 коллекции (например, `policy.excludedCollections` с `{name, id, remote,
 variableCount, reason}`), что требует правки схемы `tokens/v1`.
 
+**G13. `codegen/tokens`'s Kotlin output shape doesn't match what real
+consumers (Android_Stelo) expect — needs a deliberate redesign decision.**
+Verified by generating the new emitter's real output against Android_Stelo's
+production fixture and diffing it against what's actually on disk there.
+
+Old (retired `_legacy-python` generator, still what `Android_Stelo` builds
+against today): one `.kt` file **per top-level branch** (e.g.
+`base/color/Color.kt`), a separate per-mode factory file per branch
+(`base/color/ColorLight.kt` → `colorLight(palette: Palette)`,
+`base/color/ColorDark.kt` → `colorDark(palette: Palette)`), a root aggregator
+per collection (`base/Base.kt` + `base/BaseLight.kt`/`BaseDark.kt`), and
+per-platform primitives variants (`primitivesAndroid()`/`primitivesIos()`).
+119 files, ~16k lines. App code hard-depends on this exact shape:
+`app/.../DsThemeColors.kt` has
+`typealias SemanticColors = com.dexcom...token.base.color.Color` and calls
+`colorLight`/`colorDark`/`componentsDark`/`componentsLight`/`primitivesAndroid`
+directly by name and package.
+
+New (`codegen/tokens` v1, this repo, merged in #16): one file **per
+collection** (`Base.kt`, `Primitives.kt`, ...), every branch nested as an
+inner `data class`, one factory per collection-mode taking the *whole*
+upstream collection (`baseLight(primitives: Primitives)`, not
+`colorLight(palette: Palette)`). 4 files, ~14.7k lines. This is a
+deliberately simpler design (see `kotlin.ts`'s header comment — the old
+`branch_pkg_map`/`cross_branch_deps` machinery was cut on purpose) and is
+well covered by golden/unit tests, but it is **not a drop-in replacement**:
+swapping it in as-is would break every reference above.
+
+Trade-offs observed:
+- Old: fine-grained per-branch diffs, matches shipping app code as-is, but
+  much more emitter complexity, and per-branch files can go stale/orphaned
+  if a branch is renamed or removed (the exact failure class this whole
+  migration was meant to fix).
+- New: far fewer, simpler-to-generate files, no orphaned-file risk (each
+  file is fully rewritten every run), but factories take a whole collection
+  instead of narrow per-branch dependencies, there's no root aggregator, and
+  no per-platform primitives split — so it can't be dropped into an
+  Android app that already depends on the old API shape without also
+  touching that app's consumer code.
+
+Decision taken for the immediate Android_Stelo request: emit a
+*structural*-compatibility mode (one file per top-level branch again, in its
+own subpackage, restoring `token.base.color.Color`-shaped paths) without
+porting the old cross-branch/per-parameter dependency injection or the
+mode-collapsing-when-values-don't-vary-by-mode optimization. Consumers still
+need small call-site updates (factories now take the whole upstream
+collection, e.g. `colorLight(primitives: Primitives)` instead of
+`colorLight(palette: Palette)`). Revisit later: either invest in full binary
+parity (bigger, arguably wasted effort re-adding complexity stage 6
+deliberately removed) or — preferred — treat this as a bridge and plan a
+one-time migration of Android_Stelo's consumers to the compact
+one-file-per-collection format once it's proven out, rather than
+maintaining the legacy multi-file layout indefinitely.
+
+**G14. `COMPOSE_COLOR` with an alias-typed opacity was silently falling back to
+`unsupported-value` — fixed.** Figma's `COMPOSE_COLOR` variable expression
+(color variable + opacity override, built via the Figma UI) has two
+independent arguments: a color `VARIABLE_ALIAS` and an opacity argument that
+can be either a bare number *or itself* a `VARIABLE_ALIAS` to a named opacity
+token. `tokenExport.ts` only handled the bare-number case; when opacity was
+also an alias it fell through to the generic "unexpected shape"
+`unsupported-value` path. On the real-world fixture this was **all 168** of
+its `unsupported-value` entries — not a rare edge case.
+
+Fixed by adding a self-referential `opacity` field to `aliasTarget` in the
+`tokens/v1` schema, resolving the opacity alias recursively in
+`resolveMode`, and threading `edge.opacity.collection` through the
+`dependsOn` computation the same way `edge.collection` already was. The
+Kotlin emitter (`valueExpressionFor` in `kotlin.ts`) now emits a live
+`base.copy(alpha = opacity._40)` reference instead of a baked hex literal
+when this edge is present (falls back to the old flattened-literal behavior
+if the opacity edge was itself excluded by policy). Covered by tests in
+`tokenExport.test.ts` and `kotlin.test.ts`.
+
 ## 🟡 Качество и производительность
 
 **Q1. ✅ (исправлено) `structuralSignature` — O(n²) по поддереву.** Раньше для

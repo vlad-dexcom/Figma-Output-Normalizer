@@ -37,3 +37,15 @@ jobs:
             --exclude-mode "[iI][oO][sS]" \
             --on-unresolved unsupported-value=warn \
             --check
+      # Guards the standalone bundle (used by external consumers such as
+      # DexFigmaPlugin) against drifting from the CLI it's built from.
+      - name: codegen-tokens standalone bundle --check (real-world fixture)
+        run: |
+          npm run bundle --workspace=@figma-normalizator/codegen-tokens
+          node codegen/tokens/dist/codegen-tokens.cjs \
+            --input fixtures/src/real-world/gPHx1sqQHIfMs8706VDGM1_c1-88d0431a4019ec4b.tokens.json \
+            --output codegen/tokens/testdata/golden/real-world \
+            --package com.dexcom.tokens \
+            --exclude-mode "[iI][oO][sS]" \
+            --on-unresolved unsupported-value=warn \
+            --check
