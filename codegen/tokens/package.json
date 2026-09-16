@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc",
     "cli": "tsx src/cli/index.ts",
+    "bundle": "node scripts/build-bundle.mjs",
     "golden:update": "tsx scripts/update-golden.ts"
   },
   "dependencies": {
@@ -18,6 +19,7 @@
     "ajv": "^8.20.0"
   },
   "devDependencies": {
+    "esbuild": "^0.28.2",
     "prettier": "^3.3.3",
     "tsx": "^4.19.2"
   }

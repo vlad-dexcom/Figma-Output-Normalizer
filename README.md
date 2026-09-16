@@ -78,6 +78,12 @@ End-to-end, from a Figma file to generated Kotlin:
    `npm run cli --workspace=@figma-normalizator/codegen-tokens -- --help`
    for the full flag list.
 
+   External consumers that don't want to `npm install`/check out the whole
+   monorepo (e.g. an IDE plugin) can instead build a standalone, dependency-
+   free bundle once with `npm run bundle --workspace=@figma-normalizator/codegen-tokens`
+   and invoke `node codegen/tokens/dist/codegen-tokens.cjs <same flags>` —
+   see "Building a standalone bundle" in `codegen/tokens/README.md`.
+
 4. **Wire the generated data classes into the app.** v1 emits one file per
    collection only — there is no root aggregator by default (see "Status:
    Stage 1" below) — so calling `primitivesValue()` → `baseLight(primitives)`
