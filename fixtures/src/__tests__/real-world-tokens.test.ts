@@ -22,7 +22,7 @@ import type { TokenDocument } from "@figma-normalizator/schema";
 
 const REAL_WORLD_TOKENS_PATH = path.join(
   import.meta.dirname,
-  "../real-world/gPHx1sqQHIfMs8706VDGM1_c1-88d0431a4019ec4b.tokens.json",
+  "../real-world/gPHx1sqQHIfMs8706VDGM1_c1-4228e256df698463.tokens.json",
 );
 
 async function loadDocument(): Promise<TokenDocument> {

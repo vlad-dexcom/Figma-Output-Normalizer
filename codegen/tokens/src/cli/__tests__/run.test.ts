@@ -6,7 +6,7 @@ import { runCli } from "../run.js";
 
 const REAL_WORLD_TOKENS_PATH = path.join(
   import.meta.dirname,
-  "../../../../../fixtures/src/real-world/gPHx1sqQHIfMs8706VDGM1_c1-88d0431a4019ec4b.tokens.json",
+  "../../../../../fixtures/src/real-world/gPHx1sqQHIfMs8706VDGM1_c1-4228e256df698463.tokens.json",
 );
 
 function capturingIo() {
@@ -45,7 +45,13 @@ describe("runCli — real-world fixture", () => {
     ...extra,
   ];
 
-  it("fails by default because this fixture has real unsupported-value entries, without writing anything", async () => {
+  it("succeeds by default now that this fixture has no more unsupported-value entries", async () => {
+    // Was "fails by default because this fixture has real unsupported-value
+    // entries" before the COMPOSE_COLOR alias-typed-opacity fix (BACKLOG
+    // G14): the fixture's 168 unsupported-value entries were all fixed by
+    // re-exporting with the fixed plugin, leaving only
+    // excluded-collection-alias entries, which triage to warnings (not
+    // failures) by default.
     const io = capturingIo();
     const code = await runCli(
       [
@@ -57,6 +63,27 @@ describe("runCli — real-world fixture", () => {
         "com.dexcom.tokens",
         "--exclude-mode",
         "ios",
+      ],
+      io,
+    );
+    expect(code).toBe(0);
+    expect(io.out.some((m) => m.includes("file(s) generated"))).toBe(true);
+  });
+
+  it("fails when an override escalates a real reason code (excluded-collection-alias) to a failure", async () => {
+    const io = capturingIo();
+    const code = await runCli(
+      [
+        "--input",
+        REAL_WORLD_TOKENS_PATH,
+        "--output",
+        outDir,
+        "--package",
+        "com.dexcom.tokens",
+        "--exclude-mode",
+        "ios",
+        "--on-unresolved",
+        "excluded-collection-alias=fail",
       ],
       io,
     );

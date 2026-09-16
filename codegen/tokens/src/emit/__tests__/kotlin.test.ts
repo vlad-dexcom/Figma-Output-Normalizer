@@ -15,7 +15,7 @@ import {
 
 const REAL_WORLD_TOKENS_PATH = path.join(
   import.meta.dirname,
-  "../../../../../fixtures/src/real-world/gPHx1sqQHIfMs8706VDGM1_c1-88d0431a4019ec4b.tokens.json",
+  "../../../../../fixtures/src/real-world/gPHx1sqQHIfMs8706VDGM1_c1-4228e256df698463.tokens.json",
 );
 
 function collection(
@@ -465,7 +465,7 @@ describe("generateLegacyKotlinFiles — synthetic", () => {
 });
 
 describe("generateKotlinFiles — real-world fixture", () => {
-  it("generates valid output for every null-free collection, and a nullable field for base's known null-valued token", async () => {
+  it("generates valid output for every collection, resolving pressed/disabled COMPOSE_COLOR tokens to live copy(alpha=) references", async () => {
     const doc = await loadTokenDocument(REAL_WORLD_TOKENS_PATH);
     const model = buildTokenModel(doc);
     const files = generateKotlinFiles(model, {
@@ -481,8 +481,15 @@ describe("generateKotlinFiles — real-world fixture", () => {
 
     const base = byPath.get("com/dexcom/tokens/Base.kt")!;
     expect(base).toBeDefined();
-    expect(base.contents).toContain("val pressed: androidx.compose.ui.graphics.Color?,");
-    expect(base.contents).toContain("pressed = null,");
+    // The fixture's only previously-null-valued tokens ("pressed"/"disabled"
+    // under color/surface/action/*) were all COMPOSE_COLOR expressions with
+    // an alias-typed opacity (BACKLOG G14) that used to fall through to a
+    // literal `null`. Now that this fixture is re-exported with the fix
+    // applied, they resolve to a live `.copy(alpha = ...)` reference instead,
+    // so the field is non-nullable and this fixture has no nullable leaves
+    // left to assert on.
+    expect(base.contents).toContain("val pressed: androidx.compose.ui.graphics.Color,");
+    expect(base.contents).toContain(".copy(alpha = ");
   });
 
   it("throws UnrepresentableTokenValueError as a defensive guard when a mode key is entirely absent from token.modes", () => {

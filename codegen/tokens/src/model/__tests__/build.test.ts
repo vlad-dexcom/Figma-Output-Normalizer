@@ -7,7 +7,7 @@ import { hasNameCollision } from "../types.js";
 
 const REAL_WORLD_TOKENS_PATH = path.join(
   import.meta.dirname,
-  "../../../../../fixtures/src/real-world/gPHx1sqQHIfMs8706VDGM1_c1-88d0431a4019ec4b.tokens.json",
+  "../../../../../fixtures/src/real-world/gPHx1sqQHIfMs8706VDGM1_c1-4228e256df698463.tokens.json",
 );
 
 function collection(
