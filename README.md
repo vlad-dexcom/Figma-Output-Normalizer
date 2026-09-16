@@ -43,6 +43,52 @@ codegen/tokens/  # TypeScript generator that turns a *.tokens.json document
 scripts/    # repo-wide checks (verify-generated.mjs)
 ```
 
+## How to use
+
+End-to-end, from a Figma file to generated Kotlin:
+
+1. **Build and install the plugin.**
+   ```bash
+   npm install
+   npm run build --workspace=plugin
+   ```
+   In Figma desktop: **Plugins → Development → Import plugin from manifest…**,
+   pick `plugin/manifest.json`. See `plugin/README.md` for details.
+
+2. **Export the file's design tokens.** Open the plugin
+   (**Plugins → Development → Figma Normalizator**) and use the token row's
+   **Extract tokens** / **Export tokens** buttons (unrelated to the current
+   canvas selection — tokens are file-scoped, not selection-scoped). This
+   downloads `{fileKey}_{version}.tokens.json`. See "Token export
+   (file-scoped)" in `plugin/README.md` for what's in scope and why it runs
+   in the plugin rather than downstream.
+
+3. **Generate Kotlin from the exported document.**
+   ```bash
+   npm run cli --workspace=@figma-normalizator/codegen-tokens -- \
+     --input path/to/{fileKey}_{version}.tokens.json \
+     --output path/to/output/dir \
+     --package com.example.tokens
+   ```
+   This writes one `.kt` file per collection (`Primitives.kt`, `Base.kt`,
+   …), each with a nested data class and one factory function per mode. Add
+   `--layout legacy` if the consuming app still expects the old
+   per-branch/subpackage layout (see `codegen/tokens/README.md`), or
+   `--dry-run`/`--check` to preview or validate without writing. Run
+   `npm run cli --workspace=@figma-normalizator/codegen-tokens -- --help`
+   for the full flag list.
+
+4. **Wire the generated data classes into the app.** v1 emits one file per
+   collection only — there is no root aggregator by default (see "Status:
+   Stage 1" below) — so calling `primitivesValue()` → `baseLight(primitives)`
+   → … in the right order, and re-running step 3 whenever the token export
+   changes, is left to hand-written app code.
+
+Selection-scoped node IR (for design-to-code beyond tokens) is exported the
+same way via the panel's **Extract** / **Export** buttons — see "Using the
+panel" in `plugin/README.md` — but has no consuming code generator yet (see
+"Status: Stage 1" below).
+
 ## Two documents, split by cadence
 
 The plugin emits two artifacts, and the split between them is **cadence**,
