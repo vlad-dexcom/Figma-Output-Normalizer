@@ -82,8 +82,12 @@ Add `--check` to fail (without writing) if the output directory is stale, or
 Add `--layout legacy` to restore the old generator's per-branch/subpackage
 file layout (e.g. `<package>.base.color.Color`) instead of the default
 one-file-per-collection layout — useful only for a consumer whose existing
-hand-written code still references that package shape. Factory functions
-still take the whole upstream collection as their parameter (e.g.
+hand-written code still references that package shape. Matching the old
+generator's file granularity, each data class (`Color.kt`) and each of its
+per-mode factory functions (`ColorLight.kt` -> `colorLight(...)`,
+`ColorDark.kt` -> `colorDark(...)`) live in their own file, and likewise for
+the root aggregator (`Base.kt`, `BaseLight.kt`, `BaseDark.kt`). Factory
+functions still take the whole upstream collection as their parameter (e.g.
 `colorLight(primitives: Primitives)`), not the narrower per-branch
 parameters the old generator used, so migrating a consumer onto this layout
 still requires updating those call sites. See `docs/BACKLOG.md` G13.

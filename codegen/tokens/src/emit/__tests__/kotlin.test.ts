@@ -412,37 +412,45 @@ describe("generateCollectionLegacyKotlinFiles — synthetic", () => {
     const files = generateCollectionLegacyKotlinFiles(model, base, { packageName: "com.test" });
     const byPath = new Map(files.map((f) => [f.relativePath, f]));
 
-    // Root file: restores the "com.test.base" subpackage (the flat emitter
-    // puts collection root classes directly under "com.test").
+    // Root data-class file: restores the "com.test.base" subpackage (the
+    // flat emitter puts collection root classes directly under "com.test").
     const root = byPath.get("com/test/base/Base.kt")!;
     expect(root).toBeDefined();
     expect(root.contents).toContain("package com.test.base");
-    expect(root.contents).toContain(
-      "val color: com.test.base.color.Color,",
-    );
-    expect(root.contents).toContain(
-      "val scale: com.test.base.scale.Scale,",
-    );
+    expect(root.contents).toContain("val color: com.test.base.color.Color,");
+    expect(root.contents).toContain("val scale: com.test.base.scale.Scale,");
     expect(root.contents).not.toContain("data class Color(");
-    expect(root.contents).toContain(
+    expect(root.contents).not.toContain("fun baseLight");
+
+    // Root per-mode factory files: one file per mode, calling each branch's
+    // mode factory by fully-qualified name (no import needed).
+    const rootLight = byPath.get("com/test/base/BaseLight.kt")!;
+    expect(rootLight).toBeDefined();
+    expect(rootLight.contents).toContain("package com.test.base");
+    expect(rootLight.contents).toContain(
       "fun baseLight(primitives: com.test.primitives.Primitives): Base = Base(",
     );
-    expect(root.contents).toContain("color = colorLight(primitives),");
-    expect(root.contents).toContain("scale = scaleLight(primitives),");
+    expect(rootLight.contents).toContain("color = com.test.base.color.colorLight(primitives),");
+    expect(rootLight.contents).toContain("scale = com.test.base.scale.scaleLight(primitives),");
+    expect(byPath.get("com/test/base/BaseDark.kt")).toBeDefined();
 
-    // Branch file: full nested data class + per-mode factory, restoring
-    // the old "token.base.color.Color" package shape.
+    // Branch data-class file: full nested data class, no factories.
     const colorFile = byPath.get("com/test/base/color/Color.kt")!;
     expect(colorFile).toBeDefined();
     expect(colorFile.contents).toContain("package com.test.base.color");
     expect(colorFile.contents).toContain("data class Color(");
-    expect(colorFile.contents).toContain(
+    expect(colorFile.contents).not.toContain("fun colorLight");
+
+    // Branch per-mode factory files, restoring the old
+    // "token.base.color.ColorLight"/"ColorDark" package+file shape.
+    const colorLight = byPath.get("com/test/base/color/ColorLight.kt")!;
+    expect(colorLight).toBeDefined();
+    expect(colorLight.contents).toContain("package com.test.base.color");
+    expect(colorLight.contents).toContain(
       "fun colorLight(primitives: com.test.primitives.Primitives): Color =",
     );
-    expect(colorFile.contents).toContain("surface = primitives.color.red,");
-    expect(colorFile.contents).toContain(
-      "fun colorDark(primitives: com.test.primitives.Primitives): Color =",
-    );
+    expect(colorLight.contents).toContain("surface = primitives.color.red,");
+    expect(byPath.get("com/test/base/color/ColorDark.kt")).toBeDefined();
   });
 });
 
@@ -459,7 +467,9 @@ describe("generateLegacyKotlinFiles — synthetic", () => {
     const files = generateLegacyKotlinFiles(model, { packageName: "com.test" });
     expect(files.map((f) => f.relativePath)).toEqual([
       "com/test/primitives/color/Color.kt",
+      "com/test/primitives/color/ColorValue.kt",
       "com/test/primitives/Primitives.kt",
+      "com/test/primitives/PrimitivesValue.kt",
     ]);
   });
 });
