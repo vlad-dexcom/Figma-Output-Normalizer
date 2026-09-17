@@ -120,7 +120,7 @@ data class Components(
             val shape: Shape,
         ) {
             /**
-             * @property container Banner container opacity.
+             * @property container Banner container opacity. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -1441,8 +1441,8 @@ data class Components(
                 }
             }
             /**
-             * @property pressed Opacity when pressed.
-             * @property disabled Opacity when disabled.
+             * @property pressed Opacity when pressed. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property disabled Opacity when disabled. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -2480,7 +2480,7 @@ data class Components(
                 )
             }
             /**
-             * @property opaque Opaque state opacity.
+             * @property opaque Opaque state opacity. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -3162,8 +3162,8 @@ data class Components(
                 )
             }
             /**
-             * @property disabled chips: opacity › disabled. Applies to all variants.
-             * @property pressed chips: opacity › pressed. Applies to all variants.
+             * @property disabled chips: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed chips: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -3254,11 +3254,11 @@ data class Components(
                 )
             }
             /**
-             * @property _100 Container opacity 100%.
-             * @property _60 Container opacity 60%.
-             * @property _50 Container opacity 50%.
-             * @property _30 Container opacity 30%.
-             * @property _0 Container opacity 0%.
+             * @property _100 Container opacity 100%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property _60 Container opacity 60%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property _50 Container opacity 50%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property _30 Container opacity 30%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property _0 Container opacity 0%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -3364,7 +3364,7 @@ data class Components(
                 val icon: Float,
             )
             /**
-             * @property disabled Opacity when the control is disabled.
+             * @property disabled Opacity when the control is disabled. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -4383,7 +4383,7 @@ data class Components(
                 }
             }
             /**
-             * @property inverted Inverted row opacity.
+             * @property inverted Inverted row opacity. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -5077,8 +5077,8 @@ data class Components(
                 )
             }
             /**
-             * @property disabled messages: opacity › disabled. Applies to all variants.
-             * @property pressed messages: opacity › pressed. Applies to all variants.
+             * @property disabled messages: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed messages: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -5190,7 +5190,7 @@ data class Components(
                 )
             }
             /**
-             * @property opacity Indicator opacity when inactive.
+             * @property opacity Indicator opacity when inactive. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Inactive(
@@ -5243,7 +5243,7 @@ data class Components(
                 )
             }
             /**
-             * @property opacity Bar opacity when inactive.
+             * @property opacity Bar opacity when inactive. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Inactive(
@@ -5382,8 +5382,8 @@ data class Components(
                 val radius: Float,
             )
             /**
-             * @property disabled search bars: opacity › disabled. Applies to all variants.
-             * @property pressed search bars: opacity › pressed. Applies to all variants.
+             * @property disabled search bars: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed search bars: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -5825,8 +5825,8 @@ data class Components(
                 )
             }
             /**
-             * @property disabled segmented controls: opacity › disabled. Applies to all variants.
-             * @property pressed segmented controls: opacity › pressed. Applies to all variants.
+             * @property disabled segmented controls: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed segmented controls: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -6187,8 +6187,8 @@ data class Components(
                 )
             }
             /**
-             * @property disabled selectors: opacity › disabled. Applies to all variants.
-             * @property pressed selectors: opacity › pressed. Applies to all variants.
+             * @property disabled selectors: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed selectors: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -6341,9 +6341,9 @@ data class Components(
                 val backgroundBlur: Float,
             )
             /**
-             * @property track sliders: opacity › track. Applies to all variants.
-             * @property fill sliders: opacity › fill. Applies to all variants.
-             * @property thumb sliders: opacity › thumb. Applies to all variants.
+             * @property track sliders: opacity › track. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property fill sliders: opacity › fill. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property thumb sliders: opacity › thumb. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -6485,8 +6485,8 @@ data class Components(
                 )
             }
             /**
-             * @property disabled snackbars: opacity › disabled. Applies to all variants.
-             * @property pressed snackbars: opacity › pressed. Applies to all variants.
+             * @property disabled snackbars: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed snackbars: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -6660,7 +6660,7 @@ data class Components(
                 val radius: Float,
             )
             /**
-             * @property container Container fill opacity. Applies to all tag types.
+             * @property container Container fill opacity. Applies to all tag types. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -6830,7 +6830,7 @@ data class Components(
                 val radius: Float,
             )
             /**
-             * @property disabled Opacity when disabled.
+             * @property disabled Opacity when disabled. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -7173,8 +7173,8 @@ data class Components(
                 val borderWidth: Float,
             )
             /**
-             * @property disabled Opacity when disabled.
-             * @property pressed Opacity when pressed.
+             * @property disabled Opacity when disabled. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed Opacity when pressed. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -7339,8 +7339,8 @@ data class Components(
                 )
             }
             /**
-             * @property disabled tooltips: opacity › disabled. Applies to all variants.
-             * @property pressed tooltips: opacity › pressed. Applies to all variants.
+             * @property disabled tooltips: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed tooltips: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(
@@ -7473,7 +7473,7 @@ data class Components(
                 val borderWidth: Float,
             )
             /**
-             * @property disabled uploaders: opacity › disabled. Applies to all variants.
+             * @property disabled uploaders: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
             data class Opacity(

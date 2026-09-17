@@ -373,7 +373,9 @@ describe("token export: unsupported value shapes", () => {
 
     expect(token?.modes.light).toBeNull();
     const entry = document.unresolved.find(
-      (u) => u.path === "color/border/muted/compose-malformed-test" && u.detail?.includes('Mode "light"'),
+      (u) =>
+        u.path === "color/border/muted/compose-malformed-test" &&
+        u.detail?.includes('Mode "light"'),
     );
     expect(entry?.reason).toBe("unsupported-value");
     expect(entry?.detail).toContain("COMPOSE_COLOR");
@@ -404,5 +406,43 @@ describe("token export: unsupported value shapes", () => {
     // dependsOn, same as the color edge's collection would.
     const base = document.collections.find((c) => c.name === "base");
     expect(base?.dependsOn).toContain("primitives");
+  });
+
+  it("resolves the record-shaped composed color ({ color, opacity }) Figma emits with no expressionFunction tag", async () => {
+    // The same authoring gesture as the test above, but Figma's runtime
+    // emits it as a plain `{ color, opacity }` record instead of a
+    // COMPOSE_COLOR expression -- both shapes occur in real exports (see
+    // BACKLOG G17). Recognizing only the expression form sent every one of
+    // these to `unsupported-value`, which reads downstream as "this token
+    // has no value" and emitted `pressed = null`.
+    const { document } = await exportTokens();
+    const token = findToken(document, "base", "color/border/muted/compose-record-opacity-test");
+
+    expect(token?.modes.light).toBe("#2E2D3E66");
+    expect(token?.modes.dark).toBe("#FFFFFF");
+    expect(token?.alias?.byMode.light).toEqual({
+      collection: "base",
+      path: "color/surface/action/primary/default",
+      opacity: { collection: "primitives", path: "opacity/40" },
+    });
+    expect(
+      document.unresolved.some((u) => u.path === "color/border/muted/compose-record-opacity-test"),
+    ).toBe(false);
+  });
+
+  it("still flags an unrelated object that merely carries color/opacity keys", async () => {
+    // The record-form guard must not swallow any object with those two key
+    // names -- an unrecognized shape has to stay a loud `unsupported-value`.
+    const { document } = await exportTokens();
+    const token = findToken(document, "base", "color/border/muted/compose-record-bogus-test");
+
+    expect(token?.modes.light).toBeNull();
+    const entry = document.unresolved.find(
+      (u) =>
+        u.path === "color/border/muted/compose-record-bogus-test" &&
+        u.detail?.includes('Mode "light"'),
+    );
+    expect(entry?.reason).toBe("unsupported-value");
+    expect(entry?.detail).toContain("does not recognize");
   });
 });

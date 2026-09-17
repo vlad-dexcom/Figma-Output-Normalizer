@@ -45,7 +45,12 @@ alias graph (see git history for `codegen/tokens/_legacy-python/`).
    comment — never used to derive a name. A `COMPOSE_COLOR` alias whose
    opacity argument is itself a named variable (not a bare number) is
    emitted as a live `base.copy(alpha = opacity._40)` reference rather than
-   a baked hex literal (see `docs/BACKLOG.md` G14).
+   a baked hex literal (see `docs/BACKLOG.md` G14). Opacity variables are
+   rescaled on the way out: Figma stores them the way its UI shows them
+   (`opacity/40` = the number 40), while every Compose alpha is 0-1, so an
+   opacity-scoped `FLOAT` is emitted as `0.4f` — once, at the leaf holding
+   the literal, so `.copy(alpha = …)` references need no arithmetic (see
+   `docs/BACKLOG.md` G15).
 
    **v1 emits one file per collection only, by default.** No root class
    aggregates every collection into one app-level tree; wiring
@@ -59,7 +64,11 @@ alias graph (see git history for `codegen/tokens/_legacy-python/`).
 4. **`src/cli/`** — the `codegen-tokens` CLI: `--input`, `--output`,
    `--package`, `--prefix`, `--exclude-mode <regex>`,
    `--on-unresolved <reason>=<action>` (repeatable), `--layout <flat|legacy>`,
-   `--dry-run`, `--check`, `--help`.
+   `--dry-run`, `--check`, `--help`. `--exclude-mode` is always matched
+   case-insensitively — a mode name is free-form text a designer typed into
+   Figma, and the same semantic mode shows up with different casing per
+   collection (the real export declares `iOS` on `primitives` and `ios` on
+   `typography`), so `--exclude-mode ios` excludes both.
 
 ## Running the CLI
 
@@ -72,12 +81,20 @@ npm run cli --workspace=@figma-normalizator/codegen-tokens -- \
   --input path/to/export.tokens.json \
   --output path/to/output/dir \
   --package com.example.tokens \
-  --exclude-mode "[iI][oO][sS]" \
+  --exclude-mode "ios" \
   --on-unresolved unsupported-value=warn
 ```
 
 Add `--check` to fail (without writing) if the output directory is stale, or
 `--dry-run` to preview which files would be written.
+
+The output directory is kept in sync, not just written to: a file this
+generator previously produced but no longer does — a collection or branch
+renamed or deleted in Figma, a mode `--exclude-mode` now filters out, or the
+whole previous `--layout` — is deleted, and `--check` fails on it. Only files
+carrying the emitter's own "DO NOT MODIFY" banner are ever removed, so
+pointing `--output` at a directory that also holds hand-written Kotlin is
+safe.
 
 Add `--layout legacy` to restore the old generator's per-branch/subpackage
 file layout (e.g. `<package>.base.color.Color`) instead of the default

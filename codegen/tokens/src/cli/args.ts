@@ -13,7 +13,7 @@ export interface CliOptions {
   packageName: string;
   /** Prepended to every generated root class name; default none. */
   prefix?: string;
-  /** Modes matching this pattern get no factory function (e.g. a Kotlin/Android-only build). */
+  /** Modes matching this pattern get no factory function (e.g. a Kotlin/Android-only build). Always compiled case-insensitively -- see `--exclude-mode` in `parseArgs`. */
   excludeMode?: RegExp;
   /** Per-reason overrides for the default unresolved-token triage. */
   onUnresolved: UnresolvedActionOverrides;
@@ -108,7 +108,14 @@ export function parseArgs(argv: readonly string[]): CliOptions {
         prefix = next(arg, i++);
         break;
       case "--exclude-mode":
-        excludeMode = new RegExp(next(arg, i++));
+        // Always case-insensitive. A mode name is free-form text a designer
+        // typed into Figma, so the same semantic mode shows up with
+        // whatever casing each collection's author happened to use -- this
+        // file's own real export carries "IOS" on the color collection and
+        // "ios" on typography. Making the caller spell that out
+        // ("[iI][oO][sS]") just turns an inconsistency Figma allows into a
+        // silent partial match in generated output.
+        excludeMode = new RegExp(next(arg, i++), "i");
         break;
       case "--on-unresolved": {
         const [reason, action] = parseOnUnresolved(next(arg, i++));
@@ -124,7 +131,9 @@ export function parseArgs(argv: readonly string[]): CliOptions {
       case "--layout": {
         const value = next(arg, i++);
         if (value !== "flat" && value !== "legacy") {
-          throw new CliArgError(`--layout expects "flat" or "legacy", got ${JSON.stringify(value)}`);
+          throw new CliArgError(
+            `--layout expects "flat" or "legacy", got ${JSON.stringify(value)}`,
+          );
         }
         layout = value;
         break;
@@ -169,12 +178,17 @@ Generates Kotlin design-token source files from a schema/tokens/v1 export
 Required:
   --input <path>       Path to the *.tokens.json export to read.
   --output <dir>        Directory to write generated Kotlin files into.
+                        Generated files that this run no longer produces are
+                        deleted from it; files this tool did not write (no
+                        "DO NOT MODIFY" banner) are always left alone.
   --package <name>       Kotlin package declared by every generated file.
 
 Options:
   --prefix <str>          Prepended to every generated root class name.
   --exclude-mode <regex>  Modes matching this pattern get no factory function
-                          (e.g. "ios" to skip iOS-only modes in a Kotlin build).
+                          (e.g. "ios" to skip iOS-only modes in a Kotlin
+                          build). Matched case-insensitively, so "ios" also
+                          covers modes a designer named "iOS" or "IOS".
   --on-unresolved <reason>=<silent|warn|fail>
                           Override the default triage action for one
                           unresolved-token reason code. Repeatable.
@@ -183,8 +197,11 @@ Options:
                           root aggregator per collection, matching the old
                           (retired) generator's package layout, for
                           consumers still coupled to it.
-  --dry-run               Report what would be generated without writing.
+  --dry-run               Report what would be generated and what stale
+                          generated files would be deleted, without writing.
   --check                 Generate into memory and diff against --output;
-                          exits non-zero on any difference, writes nothing.
+                          exits non-zero on any difference (including a
+                          previously-generated file this run no longer
+                          produces), writes nothing.
   --help, -h              Show this help text.
 `;

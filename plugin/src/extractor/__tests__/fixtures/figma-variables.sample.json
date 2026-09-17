@@ -27,7 +27,9 @@
         "VariableID:test:sparse-mode",
         "VariableID:test:compose-color",
         "VariableID:test:compose-malformed",
-        "VariableID:test:compose-alias-opacity"
+        "VariableID:test:compose-alias-opacity",
+        "VariableID:test:compose-record-opacity",
+        "VariableID:test:compose-record-bogus"
       ]
     },
     "VariableCollectionId:44:2": {
@@ -766,6 +768,62 @@
               "id": "VariableID:test:opacity-40"
             }
           ]
+        }
+      },
+      "scopes": [
+        "STROKE_COLOR"
+      ],
+      "codeSyntax": {}
+    },
+    "VariableID:test:compose-record-opacity": {
+      "name": "color/border/muted/compose-record-opacity-test",
+      "id": "VariableID:test:compose-record-opacity",
+      "remote": false,
+      "key": "test-compose-record-opacity-key",
+      "variableCollectionId": "VariableCollectionId:32186:2",
+      "resolvedType": "COLOR",
+      "description": "Regression fixture for the record-shaped composed color ({ color, opacity }) Figma emits with no expressionFunction tag.",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "32186:0": {
+          "r": 1,
+          "g": 1,
+          "b": 1
+        },
+        "32245:0": {
+          "color": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:32186:141"
+          },
+          "opacity": {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:test:opacity-40"
+          }
+        }
+      },
+      "scopes": [
+        "STROKE_COLOR"
+      ],
+      "codeSyntax": {}
+    },
+    "VariableID:test:compose-record-bogus": {
+      "name": "color/border/muted/compose-record-bogus-test",
+      "id": "VariableID:test:compose-record-bogus",
+      "remote": false,
+      "key": "test-compose-record-bogus-key",
+      "variableCollectionId": "VariableCollectionId:32186:2",
+      "resolvedType": "COLOR",
+      "description": "Regression fixture: an object carrying color/opacity keys whose color is not a usable color source must stay a loud unsupported-value.",
+      "hiddenFromPublishing": false,
+      "valuesByMode": {
+        "32186:0": {
+          "r": 1,
+          "g": 1,
+          "b": 1
+        },
+        "32245:0": {
+          "color": "not-a-color-source",
+          "opacity": 0.4
         }
       },
       "scopes": [

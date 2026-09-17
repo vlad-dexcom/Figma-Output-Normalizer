@@ -335,6 +335,20 @@ data class Primitives(
         val _92: Float,
         val _9999: Float,
     )
+    /**
+     * @property _0 Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _5 Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _10 Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _20 Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _30 Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _40 Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _50 Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _60 Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _70 Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _80 Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _90 Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _100 Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     */
     @androidx.compose.runtime.Immutable
     data class Opacity(
         val _0: Float,
@@ -631,17 +645,17 @@ fun primitivesValue(): Primitives =
         ),
         opacity = Primitives.Opacity(
             _0 = 0.0f,
-            _5 = 5.0f,
-            _10 = 10.0f,
-            _20 = 20.0f,
-            _30 = 30.0f,
-            _40 = 40.0f,
-            _50 = 50.0f,
-            _60 = 60.0f,
-            _70 = 70.0f,
-            _80 = 80.0f,
-            _90 = 90.0f,
-            _100 = 100.0f,
+            _5 = 0.05f,
+            _10 = 0.1f,
+            _20 = 0.2f,
+            _30 = 0.3f,
+            _40 = 0.4f,
+            _50 = 0.5f,
+            _60 = 0.6f,
+            _70 = 0.7f,
+            _80 = 0.8f,
+            _90 = 0.9f,
+            _100 = 1.0f,
         ),
     )
 
@@ -924,16 +938,16 @@ fun primitivesAndroid(): Primitives =
         ),
         opacity = Primitives.Opacity(
             _0 = 0.0f,
-            _5 = 5.0f,
-            _10 = 10.0f,
-            _20 = 20.0f,
-            _30 = 30.0f,
-            _40 = 40.0f,
-            _50 = 50.0f,
-            _60 = 60.0f,
-            _70 = 70.0f,
-            _80 = 80.0f,
-            _90 = 90.0f,
-            _100 = 100.0f,
+            _5 = 0.05f,
+            _10 = 0.1f,
+            _20 = 0.2f,
+            _30 = 0.3f,
+            _40 = 0.4f,
+            _50 = 0.5f,
+            _60 = 0.6f,
+            _70 = 0.7f,
+            _80 = 0.8f,
+            _90 = 0.9f,
+            _100 = 1.0f,
         ),
     )

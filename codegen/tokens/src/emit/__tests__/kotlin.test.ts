@@ -278,6 +278,101 @@ describe("generateCollectionKotlinFile — synthetic", () => {
     expect(file.contents).toContain("androidx.compose.ui.graphics.Color(0.0f, 1.0f, 0.0f, 1.0f)");
   });
 
+  it("rescales a percentage-scaled opacity token into a 0-1 Compose alpha", () => {
+    const primitives = collection({
+      id: "p",
+      name: "primitives",
+      modes: ["value"],
+      tokens: [
+        token({ path: "color/red", modes: { value: "#FF0000" } }),
+        token({
+          path: "opacity/40",
+          type: "FLOAT",
+          scopes: ["OPACITY", "COLOR_OPACITY"],
+          modes: { value: 40 },
+        }),
+        token({
+          path: "opacity/100",
+          type: "FLOAT",
+          scopes: ["OPACITY"],
+          modes: { value: 100 },
+        }),
+        // Not opacity-scoped: a bare number stays a bare number.
+        token({
+          path: "radius/40",
+          type: "FLOAT",
+          scopes: ["CORNER_RADIUS"],
+          modes: { value: 40 },
+        }),
+      ],
+    });
+    const model = buildTokenModel(document([primitives]));
+    const file = generateCollectionKotlinFile(model, primitives, { packageName: "com.test" })!;
+    expect(file.contents).toContain("_40 = 0.4f,");
+    expect(file.contents).toContain("_100 = 1.0f,");
+    expect(file.contents).toContain("_40 = 40.0f,");
+    expect(file.contents).toContain("Opacity as a 0-1 Compose alpha");
+  });
+
+  it("leaves an opacity collection that already stores 0-1 values alone", () => {
+    const primitives = collection({
+      id: "p",
+      name: "primitives",
+      modes: ["value"],
+      tokens: [
+        token({ path: "opacity/low", type: "FLOAT", scopes: ["OPACITY"], modes: { value: 0.4 } }),
+        token({ path: "opacity/full", type: "FLOAT", scopes: ["OPACITY"], modes: { value: 1 } }),
+      ],
+    });
+    const model = buildTokenModel(document([primitives]));
+    const file = generateCollectionKotlinFile(model, primitives, { packageName: "com.test" })!;
+    expect(file.contents).toContain("low = 0.4f,");
+    expect(file.contents).toContain("full = 1.0f,");
+    expect(file.contents).not.toContain("Opacity as a 0-1 Compose alpha");
+  });
+
+  it("rescales an opacity token reached only through a composed-color's opacity edge, so alpha references stay correct", () => {
+    const primitives = collection({
+      id: "p",
+      name: "primitives",
+      modes: ["value"],
+      tokens: [
+        token({ path: "color/red", modes: { value: "#FF0000" } }),
+        // Deliberately carries no OPACITY scope: the alias edge below is the
+        // only signal that this number is an alpha.
+        token({ path: "alpha/40", type: "FLOAT", modes: { value: 40 } }),
+      ],
+    });
+    const base = collection({
+      id: "b",
+      name: "base",
+      modes: ["light"],
+      dependsOn: ["primitives"],
+      tokens: [
+        token({
+          path: "color/surface",
+          modes: { light: "#FF000066" },
+          alias: {
+            byMode: {
+              light: {
+                collection: "primitives",
+                path: "color/red",
+                opacity: { collection: "primitives", path: "alpha/40" },
+              },
+            },
+          },
+        }),
+      ],
+    });
+    const model = buildTokenModel(document([primitives, base]));
+    const files = generateKotlinFiles(model, { packageName: "com.test" });
+    const byPath = new Map(files.map((f) => [f.relativePath, f]));
+    expect(byPath.get("com/test/Primitives.kt")!.contents).toContain("_40 = 0.4f,");
+    expect(byPath.get("com/test/Base.kt")!.contents).toContain(
+      "surface = primitives.color.red.copy(alpha = primitives.alpha._40),",
+    );
+  });
+
   it("throws MissingDependencyParamError when an alias edge names a collection absent from dependsOn", () => {
     const primitives = collection({ id: "p", name: "primitives", modes: ["value"] });
     const base = collection({

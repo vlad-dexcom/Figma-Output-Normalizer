@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
@@ -98,6 +98,61 @@ describe("runCli — real-world fixture", () => {
     const written = await readFile(path.join(outDir, "com/dexcom/tokens/Primitives.kt"), "utf8");
     expect(written).toContain("data class Primitives");
     expect(io.out.some((m) => m.includes("4 file(s) generated"))).toBe(true);
+  });
+
+  it("--exclude-mode ios drops the mixed-case 'iOS' mode too, so one pattern covers every collection", async () => {
+    // The real file names the same semantic mode inconsistently: primitives
+    // declares "iOS", typography declares "ios". A case-sensitive match
+    // would silently keep `primitivesIOS(...)` in an Android-only build.
+    const io = capturingIo();
+    expect(await runCli(baseArgs(), io)).toBe(0);
+    const primitives = await readFile(path.join(outDir, "com/dexcom/tokens/Primitives.kt"), "utf8");
+    const typography = await readFile(path.join(outDir, "com/dexcom/tokens/Typography.kt"), "utf8");
+    expect(primitives).toContain("fun primitivesAndroid(): Primitives =");
+    expect(primitives).not.toMatch(/fun primitivesIOS\(/i);
+    expect(typography).toMatch(/fun typographyAndroid\(/);
+    expect(typography).not.toMatch(/fun typographyIos\(/i);
+  });
+
+  it("deletes previously-generated files that this run no longer produces, but never hand-written ones", async () => {
+    // Generating with --layout legacy then re-running flat is the worst
+    // case: every one of the legacy layout's files is orphaned at once.
+    // Without pruning they stay on disk and keep compiling into the
+    // consuming app, so a token deleted in Figma never actually dies.
+    expect(await runCli(baseArgs(["--layout", "legacy"]), capturingIo())).toBe(0);
+    const legacyFile = path.join(outDir, "com/dexcom/tokens/base/color/Color.kt");
+    expect(await readFile(legacyFile, "utf8")).toContain("data class Color");
+
+    const handWritten = path.join(outDir, "com/dexcom/tokens/base/Handwritten.kt");
+    await writeFile(handWritten, "// hand-written, not ours to delete\n", "utf8");
+
+    const io = capturingIo();
+    expect(await runCli(baseArgs(), io)).toBe(0);
+    await expect(readFile(legacyFile, "utf8")).rejects.toThrow();
+    expect(await readFile(handWritten, "utf8")).toContain("hand-written");
+    expect(await readFile(path.join(outDir, "com/dexcom/tokens/Base.kt"), "utf8")).toContain(
+      "data class Base",
+    );
+    expect(io.out.some((m) => m.includes("stale file(s) deleted"))).toBe(true);
+    // The hand-written file keeps its directory alive; the purely-generated
+    // ones below it are gone.
+    await expect(readdir(path.join(outDir, "com/dexcom/tokens/base/color"))).rejects.toThrow();
+  });
+
+  it("--check fails on a previously-generated file this run no longer produces", async () => {
+    expect(await runCli(baseArgs(), capturingIo())).toBe(0);
+    expect(await runCli(baseArgs(["--check"]), capturingIo())).toBe(0);
+
+    const orphan = path.join(outDir, "com/dexcom/tokens/Deleted.kt");
+    await writeFile(
+      orphan,
+      await readFile(path.join(outDir, "com/dexcom/tokens/Base.kt"), "utf8"),
+      "utf8",
+    );
+
+    const io = capturingIo();
+    expect(await runCli(baseArgs(["--check"]), io)).toBe(1);
+    expect(io.err.some((m) => m.includes("stale (no longer generated)"))).toBe(true);
   });
 
   it("--dry-run reports files without writing them", async () => {

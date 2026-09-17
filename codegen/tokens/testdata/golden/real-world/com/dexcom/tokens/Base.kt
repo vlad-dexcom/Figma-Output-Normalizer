@@ -1436,18 +1436,18 @@ data class Base(
         val full: Float,
     )
     /**
-     * @property _0 Opacity value: 0. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 0.
-     * @property _5 Opacity value: 5. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 5.
-     * @property _10 Opacity value: 10. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 10.
-     * @property _20 Opacity value: 20. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 20.
-     * @property _30 Opacity value: 30. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 30.
-     * @property _40 Opacity value: 40. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 40.
-     * @property _50 Opacity value: 50. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 50.
-     * @property _60 Opacity value: 60. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 60.
-     * @property _70 Opacity value: 100. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 100.
-     * @property _80 Opacity value: 80. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 80.
-     * @property _90 Opacity value: 100. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 100.
-     * @property _100 Opacity value: 100. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 100.
+     * @property _0 Opacity value: 0. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 0. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _5 Opacity value: 5. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 5. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _10 Opacity value: 10. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 10. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _20 Opacity value: 20. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 20. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _30 Opacity value: 30. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 30. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _40 Opacity value: 40. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 40. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _50 Opacity value: 50. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 50. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _60 Opacity value: 60. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 60. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _70 Opacity value: 100. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 100. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _80 Opacity value: 80. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 80. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _90 Opacity value: 100. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 100. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+     * @property _100 Opacity value: 100. Stored 0-100; divide by 100 for CSS/native opacity (0-1). Raw value: 100. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
      */
     @androidx.compose.runtime.Immutable
     data class Opacity(

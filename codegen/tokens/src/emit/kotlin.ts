@@ -103,7 +103,85 @@ export class DuplicateClassNameError extends Error {
   }
 }
 
-function docFor(token: Token): string | undefined {
+// --- Opacity scale ---
+//
+// Figma stores an opacity variable the way its own UI shows it -- as a
+// percentage, so `opacity/40` is the number 40, not 0.4 (the real export's
+// own descriptions say so: "Stored 0-100; divide by 100 for CSS/native
+// opacity"). Every Android/Compose alpha channel is 0-1, so emitting that
+// number verbatim (`Color.copy(alpha = primitives.opacity._40)`) is ~100x
+// too opaque and Compose just clamps it to fully opaque -- the 40%
+// pressed/disabled state silently disappears. Rescaling happens exactly
+// once, at the leaf that holds the literal, so a `.copy(alpha = ...)`
+// property REFERENCE (see `valueExpressionFor`) needs no arithmetic of its
+// own and can never disagree with the property it points at.
+
+/** Figma variable scopes that mark a FLOAT as an opacity/alpha value. */
+const OPACITY_SCOPES = new Set(["OPACITY", "COLOR_OPACITY"]);
+
+function opacityKey(collectionName: string, tokenPath: string): string {
+  return `${collectionName}\u0000${tokenPath}`;
+}
+
+interface OpacityPlan {
+  /** Every token carrying opacity semantics, keyed by {@link opacityKey}. */
+  readonly opacityKeys: ReadonlySet<string>;
+  /** Collection name -> the divisor its opacity literals need (100 when percentage-scaled, 1 when already 0-1). */
+  readonly scaleByCollection: ReadonlyMap<string, number>;
+}
+
+/**
+ * Works out, per collection, whether its opacity tokens are stored as
+ * percentages. The decision is made per collection rather than per value
+ * because a single token can't tell us: `opacity/1` = 1 is both a valid 1%
+ * and a valid fully-opaque 1.0. If ANY opacity token in the collection
+ * exceeds 1, the whole group is a 0-100 scale -- which is the only reading
+ * consistent with the others. A collection whose opacity values all sit in
+ * 0-1 is taken at face value and left alone.
+ */
+function buildOpacityPlan(model: TokenModel): OpacityPlan {
+  const opacityKeys = new Set<string>();
+  for (const collection of model.collections) {
+    for (const token of collection.tokens) {
+      if (token.type === "FLOAT" && (token.scopes ?? []).some((s) => OPACITY_SCOPES.has(s))) {
+        opacityKeys.add(opacityKey(collection.name, token.path));
+      }
+      // A composed-color's opacity edge names its target directly. Trust
+      // that edge too, so a target variable that happens to carry no
+      // OPACITY scope still gets rescaled rather than silently feeding a
+      // percentage into `alpha`.
+      for (const target of Object.values(token.alias?.byMode ?? {})) {
+        const opacity = target?.opacity;
+        if (opacity && !opacity.excluded && opacity.collection && opacity.path) {
+          opacityKeys.add(opacityKey(opacity.collection, opacity.path));
+        }
+      }
+    }
+  }
+
+  const scaleByCollection = new Map<string, number>();
+  for (const collection of model.collections) {
+    let percentage = scaleByCollection.get(collection.name) === 100;
+    for (const token of collection.tokens) {
+      if (!opacityKeys.has(opacityKey(collection.name, token.path))) continue;
+      for (const value of Object.values(token.modes)) {
+        if (typeof value === "number" && value > 1) percentage = true;
+      }
+    }
+    scaleByCollection.set(collection.name, percentage ? 100 : 1);
+  }
+
+  return { opacityKeys, scaleByCollection };
+}
+
+/** The divisor `token`'s literal needs to become a 0-1 alpha, or 1 when it needs none. */
+function opacityDivisor(plan: OpacityPlan, collectionName: string, token: Token): number {
+  if (token.type !== "FLOAT") return 1;
+  if (!plan.opacityKeys.has(opacityKey(collectionName, token.path))) return 1;
+  return plan.scaleByCollection.get(collectionName) ?? 1;
+}
+
+function docFor(token: Token, rescaledOpacity: boolean): string | undefined {
   const parts: string[] = [];
   if (token.description) parts.push(token.description);
   if (token.symbol) {
@@ -113,6 +191,9 @@ function docFor(token: Token): string | undefined {
         : `(symbol: \`${token.symbol}\`)`,
     );
   }
+  if (rescaledOpacity) {
+    parts.push("Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).");
+  }
   return parts.length > 0 ? parts.join(" ") : undefined;
 }
 
@@ -121,6 +202,7 @@ function valueExpressionFor(
   token: Token,
   mode: string,
   depParamByName: ReadonlyMap<string, string>,
+  opacityPlan: OpacityPlan,
 ): string {
   const aliasTarget = token.alias?.byMode[mode];
   if (aliasTarget && !aliasTarget.excluded && aliasTarget.collection && aliasTarget.path) {
@@ -155,6 +237,10 @@ function valueExpressionFor(
   // `isNullableLeaf`), so a bare `null` literal is the correct value here.
   if (literal === null) return "null";
   if (literal === undefined) throw new UnrepresentableTokenValueError(token.path, mode);
+  const divisor = opacityDivisor(opacityPlan, collection.name, token);
+  if (divisor !== 1 && typeof literal === "number") {
+    return formatKotlinLiteral(token.type, literal / divisor);
+  }
   return formatKotlinLiteral(token.type, literal);
 }
 
@@ -178,6 +264,8 @@ function emitDataClass(
   indent: number,
   lines: string[],
   modes: readonly string[],
+  collectionName: string,
+  opacityPlan: OpacityPlan,
 ): void {
   const pad = "    ".repeat(indent);
   const leaves = leafChildren(node);
@@ -185,7 +273,13 @@ function emitDataClass(
 
   lines.push(
     ...kdocBlock(
-      leaves.map((l) => [safeKotlinProperty(l.name), docFor(l.token as Token)] as const),
+      leaves.map((l) => {
+        const token = l.token as Token;
+        return [
+          safeKotlinProperty(l.name),
+          docFor(token, opacityDivisor(opacityPlan, collectionName, token) !== 1),
+        ] as const;
+      }),
       pad,
     ),
   );
@@ -202,7 +296,15 @@ function emitDataClass(
   if (branches.length > 0) {
     lines.push(`${pad}) {`);
     for (const branch of branches) {
-      emitDataClass(branch, toPascalCase(branch.name), indent + 1, lines, modes);
+      emitDataClass(
+        branch,
+        toPascalCase(branch.name),
+        indent + 1,
+        lines,
+        modes,
+        collectionName,
+        opacityPlan,
+      );
     }
     lines.push(`${pad}}`);
   } else {
@@ -217,6 +319,7 @@ function emitConstructorExpr(
   indent: number,
   mode: string,
   depParamByName: ReadonlyMap<string, string>,
+  opacityPlan: OpacityPlan,
 ): string {
   const pad = "    ".repeat(indent);
   const childPad = "    ".repeat(indent + 1);
@@ -225,7 +328,13 @@ function emitConstructorExpr(
 
   const lines = [`${classPath}(`];
   for (const leaf of leaves) {
-    const value = valueExpressionFor(collection, leaf.token as Token, mode, depParamByName);
+    const value = valueExpressionFor(
+      collection,
+      leaf.token as Token,
+      mode,
+      depParamByName,
+      opacityPlan,
+    );
     lines.push(`${childPad}${safeKotlinProperty(leaf.name)} = ${value},`);
   }
   for (const branch of branches) {
@@ -237,6 +346,7 @@ function emitConstructorExpr(
       indent + 1,
       mode,
       depParamByName,
+      opacityPlan,
     );
     lines.push(`${childPad}${safeKotlinProperty(branch.name)} = ${inner},`);
   }
@@ -270,7 +380,8 @@ export function generateCollectionKotlinFile(
   const modesToEmit = filteredModes.length > 0 ? filteredModes : collection.modes;
 
   const lines: string[] = [kotlinGeneratedHeader(), `package ${options.packageName}`, ""];
-  emitDataClass(tree, rootClassName, 0, lines, modesToEmit);
+  const opacityPlan = buildOpacityPlan(model);
+  emitDataClass(tree, rootClassName, 0, lines, modesToEmit, collection.name, opacityPlan);
   lines.push("");
 
   const params = dependencies
@@ -278,7 +389,15 @@ export function generateCollectionKotlinFile(
     .join(", ");
   for (const mode of modesToEmit) {
     const fnName = `${toCamelCase(collection.name)}${toPascalCase(mode)}`;
-    const expr = emitConstructorExpr(collection, tree, rootClassName, 1, mode, depParamByName);
+    const expr = emitConstructorExpr(
+      collection,
+      tree,
+      rootClassName,
+      1,
+      mode,
+      depParamByName,
+      opacityPlan,
+    );
     lines.push(`fun ${fnName}(${params}): ${rootClassName} =`);
     lines.push(`    ${expr}`);
     lines.push("");
@@ -362,13 +481,21 @@ function emitLegacyRootDataClass(
   lines: string[],
   modes: readonly string[],
   branchTypeFqn: (branchName: string) => string,
+  collectionName: string,
+  opacityPlan: OpacityPlan,
 ): void {
   const leaves = leafChildren(node);
   const branches = branchChildren(node);
 
   lines.push(
     ...kdocBlock(
-      leaves.map((l) => [safeKotlinProperty(l.name), docFor(l.token as Token)] as const),
+      leaves.map((l) => {
+        const token = l.token as Token;
+        return [
+          safeKotlinProperty(l.name),
+          docFor(token, opacityDivisor(opacityPlan, collectionName, token) !== 1),
+        ] as const;
+      }),
       "",
     ),
   );
@@ -436,6 +563,7 @@ export function generateCollectionLegacyKotlinFiles(
   const leaves = leafChildren(tree);
   const branches = branchChildren(tree);
   const files: KotlinFile[] = [];
+  const opacityPlan = buildOpacityPlan(model);
 
   // One data-class-only file per top-level branch, plus one factory-only file per branch mode.
   for (const branch of branches) {
@@ -443,7 +571,15 @@ export function generateCollectionLegacyKotlinFiles(
     const branchPkg = `${pkg}.${toFolderName(branch.name)}`;
 
     const classLines: string[] = [];
-    emitDataClass(branch, branchClassName, 0, classLines, modesToEmit);
+    emitDataClass(
+      branch,
+      branchClassName,
+      0,
+      classLines,
+      modesToEmit,
+      collection.name,
+      opacityPlan,
+    );
     files.push({
       relativePath: `${branchPkg.split(".").join("/")}/${branchClassName}.kt`,
       contents: renderKotlinFile(branchPkg, classLines),
@@ -459,6 +595,7 @@ export function generateCollectionLegacyKotlinFiles(
         1,
         mode,
         depParamByName,
+        opacityPlan,
       );
       const factoryLines = [`fun ${fnName}(${params}): ${branchClassName} =`, `    ${expr}`];
       files.push({
@@ -476,6 +613,8 @@ export function generateCollectionLegacyKotlinFiles(
     rootClassLines,
     modesToEmit,
     (branchName) => `${pkg}.${toFolderName(branchName)}.${classNameFor(branchName)}`,
+    collection.name,
+    opacityPlan,
   );
   files.push({
     relativePath: `${pkg.split(".").join("/")}/${rootClassName}.kt`,
@@ -490,7 +629,13 @@ export function generateCollectionLegacyKotlinFiles(
     const fnName = `${toCamelCase(collection.name)}${modePascal}`;
     const ctorArgs: string[] = [];
     for (const leaf of leaves) {
-      const value = valueExpressionFor(collection, leaf.token as Token, mode, depParamByName);
+      const value = valueExpressionFor(
+        collection,
+        leaf.token as Token,
+        mode,
+        depParamByName,
+        opacityPlan,
+      );
       ctorArgs.push(`${safeKotlinProperty(leaf.name)} = ${value}`);
     }
     for (const branch of branches) {

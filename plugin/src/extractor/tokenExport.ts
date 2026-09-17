@@ -74,22 +74,51 @@ function isRgb(raw: unknown): raw is { r: number; g: number; b: number; a?: numb
 }
 
 /**
- * Matches the shape Figma's Plugin API returns for a "composed color"
+ * Matches the shapes Figma's Plugin API returns for a "composed color"
  * variable — created in the UI by picking a color variable AND applying an
  * opacity override on top of it (e.g. "palette/slate/300 at 40%"). This is
  * not in the published `@figma/plugin-typings` (`ExpressionFunction` has no
  * `COMPOSE_COLOR` member as of writing), but Figma's runtime does emit it in
  * `valuesByMode` for variables authored that way — read support shipped
  * ahead of the public types. Detected structurally rather than by `type`
- * for the same reason: the exact literal `type` tag is unconfirmed, but
- * `expressionFunction`/`expressionArguments` is the stable part.
+ * for the same reason: the exact literal `type` tag is unconfirmed.
+ *
+ * TWO shapes occur in the wild for the same authoring gesture, and both
+ * must be handled:
+ *
+ *   1. The expression form, `{ expressionFunction: "COMPOSE_COLOR",
+ *      expressionArguments: [color, opacity] }`.
+ *   2. The record form, `{ color, opacity }` — no `expressionFunction` tag
+ *      at all. Real production exports from the same file contain this one
+ *      (see `docs/BACKLOG.md` G17); recognizing only the expression form
+ *      sent every such token to `unsupported-value`, which is data loss
+ *      that looks exactly like "this token has no value".
+ *
+ * Returns the two arguments normalized into one order, or `undefined` when
+ * `raw` isn't a composed color at all. `color`/`opacity` are returned
+ * unvalidated: the caller distinguishes "not a composed color" (this
+ * returning `undefined`) from "composed color with an argument shape we
+ * can't use" (a real `unsupported-value`), and collapsing those two would
+ * hide malformed input.
  */
-function isComposeColorExpression(
-  raw: unknown,
-): raw is { expressionFunction: string; expressionArguments: unknown[] } {
-  if (typeof raw !== "object" || raw === null) return false;
+function readComposedColor(raw: unknown): { color: unknown; opacity: unknown } | undefined {
+  if (typeof raw !== "object" || raw === null) return undefined;
   const obj = raw as Record<string, unknown>;
-  return obj.expressionFunction === "COMPOSE_COLOR" && Array.isArray(obj.expressionArguments);
+
+  if (obj.expressionFunction === "COMPOSE_COLOR" && Array.isArray(obj.expressionArguments)) {
+    const [color, opacity] = obj.expressionArguments;
+    return { color, opacity };
+  }
+
+  // The record form. Guarded on the color argument being something a color
+  // can actually come from, so an unrelated object that merely happens to
+  // carry `color`/`opacity` keys still falls through to the generic
+  // unrecognized-shape path rather than being mis-parsed here.
+  if ("color" in obj && "opacity" in obj && (isVariableAlias(obj.color) || isRgb(obj.color))) {
+    return { color: obj.color, opacity: obj.opacity };
+  }
+
+  return undefined;
 }
 
 /** Re-encodes an already-hex-encoded color with its alpha multiplied by `opacity` (0-1). */
@@ -194,8 +223,9 @@ async function resolveMode(
   visited: readonly string[],
   firstHop?: ModeResolution["alias"],
 ): Promise<ModeResolution> {
-  if (isComposeColorExpression(raw)) {
-    const [aliasArg, opacityArg] = raw.expressionArguments;
+  const composed = readComposedColor(raw);
+  if (composed) {
+    const { color: aliasArg, opacity: opacityArg } = composed;
 
     if (!isVariableAlias(aliasArg)) {
       return {
@@ -250,15 +280,17 @@ async function resolveMode(
       ) {
         return {
           value: applyOpacityToHex(base.value, normalizedOpacity),
-          alias: { ...(base.alias ?? firstHop ?? { collection: null, path: null }), opacity: opacityRes.alias },
+          alias: {
+            ...(base.alias ?? firstHop ?? { collection: null, path: null }),
+            opacity: opacityRes.alias,
+          },
         };
       }
 
       return {
         value: null,
         ...(base.alias ? { alias: base.alias } : firstHop ? { alias: firstHop } : {}),
-        unresolved:
-          base.unresolved ??
+        unresolved: base.unresolved ??
           opacityRes.unresolved ?? {
             reason: "unsupported-value",
             detail: `Mode "${modeName}" is a composed-color (alias + opacity-alias) expression whose base color or opacity alias did not resolve.`,

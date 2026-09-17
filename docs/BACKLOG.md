@@ -185,7 +185,7 @@ directly by name and package.
 
 New (`codegen/tokens` v1, this repo, merged in #16): one file **per
 collection** (`Base.kt`, `Primitives.kt`, ...), every branch nested as an
-inner `data class`, one factory per collection-mode taking the *whole*
+inner `data class`, one factory per collection-mode taking the _whole_
 upstream collection (`baseLight(primitives: Primitives)`, not
 `colorLight(palette: Palette)`). 4 files, ~14.7k lines. This is a
 deliberately simpler design (see `kotlin.ts`'s header comment — the old
@@ -194,6 +194,7 @@ well covered by golden/unit tests, but it is **not a drop-in replacement**:
 swapping it in as-is would break every reference above.
 
 Trade-offs observed:
+
 - Old: fine-grained per-branch diffs, matches shipping app code as-is, but
   much more emitter complexity, and per-branch files can go stale/orphaned
   if a branch is renamed or removed (the exact failure class this whole
@@ -206,7 +207,7 @@ Trade-offs observed:
   touching that app's consumer code.
 
 Decision taken for the immediate Android_Stelo request: emit a
-*structural*-compatibility mode (one data-class file per top-level branch
+_structural_-compatibility mode (one data-class file per top-level branch
 again, in its own subpackage, restoring `token.base.color.Color`-shaped
 paths, plus a separate factory-only file per branch per mode --
 `token.base.color.ColorLight`/`ColorDark` -- and likewise a data-class-only
@@ -227,7 +228,7 @@ maintaining the legacy multi-file layout indefinitely.
 `unsupported-value` — fixed.** Figma's `COMPOSE_COLOR` variable expression
 (color variable + opacity override, built via the Figma UI) has two
 independent arguments: a color `VARIABLE_ALIAS` and an opacity argument that
-can be either a bare number *or itself* a `VARIABLE_ALIAS` to a named opacity
+can be either a bare number _or itself_ a `VARIABLE_ALIAS` to a named opacity
 token. `tokenExport.ts` only handled the bare-number case; when opacity was
 also an alias it fell through to the generic "unexpected shape"
 `unsupported-value` path. On the real-world fixture this was **all 168** of
@@ -242,6 +243,92 @@ Kotlin emitter (`valueExpressionFor` in `kotlin.ts`) now emits a live
 when this edge is present (falls back to the old flattened-literal behavior
 if the opacity edge was itself excluded by policy). Covered by tests in
 `tokenExport.test.ts` and `kotlin.test.ts`.
+
+**G15. Opacity variables were emitted as Figma percentages into Compose's
+0-1 alpha — fixed.** Figma stores an opacity variable the way its own UI
+shows it, as a percentage: `primitives/opacity/40` is the number 40 (the
+real export's own descriptions say "Stored 0-100; divide by 100 for
+CSS/native opacity"). The Kotlin emitter passed that number straight
+through, so `_40 = 40.0f` and, worse, the G14 reference
+`Color.copy(alpha = primitives.opacity._40)` fed a 40 into a channel
+Compose clamps to 1.0 — every pressed/disabled state silently rendered
+fully opaque.
+
+Fixed in `kotlin.ts` (`buildOpacityPlan`/`opacityDivisor`): a token is
+opacity-semantic if it carries Figma's `OPACITY`/`COLOR_OPACITY` scope, or
+if some composed-color alias edge names it as its opacity argument (so an
+unscoped target can't slip through and disagree with the property
+referencing it). Scale is decided per collection, not per value, because
+one value can't tell us — `opacity/1` = 1 is both a valid 1% and a valid
+1.0; if any opacity token in the collection exceeds 1 the whole group is
+read as 0-100, and a collection already sitting in 0-1 is left alone.
+Rescaling happens only where the literal is emitted, so property
+references (`base.opacity._40 = primitives.opacity._40`,
+`.copy(alpha = …)`) stay correct with no arithmetic, and rescaled
+properties say so in their KDoc. Covered by `kotlin.test.ts` and the
+regenerated goldens.
+
+Not changed, and deliberately: every other `FLOAT` scope (`GAP`,
+`WIDTH_HEIGHT`, `CORNER_RADIUS`, `STROKE_FLOAT`, `FONT_SIZE`,
+`LINE_HEIGHT`, `LETTER_SPACING`, `EFFECT_FLOAT`) is a raw Figma-pixel
+number that needs no rescaling — only a `.dp`/`.sp` wrapper at the use
+site, which the emitter leaves to the consumer (v1 emits bare `Float`).
+
+**G16. The CLI only ever wrote files, never removed them — fixed.** `runCli`
+wrote each generated file and stopped there, so anything it had produced on a
+previous run and no longer produced just stayed on disk: a collection or
+branch renamed or deleted in Figma, a mode `--exclude-mode` now filters out,
+or the entire previous `--layout`. Measured on the real fixture, generating
+with `--layout legacy` and then re-running the default flat layout left
+**125 stale files** next to the 4 current ones — and `--check` reported
+"4 file(s) are up to date" and exited 0, because it only ever looked at
+files it was going to generate. A token deleted in Figma therefore stayed
+compiling in the consuming Android app indefinitely, and CI could not see it.
+
+Fixed in `run.ts` (`findStaleGeneratedFiles`): after generating, the output
+tree is scanned for `.kt` files that are not part of this run's output, and
+those are deleted (with empty directories pruned afterwards). `--check`
+reports them as `stale (no longer generated)` and fails; `--dry-run` reports
+them as `would delete`.
+
+Deliberately NOT a `rm -rf` of the output directory, which is what "clear the
+whole tokens folder" would literally mean: `--output` can legitimately point
+at a directory that also holds hand-written Kotlin, so a file is only ever
+considered stale if it carries the emitter's own "DO NOT MODIFY" banner
+(`GENERATED_MARKER`). Anything this generator did not write is left strictly
+alone, and a directory kept alive by such a file is not pruned. Covered by
+`run.test.ts`.
+
+**G17. Figma emits composed colors in TWO shapes; only one was handled —
+fixed.** G14 taught `tokenExport.ts` to read a color-plus-opacity variable
+from Figma's `{ expressionFunction: "COMPOSE_COLOR", expressionArguments:
+[color, opacity] }` form. A later real export of the same file carried the
+identical authoring gesture as a plain record instead —
+`{ color: {VARIABLE_ALIAS}, opacity: {VARIABLE_ALIAS} }`, with no
+`expressionFunction` tag at all — which `isComposeColorExpression` did not
+match, so every one of those tokens fell through to the generic
+"unrecognized value shape" path: **169 `unsupported-value` entries**, a
+`null` literal, and no alias edge. Downstream that is indistinguishable
+from "this token genuinely has no value", so the Kotlin emitter correctly
+but uselessly produced `pressed = null` where `primitives.palette.lavender
+._500.copy(alpha = primitives.opacity._40)` was intended — the same visible
+symptom as G14, from a different cause.
+
+Fixed by replacing the single-shape guard with `readComposedColor`, which
+normalizes both forms into one `{ color, opacity }` pair and leaves every
+downstream branch (bare-number opacity, alias-typed opacity, malformed
+arguments) untouched. The record form is guarded on its `color` argument
+actually being an alias or an RGB literal, so an unrelated object that
+merely happens to carry `color`/`opacity` keys still surfaces as a loud
+`unsupported-value` rather than being silently mis-parsed. Covered by two
+new cases in `tokenExport.test.ts`.
+
+Worth noting for the next shape: the reason this was a one-line symptom and
+not a silent corruption is `--on-unresolved unsupported-value=fail`. The
+default triage warns, which is what let the earlier bad export generate a
+degraded file at exit code 0; running the generator with that override in
+CI is what turns "Figma changed a shape" into a build failure instead of
+`null`s landing in the app.
 
 ## 🟡 Качество и производительность
 

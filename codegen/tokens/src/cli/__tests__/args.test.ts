@@ -38,6 +38,12 @@ describe("parseArgs", () => {
     expect(options.prefix).toBe("DT");
     expect(options.excludeMode).toBeInstanceOf(RegExp);
     expect(options.excludeMode?.test("ios-only")).toBe(true);
+    // Designers name the same semantic mode with whatever casing they like
+    // -- the real export carries "iOS" on primitives and "ios" on
+    // typography -- so one pattern must cover both.
+    expect(options.excludeMode?.test("iOS")).toBe(true);
+    expect(options.excludeMode?.test("IOS")).toBe(true);
+    expect(options.excludeMode?.test("android")).toBe(false);
     expect(options.onUnresolved).toEqual({
       "unsupported-value": "warn",
       "missing-alias-target": "silent",
