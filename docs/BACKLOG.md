@@ -206,10 +206,14 @@ Trade-offs observed:
   touching that app's consumer code.
 
 Decision taken for the immediate Android_Stelo request: emit a
-*structural*-compatibility mode (one file per top-level branch again, in its
-own subpackage, restoring `token.base.color.Color`-shaped paths) without
-porting the old cross-branch/per-parameter dependency injection or the
-mode-collapsing-when-values-don't-vary-by-mode optimization. Consumers still
+*structural*-compatibility mode (one data-class file per top-level branch
+again, in its own subpackage, restoring `token.base.color.Color`-shaped
+paths, plus a separate factory-only file per branch per mode --
+`token.base.color.ColorLight`/`ColorDark` -- and likewise a data-class-only
+root file plus one factory-only file per collection mode --
+`token.base.BaseLight`/`BaseDark`) without porting the old cross-branch/
+per-parameter dependency injection or the mode-collapsing-when-values-
+don't-vary-by-mode optimization. Consumers still
 need small call-site updates (factories now take the whole upstream
 collection, e.g. `colorLight(primitives: Primitives)` instead of
 `colorLight(palette: Palette)`). Revisit later: either invest in full binary

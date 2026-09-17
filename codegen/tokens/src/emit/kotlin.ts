@@ -320,15 +320,19 @@ export function generateKotlinFiles(model: TokenModel, options: KotlinEmitOption
   return files;
 }
 
-// --- Legacy (per-branch, multi-file) layout ---
+// --- Legacy (per-branch, per-factory, multi-file) layout ---
 //
 // A bridge, not the target design (see docs/BACKLOG.md G13): restores the
-// old generator's *structural* shape -- one file per top-level branch, in
-// its own subpackage under the collection's own subpackage (e.g.
-// "<pkg>.base.color.Color") -- because real downstream consumers
-// (Android_Stelo) still hard-reference that package layout (e.g.
-// `typealias SemanticColors = <pkg>.base.color.Color`). It deliberately
-// does NOT port the old generator's per-branch dependency narrowing
+// old generator's *structural* shape -- a data-class-only file per
+// top-level branch, in its own subpackage under the collection's own
+// subpackage (e.g. "<pkg>.base.color.Color"), plus a separate factory-only
+// file per branch per mode (e.g. "<pkg>.base.color.ColorLight" ->
+// `colorLight(...)`), and likewise a data-class-only root file plus one
+// factory-only file per collection mode (e.g. "<pkg>.base.BaseLight" ->
+// `baseLight(...)`) -- because real downstream consumers (Android_Stelo)
+// still hard-reference that package layout (e.g. `typealias
+// SemanticColors = <pkg>.base.color.Color`). It deliberately does NOT port
+// the old generator's per-branch dependency narrowing
 // (`colorLight(palette: Palette)`) or its mode-collapsing-when-constant
 // optimization: every factory here takes the same whole-collection
 // dependency parameters as `generateCollectionKotlinFile` does
@@ -381,11 +385,26 @@ function emitLegacyRootDataClass(
   lines.push(")");
 }
 
+/** Wraps `contents` lines with the generated-file boilerplate and normalizes blank runs. */
+function renderKotlinFile(packageName: string, bodyLines: readonly string[]): string {
+  const lines = [kotlinGeneratedHeader(), `package ${packageName}`, "", ...bodyLines];
+  return `${lines
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trimEnd()}\n`;
+}
+
 /**
- * Generates the legacy-layout files for one collection: a root file (data
- * class with FQN-typed branch properties + one factory per mode) plus one
- * file per top-level branch (full nested data class + one factory per
- * mode). Returns an empty array for an empty collection.
+ * Generates the legacy-layout files for one collection, fully matching the
+ * old (retired) generator's per-file granularity: a data-class-only file
+ * per top-level branch (`Color.kt`), one factory-only file per branch per
+ * mode (`ColorLight.kt` -> `colorLight(...)`, `ColorDark.kt` ->
+ * `colorDark(...)`), a data-class-only root aggregator file (`Base.kt`),
+ * and one factory-only file per collection mode (`BaseLight.kt` ->
+ * `baseLight(...)`). A root-mode factory calls its branches' mode factories
+ * by fully-qualified name (matching the old generator's call-site FQN
+ * approach) rather than importing them, so no additional `import`
+ * statements are needed. Returns an empty array for an empty collection.
  */
 export function generateCollectionLegacyKotlinFiles(
   model: TokenModel,
@@ -407,6 +426,7 @@ export function generateCollectionLegacyKotlinFiles(
         `${depParamByName.get(d.name)}: ${collectionClassFqn(options.packageName, d.name, classNameFor)}`,
     )
     .join(", ");
+  const args = dependencies.map((d) => depParamByName.get(d.name)).join(", ");
 
   const filteredModes = options.excludeModePattern
     ? collection.modes.filter((m) => !options.excludeModePattern?.test(m))
@@ -417,62 +437,75 @@ export function generateCollectionLegacyKotlinFiles(
   const branches = branchChildren(tree);
   const files: KotlinFile[] = [];
 
-  // One file per top-level branch: full nested data class + one factory per mode.
+  // One data-class-only file per top-level branch, plus one factory-only file per branch mode.
   for (const branch of branches) {
     const branchClassName = classNameFor(branch.name);
     const branchPkg = `${pkg}.${toFolderName(branch.name)}`;
-    const lines: string[] = [kotlinGeneratedHeader(), `package ${branchPkg}`, ""];
-    emitDataClass(branch, branchClassName, 0, lines, modesToEmit);
-    lines.push("");
-    for (const mode of modesToEmit) {
-      const fnName = `${toCamelCase(branch.name)}${toPascalCase(mode)}`;
-      const expr = emitConstructorExpr(collection, branch, branchClassName, 1, mode, depParamByName);
-      lines.push(`fun ${fnName}(${params}): ${branchClassName} =`);
-      lines.push(`    ${expr}`);
-      lines.push("");
-    }
+
+    const classLines: string[] = [];
+    emitDataClass(branch, branchClassName, 0, classLines, modesToEmit);
     files.push({
       relativePath: `${branchPkg.split(".").join("/")}/${branchClassName}.kt`,
-      contents: `${lines
-        .join("\n")
-        .replace(/\n{3,}/g, "\n\n")
-        .trimEnd()}\n`,
+      contents: renderKotlinFile(branchPkg, classLines),
     });
+
+    for (const mode of modesToEmit) {
+      const modePascal = toPascalCase(mode);
+      const fnName = `${toCamelCase(branch.name)}${modePascal}`;
+      const expr = emitConstructorExpr(
+        collection,
+        branch,
+        branchClassName,
+        1,
+        mode,
+        depParamByName,
+      );
+      const factoryLines = [`fun ${fnName}(${params}): ${branchClassName} =`, `    ${expr}`];
+      files.push({
+        relativePath: `${branchPkg.split(".").join("/")}/${branchClassName}${modePascal}.kt`,
+        contents: renderKotlinFile(branchPkg, factoryLines),
+      });
+    }
   }
 
-  // The root file: data class referencing each branch by FQN, plus one factory per mode.
-  const rootLines: string[] = [kotlinGeneratedHeader(), `package ${pkg}`, ""];
+  // The root data-class-only file: branch properties reference each branch's class by FQN.
+  const rootClassLines: string[] = [];
   emitLegacyRootDataClass(
     tree,
     rootClassName,
-    rootLines,
+    rootClassLines,
     modesToEmit,
     (branchName) => `${pkg}.${toFolderName(branchName)}.${classNameFor(branchName)}`,
   );
-  rootLines.push("");
-  for (const mode of modesToEmit) {
-    const fnName = `${toCamelCase(collection.name)}${toPascalCase(mode)}`;
-    const args: string[] = [];
-    for (const leaf of leaves) {
-      const value = valueExpressionFor(collection, leaf.token as Token, mode, depParamByName);
-      args.push(`${safeKotlinProperty(leaf.name)} = ${value}`);
-    }
-    for (const branch of branches) {
-      const branchFnName = `${toCamelCase(branch.name)}${toPascalCase(mode)}`;
-      args.push(`${safeKotlinProperty(branch.name)} = ${branchFnName}(${dependencies.map((d) => depParamByName.get(d.name)).join(", ")})`);
-    }
-    rootLines.push(`fun ${fnName}(${params}): ${rootClassName} = ${rootClassName}(`);
-    for (const arg of args) rootLines.push(`    ${arg},`);
-    rootLines.push(")");
-    rootLines.push("");
-  }
   files.push({
     relativePath: `${pkg.split(".").join("/")}/${rootClassName}.kt`,
-    contents: `${rootLines
-      .join("\n")
-      .replace(/\n{3,}/g, "\n\n")
-      .trimEnd()}\n`,
+    contents: renderKotlinFile(pkg, rootClassLines),
   });
+
+  // One factory-only file per collection mode, calling each branch's mode
+  // factory by fully-qualified name (no import needed, matching the old
+  // generator's call-site FQN approach).
+  for (const mode of modesToEmit) {
+    const modePascal = toPascalCase(mode);
+    const fnName = `${toCamelCase(collection.name)}${modePascal}`;
+    const ctorArgs: string[] = [];
+    for (const leaf of leaves) {
+      const value = valueExpressionFor(collection, leaf.token as Token, mode, depParamByName);
+      ctorArgs.push(`${safeKotlinProperty(leaf.name)} = ${value}`);
+    }
+    for (const branch of branches) {
+      const branchPkg = `${pkg}.${toFolderName(branch.name)}`;
+      const branchFnFqn = `${branchPkg}.${toCamelCase(branch.name)}${modePascal}`;
+      ctorArgs.push(`${safeKotlinProperty(branch.name)} = ${branchFnFqn}(${args})`);
+    }
+    const factoryLines = [`fun ${fnName}(${params}): ${rootClassName} = ${rootClassName}(`];
+    for (const arg of ctorArgs) factoryLines.push(`    ${arg},`);
+    factoryLines.push(")");
+    files.push({
+      relativePath: `${pkg.split(".").join("/")}/${rootClassName}${modePascal}.kt`,
+      contents: renderKotlinFile(pkg, factoryLines),
+    });
+  }
 
   return files;
 }
