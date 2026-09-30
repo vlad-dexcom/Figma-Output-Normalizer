@@ -21,3 +21,8 @@ export {
   type ThemeModeOptions,
   type ThemeModeVariant,
 } from "./graph.js";
+export {
+  CollectionParentError,
+  resolveCollectionParents,
+  type CollectionParents,
+} from "./parents.js";

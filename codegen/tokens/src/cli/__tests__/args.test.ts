@@ -125,4 +125,57 @@ describe("parseArgs", () => {
       parseArgs(["--input", "i", "--output", "o", "--package", "p", "--layout", "bogus"]),
     ).toThrow(/--layout expects/);
   });
+
+  it("splits a comma-separated --exclude-mode into an OR'd pattern", () => {
+    const options = parseArgs([
+      "--input",
+      "i",
+      "--output",
+      "o",
+      "--package",
+      "p",
+      "--exclude-mode",
+      "ios,tvos",
+    ]);
+    expect(options.excludeMode?.test("ios")).toBe(true);
+    expect(options.excludeMode?.test("tvos")).toBe(true);
+    expect(options.excludeMode?.test("android")).toBe(false);
+  });
+
+  it("combines a repeated --exclude-mode with a comma-separated one", () => {
+    const options = parseArgs([
+      "--input",
+      "i",
+      "--output",
+      "o",
+      "--package",
+      "p",
+      "--exclude-mode",
+      "ios,tvos",
+      "--exclude-mode",
+      "watchos",
+    ]);
+    expect(options.excludeMode?.test("ios")).toBe(true);
+    expect(options.excludeMode?.test("tvos")).toBe(true);
+    expect(options.excludeMode?.test("watchos")).toBe(true);
+    expect(options.excludeMode?.test("android")).toBe(false);
+  });
+
+  it("ignores blank segments from stray commas or whitespace", () => {
+    const options = parseArgs([
+      "--input",
+      "i",
+      "--output",
+      "o",
+      "--package",
+      "p",
+      "--exclude-mode",
+      "ios, ,tvos,",
+    ]);
+    expect(options.excludeMode?.test("ios")).toBe(true);
+    expect(options.excludeMode?.test("tvos")).toBe(true);
+    // A dangling empty segment must not compile into a pattern that
+    // matches everything.
+    expect(options.excludeMode?.test("android")).toBe(false);
+  });
 });

@@ -10,6 +10,7 @@ import {
   generateKotlinFiles,
   generateLegacyKotlinFiles,
   MissingDependencyParamError,
+  SubCollectionValueError,
   UnrepresentableTokenValueError,
 } from "../kotlin.js";
 
@@ -624,5 +625,113 @@ describe("generateKotlinFiles — real-world fixture", () => {
     expect(byPath.has("com/dexcom/tokens/base/color/Color.kt")).toBe(true);
     expect(byPath.has("com/dexcom/tokens/base/Base.kt")).toBe(true);
     expect(byPath.has("com/dexcom/tokens/primitives/Primitives.kt")).toBe(true);
+  });
+});
+
+describe("sub-collections (extended collections)", () => {
+  function themed(steloLight: Token["modes"][string]) {
+    const primitives = collection({
+      id: "p",
+      name: "primitives",
+      modes: ["value"],
+      tokens: [
+        token({ path: "palette/slate/100", modes: { value: "#F0F3F8" } }),
+        token({ path: "palette/tan/200", modes: { value: "#F1F0EB" } }),
+      ],
+    });
+    const base = collection({
+      id: "b",
+      name: "base",
+      modes: ["light", "dark"],
+      dependsOn: ["primitives"],
+      tokens: [
+        token({
+          path: "color/surface/canvas/primary",
+          modes: { light: "#F0F3F8", dark: "#000000" },
+          alias: { byMode: { light: { collection: "primitives", path: "palette/slate/100" } } },
+        }),
+      ],
+    });
+    const stelo = collection({
+      id: "s",
+      name: "stelo",
+      extends: "base",
+      modes: ["light", "dark"],
+      dependsOn: ["primitives"],
+      tokens: [
+        token({
+          path: "color/surface/canvas/primary",
+          modes: { light: steloLight, dark: "#111111" },
+          ...(steloLight !== null
+            ? {
+                alias: {
+                  byMode: { light: { collection: "primitives", path: "palette/tan/200" } },
+                },
+              }
+            : {}),
+        }),
+      ],
+    });
+    const model = buildTokenModel(document([primitives, base, stelo]));
+    const options = { packageName: "com.test", parentCollections: new Map([["stelo", "base"]]) };
+    return { model, stelo, options };
+  }
+
+  it("emits only factories returning the parent's type, built from the sub-collection's own values", () => {
+    const { model, stelo, options } = themed("#F1F0EB");
+    const file = generateCollectionKotlinFile(model, stelo, options)!;
+
+    expect(file.relativePath).toBe("com/test/Stelo.kt");
+    expect(file.contents).not.toContain("data class");
+    expect(file.contents).toContain("fun steloLight(primitives: Primitives): Base =");
+    expect(file.contents).toContain("fun steloDark(primitives: Primitives): Base =");
+    expect(file.contents).toContain("color = Base.Color(");
+    expect(file.contents).toContain("primary = primitives.palette.tan._200,");
+    expect(file.contents).not.toContain("slate");
+
+    // The parent keeps its class and its own factories.
+    const baseFile = generateKotlinFiles(model, options).find((f) =>
+      f.relativePath.endsWith("Base.kt"),
+    )!;
+    expect(baseFile.contents).toContain("data class Base(");
+    expect(baseFile.contents).toContain("primary = primitives.palette.slate._100,");
+  });
+
+  it("legacy layout: factories in the sub-collection's package return the parent's classes by FQN", () => {
+    const { model, stelo, options } = themed("#F1F0EB");
+    const files = generateCollectionLegacyKotlinFiles(model, stelo, options);
+    const paths = files.map((f) => f.relativePath).sort();
+
+    expect(paths).toEqual([
+      "com/test/stelo/SteloDark.kt",
+      "com/test/stelo/SteloLight.kt",
+      "com/test/stelo/color/ColorDark.kt",
+      "com/test/stelo/color/ColorLight.kt",
+    ]);
+    const root = files.find((f) => f.relativePath === "com/test/stelo/SteloLight.kt")!.contents;
+    expect(root).toContain(
+      "fun steloLight(primitives: com.test.primitives.Primitives): com.test.base.Base = com.test.base.Base(",
+    );
+    expect(root).toContain("color = com.test.stelo.color.colorLight(primitives),");
+    const branch = files.find(
+      (f) => f.relativePath === "com/test/stelo/color/ColorLight.kt",
+    )!.contents;
+    expect(branch).toContain(
+      "fun colorLight(primitives: com.test.primitives.Primitives): com.test.base.color.Color =",
+    );
+    expect(branch).toContain("com.test.base.color.Color.Surface(");
+  });
+
+  it("throws SubCollectionValueError when a value is missing where the parent's property is non-nullable", () => {
+    const { model, stelo, options } = themed(null);
+    expect(() => generateCollectionKotlinFile(model, stelo, options)).toThrow(
+      SubCollectionValueError,
+    );
+  });
+
+  it("emits a standalone class when no parent mapping is given", () => {
+    const { model, stelo } = themed("#F1F0EB");
+    const file = generateCollectionKotlinFile(model, stelo, { packageName: "com.test" })!;
+    expect(file.contents).toContain("data class Stelo(");
   });
 });

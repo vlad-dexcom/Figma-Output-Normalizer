@@ -7,6 +7,14 @@ export {
   type PolicyStalenessResult,
 } from "./policy.js";
 export {
+  applyCollectionFallbacks,
+  detectCollectionFallbacks,
+  parseFallbackCollectionArg,
+  type DetectedFallbacks,
+  type FallbackMapping,
+  type FallbackResult,
+} from "./fallback.js";
+export {
   DEFAULT_UNRESOLVED_ACTIONS,
   UnresolvedTokensError,
   assertNoUnresolvedFailures,

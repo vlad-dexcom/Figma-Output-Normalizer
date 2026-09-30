@@ -446,3 +446,128 @@ describe("token export: unsupported value shapes", () => {
     expect(entry?.detail).toContain("does not recognize");
   });
 });
+
+describe("token export: extended collections", () => {
+  // Figma theming: `stelo` extends `base`. The extension shares base's
+  // variables (whose `valuesByMode` is keyed by *base's* mode ids and never
+  // holds extension overrides), declares its own mode ids linked back via
+  // `parentModeId`, and stores its overrides in `variableOverrides`.
+  // Reading `valuesByMode` by the extension's mode ids exported every stelo
+  // value as null -- overridden or not.
+  const primitives: FigmaVariableCollection = {
+    id: "C:prim",
+    name: "primitives",
+    modes: [{ modeId: "p:value", name: "Value" }],
+    defaultModeId: "p:value",
+    variableIds: ["V:slate", "V:tan"],
+  };
+  const base: FigmaVariableCollection = {
+    id: "C:base",
+    name: "base",
+    modes: [
+      { modeId: "b:light", name: "light" },
+      { modeId: "b:dark", name: "dark" },
+    ],
+    defaultModeId: "b:light",
+    variableIds: ["V:canvas"],
+  };
+  const stelo: FigmaVariableCollection = {
+    id: "C:stelo",
+    name: "stelo",
+    isExtension: true,
+    parentVariableCollectionId: "C:base",
+    modes: [
+      { modeId: "s:light", name: "light", parentModeId: "b:light" },
+      { modeId: "s:dark", name: "dark", parentModeId: "b:dark" },
+    ],
+    // Extensions can report the parent's default mode id.
+    defaultModeId: "b:light",
+    variableIds: ["V:canvas"],
+    variableOverrides: { "V:canvas": { "s:light": { type: "VARIABLE_ALIAS", id: "V:tan" } } },
+  };
+  const vars: Record<string, FigmaVariable> = {
+    "V:slate": {
+      id: "V:slate",
+      name: "palette/slate/100",
+      variableCollectionId: "C:prim",
+      resolvedType: "COLOR",
+      valuesByMode: { "p:value": { r: 1, g: 1, b: 1 } },
+    },
+    "V:tan": {
+      id: "V:tan",
+      name: "palette/tan/200",
+      variableCollectionId: "C:prim",
+      resolvedType: "COLOR",
+      valuesByMode: { "p:value": { r: 1, g: 0, b: 0 } },
+    },
+    "V:canvas": {
+      id: "V:canvas",
+      name: "color/surface/canvas/primary",
+      variableCollectionId: "C:base",
+      resolvedType: "COLOR",
+      valuesByMode: {
+        "b:light": { type: "VARIABLE_ALIAS", id: "V:slate" },
+        "b:dark": { r: 0, g: 0, b: 0 },
+      },
+    },
+  };
+  const cols: Record<string, FigmaVariableCollection> = {
+    "C:prim": primitives,
+    "C:base": base,
+    "C:stelo": stelo,
+  };
+
+  function extendedFigma(withForCollectionApi: boolean): TokenExportFigmaAPI {
+    const withApi = (v: FigmaVariable): FigmaVariable =>
+      withForCollectionApi
+        ? {
+            ...v,
+            async valuesByModeForCollectionAsync(collection) {
+              const overrides = collection.variableOverrides?.[v.id!] ?? {};
+              return Object.fromEntries(
+                collection.modes.map((m) => [
+                  m.modeId,
+                  m.modeId in overrides ? overrides[m.modeId] : v.valuesByMode[m.parentModeId!],
+                ]),
+              );
+            },
+          }
+        : v;
+    return {
+      variables: {
+        getVariableByIdAsync: async (id) => (vars[id] ? withApi(vars[id]!) : null),
+        getVariableCollectionByIdAsync: async (id) => cols[id] ?? null,
+        getLocalVariableCollectionsAsync: async () => Object.values(cols),
+      },
+    };
+  }
+
+  for (const withApi of [true, false]) {
+    it(`reads overrides and inherited values through the extension (${withApi ? "valuesByModeForCollectionAsync" : "variableOverrides fallback"})`, async () => {
+      const { document } = await extractTokens(extendedFigma(withApi), { fileKey: "k" });
+      const steloCol = document.collections.find((c) => c.name === "stelo")!;
+      const token = steloCol.tokens.find((t) => t.path === "color/surface/canvas/primary")!;
+
+      expect(steloCol.defaultMode).toBe("light");
+      expect(steloCol.extends).toBe("base");
+      expect(document.collections.find((c) => c.name === "base")?.extends).toBeUndefined();
+      // Overridden: light -> palette/tan/200 (not base's slate/100).
+      expect(token.alias?.byMode.light).toEqual({
+        collection: "primitives",
+        path: "palette/tan/200",
+      });
+      expect(token.modes.light).toBe("#FF0000");
+      // Inherited from base: dark literal.
+      expect(token.modes.dark).toBe("#000000");
+      expect(token.value).toBe("#FF0000");
+      expect(steloCol.dependsOn).toEqual(["primitives"]);
+      expect(document.unresolved.filter((u) => u.collection === "stelo")).toEqual([]);
+
+      const baseToken = findToken(document, "base", "color/surface/canvas/primary");
+      expect(baseToken?.alias?.byMode.light).toEqual({
+        collection: "primitives",
+        path: "palette/slate/100",
+      });
+    });
+  }
+});

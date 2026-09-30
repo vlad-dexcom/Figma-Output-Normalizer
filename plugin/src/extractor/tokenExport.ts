@@ -403,6 +403,62 @@ async function resolveMode(
 }
 
 /**
+ * The `valuesByMode` to read for `variable` *as seen through* `collection`,
+ * keyed by `collection`'s own mode ids.
+ *
+ * For a regular collection that is just `variable.valuesByMode`. For an
+ * `ExtendedVariableCollection` (Figma theming: e.g. `stelo` extending
+ * `base`) it is NOT: the extension shares the parent's variables, whose
+ * `valuesByMode` is keyed by the *parent's* mode ids and never contains the
+ * extension's overrides -- reading it by the extension's mode ids finds
+ * nothing, so every value (overridden or not) would export as `null`.
+ * Figma's `valuesByModeForCollectionAsync` returns the effective
+ * inherited-or-overridden values; when it isn't available, the same result
+ * is reconstructed from `variableOverrides` + each mode's `parentModeId`.
+ */
+async function effectiveValuesByMode(
+  ctx: ResolutionContext,
+  variable: FigmaVariable,
+  collection: FigmaVariableCollection,
+  depth = 0,
+): Promise<Record<string, unknown>> {
+  if (!collection.isExtension || variable.variableCollectionId === collection.id) {
+    return variable.valuesByMode;
+  }
+  if (variable.valuesByModeForCollectionAsync) {
+    return variable.valuesByModeForCollectionAsync(collection);
+  }
+
+  const parent =
+    collection.parentVariableCollectionId !== undefined && depth < MAX_ALIAS_DEPTH
+      ? await getCollection(ctx, collection.parentVariableCollectionId)
+      : null;
+  const inherited = parent ? await effectiveValuesByMode(ctx, variable, parent, depth + 1) : {};
+  const overrides = (variable.id && collection.variableOverrides?.[variable.id]) || {};
+
+  const values: Record<string, unknown> = {};
+  for (const mode of collection.modes) {
+    if (mode.modeId in overrides) {
+      values[mode.modeId] = overrides[mode.modeId];
+    } else if (mode.parentModeId !== undefined && mode.parentModeId in inherited) {
+      values[mode.modeId] = inherited[mode.parentModeId];
+    }
+  }
+  return values;
+}
+
+/**
+ * The collection's default mode name. An extended collection may report its
+ * parent's `defaultModeId`, so a mode whose `parentModeId` matches counts too.
+ */
+function defaultModeNameOf(collection: FigmaVariableCollection): string | null {
+  const mode =
+    collection.modes.find((m) => m.modeId === collection.defaultModeId) ??
+    collection.modes.find((m) => m.parentModeId === collection.defaultModeId);
+  return mode?.name ?? null;
+}
+
+/**
  * Builds one `Token` from a Figma variable, resolving every mode its owning
  * collection declares (not merely the modes present in `valuesByMode`, which
  * can be sparse).
@@ -416,9 +472,10 @@ async function buildToken(
   const unresolved: UnresolvedToken[] = [];
   const modes: Record<string, string | number | boolean | null> = {};
   const aliasByMode: Record<string, AliasHop> = {};
+  const valuesByMode = await effectiveValuesByMode(ctx, variable, collection);
 
   for (const mode of collection.modes) {
-    const raw = variable.valuesByMode[mode.modeId];
+    const raw = valuesByMode[mode.modeId];
     const resolved = await resolveMode(ctx, raw, mode.name, 0, [variable.id ?? variable.name]);
     modes[mode.name] = resolved.value;
     if (resolved.alias) aliasByMode[mode.name] = resolved.alias;
@@ -432,9 +489,7 @@ async function buildToken(
     }
   }
 
-  const defaultModeName =
-    collection.modes.find((m) => m.modeId === collection.defaultModeId)?.name ??
-    collection.modes[0]?.name;
+  const defaultModeName = defaultModeNameOf(collection) ?? collection.modes[0]?.name;
   const value = defaultModeName !== undefined ? (modes[defaultModeName] ?? null) : null;
 
   const symbolResolution = resolveTokenSymbol(collectionName, variable.name);
@@ -578,6 +633,11 @@ export async function extractTokens(
       }
     }
 
+    const parentCollection =
+      collection.isExtension && collection.parentVariableCollectionId
+        ? await getCollection(ctx, collection.parentVariableCollectionId)
+        : null;
+
     collections.push({
       name: collectionName,
       id: collection.id ?? "",
@@ -585,8 +645,8 @@ export async function extractTokens(
       ...(collection.hiddenFromPublishing !== undefined
         ? { hidden: collection.hiddenFromPublishing }
         : {}),
-      defaultMode:
-        collection.modes.find((m) => m.modeId === collection.defaultModeId)?.name ?? null,
+      ...(parentCollection?.name ? { extends: parentCollection.name } : {}),
+      defaultMode: defaultModeNameOf(collection),
       // Figma's declared order, deliberately not sorted — see the module header.
       modes: collection.modes.map((m) => m.name),
       branches,

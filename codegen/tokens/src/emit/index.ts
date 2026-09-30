@@ -27,6 +27,7 @@ export {
 export {
   DuplicateClassNameError,
   MissingDependencyParamError,
+  SubCollectionValueError,
   UnrepresentableTokenValueError,
   generateCollectionKotlinFile,
   generateCollectionLegacyKotlinFiles,

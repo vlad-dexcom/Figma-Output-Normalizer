@@ -52,6 +52,79 @@ export interface KotlinEmitOptions {
    * parameter type gets the same prefix as its own generated file.
    */
   classPrefix?: string;
+  /**
+   * Sub-collection name -> parent collection name (see
+   * `model/parents.ts`). A sub-collection gets no class of its own: only
+   * per-mode factory functions returning its parent's type, built from its
+   * own values. Chains (C extends B extends A) resolve to the root's type.
+   */
+  parentCollections?: ReadonlyMap<string, string>;
+}
+
+/**
+ * Thrown when a sub-collection's value is missing (null, no alias) where
+ * its parent's generated property is non-nullable -- returning the
+ * parent's type would otherwise require inventing a value.
+ */
+export class SubCollectionValueError extends Error {
+  constructor(childName: string, parentName: string, tokenPath: string, mode: string) {
+    super(
+      `token "${tokenPath}" in collection "${childName}" has no value in mode "${mode}", but ` +
+        `"${childName}" is generated as "${parentName}"'s type, where that property is ` +
+        `non-nullable. Set the value in Figma (or allow a fallback) before regenerating.`,
+    );
+    this.name = "SubCollectionValueError";
+  }
+}
+
+interface SubCollectionTarget {
+  /** The root parent collection whose generated type this collection's factories return. */
+  parent: TokenCollection;
+  /** The parent's modes after `excludeModePattern` filtering -- what its nullability was computed over. */
+  parentModes: readonly string[];
+}
+
+function modesToEmitFor(collection: TokenCollection, options: KotlinEmitOptions): string[] {
+  const filtered = options.excludeModePattern
+    ? collection.modes.filter((m) => !options.excludeModePattern?.test(m))
+    : collection.modes;
+  return filtered.length > 0 ? filtered : collection.modes;
+}
+
+function subCollectionTarget(
+  model: TokenModel,
+  collection: TokenCollection,
+  options: KotlinEmitOptions,
+): SubCollectionTarget | undefined {
+  const parents = options.parentCollections;
+  let parentName = parents?.get(collection.name);
+  if (parentName === undefined) return undefined;
+  const seen = new Set([collection.name]);
+  while (parents?.has(parentName) && !seen.has(parentName)) {
+    seen.add(parentName);
+    parentName = parents.get(parentName)!;
+  }
+  const parent = model.collections.find((c) => c.name === parentName);
+  if (!parent) return undefined;
+  return { parent, parentModes: modesToEmitFor(parent, options) };
+}
+
+/** Enforces {@link SubCollectionValueError} for every emitted mode of a sub-collection. */
+function assertSubCollectionValues(
+  collection: TokenCollection,
+  target: SubCollectionTarget,
+  modes: readonly string[],
+): void {
+  const parentByPath = new Map(target.parent.tokens.map((t) => [t.path, t]));
+  for (const token of collection.tokens) {
+    const parentToken = parentByPath.get(token.path);
+    if (!parentToken || isNullableLeaf(parentToken, target.parentModes)) continue;
+    for (const mode of modes) {
+      if (isNullableLeaf(token, [mode])) {
+        throw new SubCollectionValueError(collection.name, target.parent.name, token.path, mode);
+      }
+    }
+  }
 }
 
 export interface KotlinFile {
@@ -374,14 +447,21 @@ export function generateCollectionKotlinFile(
   const dependencies = resolveDependsOn(model, collection);
   const depParamByName = new Map(dependencies.map((d) => [d.name, toCamelCase(d.name)]));
 
-  const filteredModes = options.excludeModePattern
-    ? collection.modes.filter((m) => !options.excludeModePattern?.test(m))
-    : collection.modes;
-  const modesToEmit = filteredModes.length > 0 ? filteredModes : collection.modes;
+  const modesToEmit = modesToEmitFor(collection, options);
+  const subTarget = subCollectionTarget(model, collection, options);
+  const returnClassName = subTarget ? classNameFor(subTarget.parent.name) : rootClassName;
 
   const lines: string[] = [kotlinGeneratedHeader(), `package ${options.packageName}`, ""];
   const opacityPlan = buildOpacityPlan(model);
-  emitDataClass(tree, rootClassName, 0, lines, modesToEmit, collection.name, opacityPlan);
+  if (subTarget) {
+    assertSubCollectionValues(collection, subTarget, modesToEmit);
+    lines.push(
+      `// "${collection.name}" extends "${subTarget.parent.name}": no class of its own, only ` +
+        `${returnClassName} instances built from "${collection.name}"'s values.`,
+    );
+  } else {
+    emitDataClass(tree, rootClassName, 0, lines, modesToEmit, collection.name, opacityPlan);
+  }
   lines.push("");
 
   const params = dependencies
@@ -392,13 +472,13 @@ export function generateCollectionKotlinFile(
     const expr = emitConstructorExpr(
       collection,
       tree,
-      rootClassName,
+      returnClassName,
       1,
       mode,
       depParamByName,
       opacityPlan,
     );
-    lines.push(`fun ${fnName}(${params}): ${rootClassName} =`);
+    lines.push(`fun ${fnName}(${params}): ${returnClassName} =`);
     lines.push(`    ${expr}`);
     lines.push("");
   }
@@ -555,10 +635,15 @@ export function generateCollectionLegacyKotlinFiles(
     .join(", ");
   const args = dependencies.map((d) => depParamByName.get(d.name)).join(", ");
 
-  const filteredModes = options.excludeModePattern
-    ? collection.modes.filter((m) => !options.excludeModePattern?.test(m))
-    : collection.modes;
-  const modesToEmit = filteredModes.length > 0 ? filteredModes : collection.modes;
+  const modesToEmit = modesToEmitFor(collection, options);
+  // A sub-collection's factories live in its own package but construct and
+  // return its parent's classes, referenced by FQN; it emits no classes.
+  const subTarget = subCollectionTarget(model, collection, options);
+  if (subTarget) assertSubCollectionValues(collection, subTarget, modesToEmit);
+  const typePkg = subTarget ? collectionPackage(options.packageName, subTarget.parent.name) : pkg;
+  const rootTypeName = subTarget
+    ? `${typePkg}.${classNameFor(subTarget.parent.name)}`
+    : rootClassName;
 
   const leaves = leafChildren(tree);
   const branches = branchChildren(tree);
@@ -569,21 +654,26 @@ export function generateCollectionLegacyKotlinFiles(
   for (const branch of branches) {
     const branchClassName = classNameFor(branch.name);
     const branchPkg = `${pkg}.${toFolderName(branch.name)}`;
+    const branchTypeName = subTarget
+      ? `${typePkg}.${toFolderName(branch.name)}.${branchClassName}`
+      : branchClassName;
 
-    const classLines: string[] = [];
-    emitDataClass(
-      branch,
-      branchClassName,
-      0,
-      classLines,
-      modesToEmit,
-      collection.name,
-      opacityPlan,
-    );
-    files.push({
-      relativePath: `${branchPkg.split(".").join("/")}/${branchClassName}.kt`,
-      contents: renderKotlinFile(branchPkg, classLines),
-    });
+    if (!subTarget) {
+      const classLines: string[] = [];
+      emitDataClass(
+        branch,
+        branchClassName,
+        0,
+        classLines,
+        modesToEmit,
+        collection.name,
+        opacityPlan,
+      );
+      files.push({
+        relativePath: `${branchPkg.split(".").join("/")}/${branchClassName}.kt`,
+        contents: renderKotlinFile(branchPkg, classLines),
+      });
+    }
 
     for (const mode of modesToEmit) {
       const modePascal = toPascalCase(mode);
@@ -591,13 +681,13 @@ export function generateCollectionLegacyKotlinFiles(
       const expr = emitConstructorExpr(
         collection,
         branch,
-        branchClassName,
+        branchTypeName,
         1,
         mode,
         depParamByName,
         opacityPlan,
       );
-      const factoryLines = [`fun ${fnName}(${params}): ${branchClassName} =`, `    ${expr}`];
+      const factoryLines = [`fun ${fnName}(${params}): ${branchTypeName} =`, `    ${expr}`];
       files.push({
         relativePath: `${branchPkg.split(".").join("/")}/${branchClassName}${modePascal}.kt`,
         contents: renderKotlinFile(branchPkg, factoryLines),
@@ -606,20 +696,22 @@ export function generateCollectionLegacyKotlinFiles(
   }
 
   // The root data-class-only file: branch properties reference each branch's class by FQN.
-  const rootClassLines: string[] = [];
-  emitLegacyRootDataClass(
-    tree,
-    rootClassName,
-    rootClassLines,
-    modesToEmit,
-    (branchName) => `${pkg}.${toFolderName(branchName)}.${classNameFor(branchName)}`,
-    collection.name,
-    opacityPlan,
-  );
-  files.push({
-    relativePath: `${pkg.split(".").join("/")}/${rootClassName}.kt`,
-    contents: renderKotlinFile(pkg, rootClassLines),
-  });
+  if (!subTarget) {
+    const rootClassLines: string[] = [];
+    emitLegacyRootDataClass(
+      tree,
+      rootClassName,
+      rootClassLines,
+      modesToEmit,
+      (branchName) => `${pkg}.${toFolderName(branchName)}.${classNameFor(branchName)}`,
+      collection.name,
+      opacityPlan,
+    );
+    files.push({
+      relativePath: `${pkg.split(".").join("/")}/${rootClassName}.kt`,
+      contents: renderKotlinFile(pkg, rootClassLines),
+    });
+  }
 
   // One factory-only file per collection mode, calling each branch's mode
   // factory by fully-qualified name (no import needed, matching the old
@@ -643,7 +735,7 @@ export function generateCollectionLegacyKotlinFiles(
       const branchFnFqn = `${branchPkg}.${toCamelCase(branch.name)}${modePascal}`;
       ctorArgs.push(`${safeKotlinProperty(branch.name)} = ${branchFnFqn}(${args})`);
     }
-    const factoryLines = [`fun ${fnName}(${params}): ${rootClassName} = ${rootClassName}(`];
+    const factoryLines = [`fun ${fnName}(${params}): ${rootTypeName} = ${rootTypeName}(`];
     for (const arg of ctorArgs) factoryLines.push(`    ${arg},`);
     factoryLines.push(")");
     files.push({

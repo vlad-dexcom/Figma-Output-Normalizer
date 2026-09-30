@@ -76,6 +76,10 @@ export interface TokenCollection {
    */
   hidden?: boolean;
   /**
+   * Set only on a Figma extended collection (a theme, e.g. "stelo" extending "base"): the name of its parent collection. An extension shares its parent's variables and structure and differs only in values, so a generator can treat it as another set of values for the parent's type rather than a type of its own.
+   */
+  extends?: string;
+  /**
    * The name of the collection's default mode. Preserved because it encodes designer intent (which mode a single-value consumer should read) and is not recoverable from an alphabetically sorted mode list.
    */
   defaultMode: string | null;

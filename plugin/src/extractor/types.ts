@@ -37,12 +37,26 @@ export interface FigmaVariable {
   /** Figma sets this on a deleted variable that something still references. */
   deletedButReferenced?: boolean;
   remote?: boolean;
+  /**
+   * Inherited-or-overridden values keyed by `collection`'s own mode ids. The
+   * only complete way to read a variable through an extended collection:
+   * `valuesByMode` holds the parent's values only, never extension overrides.
+   */
+  valuesByModeForCollectionAsync?(
+    collection: FigmaVariableCollection,
+  ): Promise<Record<string, unknown>>;
 }
 
-/** Subset of Figma's `VariableCollection` this extractor reads. */
+/** Subset of Figma's `VariableCollection` (or `ExtendedVariableCollection`) this extractor reads. */
 export interface FigmaVariableCollection {
-  modes: { modeId: string; name: string }[];
+  /** `parentModeId` is set only on an extended collection's modes. */
+  modes: { modeId: string; name: string; parentModeId?: string }[];
   defaultModeId: string;
+  /** True for an `ExtendedVariableCollection` (a theme that overrides a parent collection). */
+  isExtension?: boolean;
+  parentVariableCollectionId?: string;
+  /** Extension-only: variable id -> extended mode id -> overridden value. */
+  variableOverrides?: Record<string, Record<string, unknown>>;
   /**
    * The collection's name. Part of a token's *identity* (see
    * `resolveVariable`), not decoration: sibling collections routinely

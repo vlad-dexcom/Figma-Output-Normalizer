@@ -6,10 +6,12 @@
 // `scripts/verify-generated.mjs`).
 import { mkdir, readdir, readFile, rm, rmdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { applyCollectionFallbacks, detectCollectionFallbacks } from "../input/fallback.js";
 import { loadTokenDocument } from "../input/load.js";
 import { assertPolicyFresh, warnAboutUnmatchedPolicyPatterns } from "../input/policy.js";
 import { assertNoUnresolvedFailures } from "../input/unresolved.js";
 import { buildTokenModel } from "../model/build.js";
+import { resolveCollectionParents } from "../model/parents.js";
 import { generateKotlinFiles, generateLegacyKotlinFiles, type KotlinFile } from "../emit/kotlin.js";
 import { CliArgError, HELP_TEXT, parseArgs, type CliOptions } from "./args.js";
 
@@ -111,16 +113,35 @@ export async function runCli(argv: readonly string[], io: CliIo = defaultIo): Pr
   }
 
   try {
-    const document = await loadTokenDocument(options.input);
+    let document = await loadTokenDocument(options.input);
+
+    const { detected, ambiguous } = detectCollectionFallbacks(document);
+    for (const [child, candidates] of ambiguous) {
+      io.stderr(
+        `fallback: [${child}] matches more than one candidate parent (${candidates.join(", ")}) -- ` +
+          `not applied automatically; disambiguate with --fallback-collection ${child}=<parent>.`,
+      );
+    }
+    // An explicit `--fallback-collection` always wins over an
+    // auto-detected match for the same child.
+    const fallbackCollections = new Map([...detected, ...options.fallbackCollections]);
+    if (fallbackCollections.size > 0) {
+      const { document: filled, applied } = applyCollectionFallbacks(document, fallbackCollections);
+      document = filled;
+      for (const line of applied) io.stderr(`fallback applied: ${line}`);
+    }
     assertPolicyFresh(document.policy, options.input);
     warnAboutUnmatchedPolicyPatterns(document.policy, io.stderr);
     assertNoUnresolvedFailures(document.unresolved, options.onUnresolved, io.stderr);
 
     const model = buildTokenModel(document);
+    const { parents, notes } = resolveCollectionParents(document);
+    for (const note of notes) io.stderr(`sub-collection: ${note}`);
     const emitOptions = {
       packageName: options.packageName,
       excludeModePattern: options.excludeMode,
       classPrefix: options.prefix,
+      parentCollections: parents,
     };
     const files =
       options.layout === "legacy"

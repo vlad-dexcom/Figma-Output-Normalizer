@@ -52,6 +52,20 @@ alias graph (see git history for `codegen/tokens/_legacy-python/`).
    the literal, so `.copy(alpha = …)` references need no arithmetic (see
    `docs/BACKLOG.md` G15).
 
+   **Sub-collections (Figma extended collections) reuse their parent's
+   type.** A theme like `stelo` extending `base` gets no class of its own:
+   `Stelo.kt` holds only `steloLight(primitives): Base`, `steloDark(…)`, …,
+   constructing `Base` from stelo's own values. Anything typed `Base`
+   (e.g. `componentsValue(base: Base, …)`) therefore accepts a stelo theme
+   as-is. The link comes from the exporter's `collection.extends` (Figma's
+   own extension link); exports that predate that field fall back to
+   structural detection (identical paths, types and modes, exactly one
+   candidate), noted on stderr. A recorded link whose token sets differ, or
+   a sub-collection value that is missing where the parent's property is
+   non-nullable, fails generation instead of producing Kotlin that
+   wouldn't compile. `--layout legacy` does the same: stelo's factory
+   files live under `<pkg>.stelo…` and return `<pkg>.base…` classes.
+
    **v1 emits one file per collection only, by default.** No root class
    aggregates every collection into one app-level tree; wiring
    `primitivesValue()` → `baseLight(primitives)` → … in the right order is
@@ -62,13 +76,46 @@ alias graph (see git history for `codegen/tokens/_legacy-python/`).
    the default.
 
 4. **`src/cli/`** — the `codegen-tokens` CLI: `--input`, `--output`,
-   `--package`, `--prefix`, `--exclude-mode <regex>`,
-   `--on-unresolved <reason>=<action>` (repeatable), `--layout <flat|legacy>`,
-   `--dry-run`, `--check`, `--help`. `--exclude-mode` is always matched
-   case-insensitively — a mode name is free-form text a designer typed into
-   Figma, and the same semantic mode shows up with different casing per
-   collection (the real export declares `iOS` on `primitives` and `ios` on
-   `typography`), so `--exclude-mode ios` excludes both.
+   `--package`, `--prefix`, `--exclude-mode <regex>` (repeatable, and
+   comma-separated within one occurrence),
+   `--on-unresolved <reason>=<action>` (repeatable),
+   `--fallback-collection <child>=<parent>` (repeatable),
+   `--layout <flat|legacy>`, `--dry-run`, `--check`, `--help`.
+   `--exclude-mode` is always matched case-insensitively — a mode name is
+   free-form text a designer typed into Figma, and the same semantic mode
+   shows up with different casing per collection (the real export declares
+   `iOS` on `primitives` and `ios` on `typography`), so `--exclude-mode ios`
+   excludes both. Excluding more than one mode needs neither a hand-built
+   regex alternation nor a second flag name: `--exclude-mode ios,tvos` and
+   `--exclude-mode ios --exclude-mode tvos` both work, and can be mixed --
+   every pattern from every occurrence is OR'd into one combined regex.
+
+   `--fallback-collection` handles a collection deliberately laid out as a
+   1:1 override of another one (same paths, same modes) where a designer
+   only sets the tokens they actually want to diverge on and leaves the
+   rest unbound in Figma entirely — not an alias the exporter can resolve,
+   since there is no edge to follow, just an empty value. **This is
+   detected automatically, by structure, with no flag needed**: a
+   collection with a `null`, non-aliased mode value is matched against
+   every other collection with the same mode names (compared
+   case-insensitively) that actually has a value at the same path/mode. A
+   single matching candidate is applied on its own — any `null` values it
+   resolves are filled in, and the corresponding `unsupported-value`
+   (sparse mode coverage) `unresolved[]` entries are dropped, since those
+   values are no longer unresolved. More than one matching candidate is
+   reported (on stderr) as ambiguous and left alone rather than guessed at;
+   pass `--fallback-collection <child>=<parent>` to disambiguate (it also
+   overrides an auto-detected match for that child).
+
+   When the parent's value for a filled mode is itself a live alias (e.g.
+   `base`'s color aliasing into `primitives`), the alias edge is copied
+   too, not just its resolved literal — the child ends up with the same
+   live reference the parent has, instead of a baked hex string that only
+   looks that way because of how the gap happened to get filled. The
+   child collection's `dependsOn` gains whatever collection(s) those
+   copied aliases point into (an alias into a policy-excluded collection
+   keeps its literal fallback, same as the parent, and is not added to
+   `dependsOn`, since that target isn't in the document at all).
 
 ## Running the CLI
 
@@ -82,7 +129,8 @@ npm run cli --workspace=@figma-normalizator/codegen-tokens -- \
   --output path/to/output/dir \
   --package com.example.tokens \
   --exclude-mode "ios" \
-  --on-unresolved unsupported-value=warn
+  --on-unresolved unsupported-value=warn \
+  --fallback-collection stelo=base
 ```
 
 Add `--check` to fail (without writing) if the output directory is stale, or

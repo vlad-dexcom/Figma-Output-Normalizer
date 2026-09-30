@@ -2,6 +2,7 @@
 // all -- unlike the old generator's CLI (--token/--token-file/--file-key),
 // this one only ever configures the shape of an already-produced Token IR
 // export and where the generated Kotlin goes.
+import { parseFallbackCollectionArg } from "../input/fallback.js";
 import type { UnresolvedActionOverrides, UnresolvedReason } from "../input/unresolved.js";
 
 export interface CliOptions {
@@ -13,10 +14,25 @@ export interface CliOptions {
   packageName: string;
   /** Prepended to every generated root class name; default none. */
   prefix?: string;
-  /** Modes matching this pattern get no factory function (e.g. a Kotlin/Android-only build). Always compiled case-insensitively -- see `--exclude-mode` in `parseArgs`. */
+  /**
+   * Modes matching this pattern get no factory function (e.g. a
+   * Kotlin/Android-only build). Always compiled case-insensitively --
+   * see `--exclude-mode` in `parseArgs`. Built from one or more `regex`
+   * sources -- each `--exclude-mode` occurrence and each comma-separated
+   * segment within one -- OR'd together into a single pattern.
+   */
   excludeMode?: RegExp;
   /** Per-reason overrides for the default unresolved-token triage. */
   onUnresolved: UnresolvedActionOverrides;
+  /**
+   * `<child>=<parent>` pairs (repeatable). This is only needed to
+   * override or disambiguate: the CLI always auto-detects a collection
+   * that is structurally a 1:1 override of another one (same mode names,
+   * a resolvable path) and fills in any `null`, non-aliased mode value in
+   * `<child>` from the same-path value in `<parent>` on its own. A given
+   * entry here always wins over an auto-detected match for that child.
+   */
+  fallbackCollections: Map<string, string>;
   /**
    * "flat" (default): one file per collection, branches nested as inner
    * classes. "legacy": one file per top-level branch in its own
@@ -78,11 +94,12 @@ export function parseArgs(argv: readonly string[]): CliOptions {
   let output: string | undefined;
   let packageName: string | undefined;
   let prefix: string | undefined;
-  let excludeMode: RegExp | undefined;
+  const excludeModeSources: string[] = [];
   let dryRun = false;
   let check = false;
   let layout: "flat" | "legacy" = "flat";
   const onUnresolved: UnresolvedActionOverrides = {};
+  const fallbackCollections = new Map<string, string>();
 
   const next = (flag: string, i: number): string => {
     const value = argv[i + 1];
@@ -115,11 +132,27 @@ export function parseArgs(argv: readonly string[]): CliOptions {
         // "ios" on typography. Making the caller spell that out
         // ("[iI][oO][sS]") just turns an inconsistency Figma allows into a
         // silent partial match in generated output.
-        excludeMode = new RegExp(next(arg, i++), "i");
+        //
+        // Repeatable, and each value may itself be a comma-separated list
+        // of patterns -- excluding more than one mode (e.g. "ios,tvos", or
+        // two separate `--exclude-mode` flags) needs neither a hand-built
+        // alternation nor a second flag name; every pattern from every
+        // occurrence is OR'd together into one combined regex.
+        excludeModeSources.push(
+          ...next(arg, i++)
+            .split(",")
+            .map((p) => p.trim())
+            .filter((p) => p.length > 0),
+        );
         break;
       case "--on-unresolved": {
         const [reason, action] = parseOnUnresolved(next(arg, i++));
         onUnresolved[reason] = action;
+        break;
+      }
+      case "--fallback-collection": {
+        const [child, parent] = parseFallbackCollectionArg(next(arg, i++));
+        fallbackCollections.set(child, parent);
         break;
       }
       case "--dry-run":
@@ -157,6 +190,11 @@ export function parseArgs(argv: readonly string[]): CliOptions {
     throw new CliArgError("--dry-run and --check are mutually exclusive");
   }
 
+  const excludeMode =
+    excludeModeSources.length > 0
+      ? new RegExp(excludeModeSources.map((p) => `(?:${p})`).join("|"), "i")
+      : undefined;
+
   return {
     input: input as string,
     output: output as string,
@@ -164,6 +202,7 @@ export function parseArgs(argv: readonly string[]): CliOptions {
     prefix,
     excludeMode,
     onUnresolved,
+    fallbackCollections,
     layout,
     dryRun,
     check,
@@ -189,9 +228,23 @@ Options:
                           (e.g. "ios" to skip iOS-only modes in a Kotlin
                           build). Matched case-insensitively, so "ios" also
                           covers modes a designer named "iOS" or "IOS".
+                          Exclude more than one mode with a comma-separated
+                          list ("ios,tvos") and/or by repeating the flag
+                          ("--exclude-mode ios --exclude-mode tvos") --
+                          every pattern is OR'd together.
   --on-unresolved <reason>=<silent|warn|fail>
                           Override the default triage action for one
                           unresolved-token reason code. Repeatable.
+  --fallback-collection <child>=<parent>
+                          Only needed to override or disambiguate: a
+                          collection structurally identical to another one
+                          (same mode names, a resolvable path) has its
+                          null, non-aliased mode values auto-filled from
+                          the same-path value in the matching parent
+                          collection already, without this flag. Use it to
+                          force a specific parent when more than one
+                          candidate matches (reported on stderr), or to
+                          override the auto-detected one. Repeatable.
   --layout <flat|legacy>  "flat" (default): one file per collection.
                           "legacy": one file per top-level branch plus a
                           root aggregator per collection, matching the old
