@@ -1,4 +1,4 @@
-// Public entry point for @figma-normalizator/mappings.
+// Public entry point for @figma-exporter/mappings.
 //
 // Consumers (the plugin-extractor) should import `componentMap` (the parsed
 // component-map.yaml, pre-generated to JSON at build time — see

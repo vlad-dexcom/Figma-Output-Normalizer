@@ -1,9 +1,9 @@
 {
-  "name": "figma-normalizator",
+  "name": "figma-exporter",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "Monorepo root for the Figma Normalizator plugin and IR schema",
+  "description": "Monorepo root for the Figma Exporter plugin and IR schema",
   "workspaces": [
     "schema",
     "plugin",
@@ -21,7 +21,7 @@
     "format:check": "prettier --check .",
     "generate": "npm run generate:types --workspace=schema && npm run generate:map --workspace=mappings && npm run generate:wiring-rules --workspace=mappings && npm run generate:collections-policy --workspace=mappings && npm run fixtures:update --workspace=fixtures",
     "verify:generated": "node scripts/verify-generated.mjs && npm run fixtures:update --workspace=fixtures && git diff --exit-code -- fixtures/src/corpus",
-    "tokens:sync": "npm run tokens:sync --workspace=@figma-normalizator/bridge --"
+    "tokens:sync": "npm run tokens:sync --workspace=@figma-exporter/bridge --"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",

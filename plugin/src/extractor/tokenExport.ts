@@ -36,8 +36,8 @@ import type {
   TokenCollection,
   TokenDocument,
   UnresolvedToken,
-} from "@figma-normalizator/schema";
-import { createPolicyEvaluator, resolveTokenSymbol } from "@figma-normalizator/mappings";
+} from "@figma-exporter/schema";
+import { createPolicyEvaluator, resolveTokenSymbol } from "@figma-exporter/mappings";
 import type {
   FigmaVariable,
   FigmaVariableCollection,

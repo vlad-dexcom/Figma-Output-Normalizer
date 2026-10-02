@@ -1,4 +1,4 @@
-# Figma-Normalizator — как оно работает (по шагам)
+# Figma Exporter — как оно работает (по шагам)
 
 Состояние: миграция `codegen/tokens` на TS-генератор из документа токенов
 завершена (см. `schema/tokens/MIGRATION.md`). Все 388 тестов проходят (`npm test`).
@@ -32,11 +32,11 @@ npm workspaces, 5 пакетов, всё на TypeScript — внешнего Py
 `codegen/tokens/_legacy-python/`, удалён этой миграцией):
 
 ```
-schema/         @figma-normalizator/schema         — JSON Schema (IR v1 + Token v1) + сгенерированные TS-типы
-plugin/         @figma-normalizator/plugin         — сам плагин Figma (extractor + UI-панель), отдаёт IR-документ и документ токенов
-mappings/       @figma-normalizator/mappings       — component-map.yaml, wiring-rules (токен → Kotlin-символ), collections-policy
-fixtures/       @figma-normalizator/fixtures       — корпус мок-сценариев + real-world-фикстуры + замороженные снапшоты IR
-codegen/tokens/ @figma-normalizator/codegen-tokens — TS-генератор Kotlin data class'ов из документа токенов (*.tokens.json), CLI `codegen-tokens`
+schema/         @figma-exporter/schema         — JSON Schema (IR v1 + Token v1) + сгенерированные TS-типы
+plugin/         @figma-exporter/plugin         — сам плагин Figma (extractor + UI-панель), отдаёт IR-документ и документ токенов
+mappings/       @figma-exporter/mappings       — component-map.yaml, wiring-rules (токен → Kotlin-символ), collections-policy
+fixtures/       @figma-exporter/fixtures       — корпус мок-сценариев + real-world-фикстуры + замороженные снапшоты IR
+codegen/tokens/ @figma-exporter/codegen-tokens — TS-генератор Kotlin data class'ов из документа токенов (*.tokens.json), CLI `codegen-tokens`
 ```
 
 CI (`.github/workflows/ci.yml`): `npm install` → `lint` → `typecheck` →
@@ -404,7 +404,7 @@ YAML компилируется в `src/generated/component-map.json` скрип
 
 ## 6. codegen/tokens — генератор Kotlin из документа токенов
 
-`@figma-normalizator/codegen-tokens` — TypeScript-пакет, читающий **только**
+`@figma-exporter/codegen-tokens` — TypeScript-пакет, читающий **только**
 `*.tokens.json` (документ токенов, `schema/tokens/v1`, уже полностью
 резолвленный плагином — алиасы, режимы, политика исключений, символы). Он не
 знает про Figma REST/Plugin API и не делает сетевых запросов; это разница с
@@ -456,14 +456,14 @@ YAML компилируется в `src/generated/component-map.json` скрип
    удаляется, а `--check` на него падает. Удаляются только файлы с
    собственным баннером «DO NOT MODIFY», так что рукописный Kotlin в том же
    каталоге не пострадает.
-   Запуск: `npm run cli --workspace=@figma-normalizator/codegen-tokens --
+   Запуск: `npm run cli --workspace=@figma-exporter/codegen-tokens --
 <args>` (через `tsx`; скомпилированный `bin` не работает в этом
    монорепо — соседние пакеты резолвятся по `main: src/index.ts`, который
    голый `node` не умеет грузить, см. комментарий в `src/cli/index.ts`).
 5. **`testdata/golden/`** — замороженный Kotlin-вывод для маленькой ручной
    фикстуры (`testdata/minimal.tokens.json`) и для реального экспорта
    (`fixtures/src/real-world/*.tokens.json`), обновляется вручную через
-   `npm run golden:update -w @figma-normalizator/codegen-tokens` с ревью
+   `npm run golden:update -w @figma-exporter/codegen-tokens` с ревью
    диффа. CI прогоняет тот же реальный экспорт через CLI в режиме `--check`
    против этой же заморозки (см. §1) — это дополнительный смок-тест самого
    CLI поверх юнит-тестов эмиттера.
@@ -539,9 +539,9 @@ npm run generate:wiring-rules -w mappings  # wiring-rules.yaml → JSON
 npm run generate:collections-policy -w mappings  # collections-policy.yaml → JSON
 npm run fixtures:update -w fixtures        # перезапись замороженных снапшотов IR
 
-npm run cli --workspace=@figma-normalizator/codegen-tokens -- --input <tokens.json> --output <dir> --package <pkg>
+npm run cli --workspace=@figma-exporter/codegen-tokens -- --input <tokens.json> --output <dir> --package <pkg>
                                             # генерация Kotlin из документа токенов (см. §6)
-npm run golden:update -w @figma-normalizator/codegen-tokens  # перезапись замороженного golden Kotlin-вывода
+npm run golden:update -w @figma-exporter/codegen-tokens  # перезапись замороженного golden Kotlin-вывода
 
 # Загрузка в Figma: Plugins → Development → Import plugin from manifest…
 #                   → выбрать plugin/manifest.json

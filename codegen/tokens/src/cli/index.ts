@@ -3,7 +3,7 @@
 // stage 7). Thin by design: all real logic lives in `run.ts`/`args.ts` so
 // it can be unit-tested without spawning a process.
 //
-// Invoke via `npm run cli --workspace=@figma-normalizator/codegen-tokens --
+// Invoke via `npm run cli --workspace=@figma-exporter/codegen-tokens --
 // <args>` (or `npx tsx src/cli/index.ts <args>` from this package's
 // directory). This package's sibling workspace dependencies (schema,
 // mappings) resolve to their TypeScript sources (`main: src/index.ts`),

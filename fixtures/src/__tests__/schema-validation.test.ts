@@ -6,7 +6,7 @@
 import { readFile } from "node:fs/promises";
 import Ajv2020 from "ajv/dist/2020.js";
 import { describe, expect, it } from "vitest";
-import { irSchemaV1 } from "@figma-normalizator/schema";
+import { irSchemaV1 } from "@figma-exporter/schema";
 import { scenarios } from "../corpus/index.js";
 import { expectedIrPath } from "../scenario.js";
 

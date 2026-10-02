@@ -3,7 +3,7 @@
 // are grouped into a single `overlay` node injected into the children array
 // at the position they'd otherwise start. See concern #7 in the
 // plugin-extractor task description.
-import type { IRNode, OverlayNode, UnresolvedEntry } from "@figma-normalizator/schema";
+import type { IRNode, OverlayNode, UnresolvedEntry } from "@figma-exporter/schema";
 import type { FigmaNode } from "./types.js";
 import type { ProvenanceContext } from "./provenance.js";
 import type { OrderedChild } from "./list.js";

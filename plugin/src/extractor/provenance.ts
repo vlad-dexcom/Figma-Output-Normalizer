@@ -1,5 +1,5 @@
 // Builds the `source` (Provenance) field attached to every IR node.
-import type { Provenance } from "@figma-normalizator/schema";
+import type { Provenance } from "@figma-exporter/schema";
 import type { FigmaNode } from "./types.js";
 
 export interface ProvenanceContext {

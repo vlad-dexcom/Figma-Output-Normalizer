@@ -10,8 +10,8 @@ import {
   mockFrame,
   mockInstance,
   mockText,
-} from "@figma-normalizator/plugin/src/test/nodeBuilders.js";
-import type { FigmaNode } from "@figma-normalizator/plugin/src/extractor/types.js";
+} from "@figma-exporter/plugin/src/test/nodeBuilders.js";
+import type { FigmaNode } from "@figma-exporter/plugin/src/extractor/types.js";
 import type { FixtureScenario } from "../../scenario.js";
 
 // Figma keeps the same component-property definition id for every instance

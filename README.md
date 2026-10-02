@@ -1,4 +1,4 @@
-# Figma-Normalizator
+# Figma Exporter
 
 A Figma plugin + intermediate representation (IR) schema that extracts a
 **semantic, platform-neutral** description of a Figma design, for use in
@@ -59,7 +59,7 @@ End-to-end, from a Figma file to generated Kotlin:
    pick `plugin/manifest.json`. See `plugin/README.md` for details.
 
 2. **Export the file's design tokens.** Open the plugin
-   (**Plugins → Development → Figma Normalizator**) and use the token row's
+   (**Plugins → Development → Figma Exporter**) and use the token row's
    **Extract tokens** / **Export tokens** buttons (unrelated to the current
    canvas selection — tokens are file-scoped, not selection-scoped). This
    downloads `{fileKey}_{version}.tokens.json`. See "Token export
@@ -69,7 +69,7 @@ End-to-end, from a Figma file to generated Kotlin:
 3. **Generate Kotlin from the exported document.**
 
    ```bash
-   npm run cli --workspace=@figma-normalizator/codegen-tokens -- \
+   npm run cli --workspace=@figma-exporter/codegen-tokens -- \
      --input path/to/{fileKey}_{version}.tokens.json \
      --output path/to/output/dir \
      --package com.example.tokens
@@ -80,12 +80,12 @@ End-to-end, from a Figma file to generated Kotlin:
    `--layout legacy` if the consuming app still expects the old
    per-branch/subpackage layout (see `codegen/tokens/README.md`), or
    `--dry-run`/`--check` to preview or validate without writing. Run
-   `npm run cli --workspace=@figma-normalizator/codegen-tokens -- --help`
+   `npm run cli --workspace=@figma-exporter/codegen-tokens -- --help`
    for the full flag list.
 
    External consumers that don't want to `npm install`/check out the whole
    monorepo (e.g. an IDE plugin) can instead build a standalone, dependency-
-   free bundle once with `npm run bundle --workspace=@figma-normalizator/codegen-tokens`
+   free bundle once with `npm run bundle --workspace=@figma-exporter/codegen-tokens`
    and invoke `node codegen/tokens/dist/codegen-tokens.cjs <same flags>` —
    see "Building a standalone bundle" in `codegen/tokens/README.md`.
 

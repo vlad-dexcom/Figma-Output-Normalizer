@@ -7,7 +7,7 @@ import type {
   FigmaNode,
   FigmaVariable,
   FigmaVariableCollection,
-} from "@figma-normalizator/plugin/src/extractor/types.js";
+} from "@figma-exporter/plugin/src/extractor/types.js";
 
 export interface FixtureScenario {
   /** kebab-case scenario name; must match its folder name under src/corpus/. */

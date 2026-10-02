@@ -1,7 +1,7 @@
-# @figma-normalizator/plugin
+# @figma-exporter/plugin
 
 The Figma plugin (TypeScript) that walks the scene graph, extracts the
-Figma Normalizator IR, and shows it — plus hygiene warnings — in a panel a
+Figma Exporter IR, and shows it — plus hygiene warnings — in a panel a
 designer can act on directly.
 
 ## Status
@@ -19,7 +19,7 @@ designer can act on directly.
 ## Using the panel
 
 1. Select a frame (or any layer) on the canvas.
-2. Run the plugin (**Plugins → Development → Figma Normalizator**). The
+2. Run the plugin (**Plugins → Development → Figma Exporter**). The
    panel shows the currently selected layer's name and type at the top.
 3. Click **Extract**. This runs the extractor on the current selection and
    shows:
@@ -128,7 +128,7 @@ is `ExtractionResult` — `{ schemaVersion, nodes, unresolved, version }` —
 not a single IR node. `schema/ir/v1/schema.json`'s root `$ref` only
 describes one `irNode` (used to validate one entry of `nodes[]`); it now
 also defines `$defs/irDocument` for this envelope shape, and
-`schemaVersion` (`IR_SCHEMA_VERSION` from `@figma-normalizator/schema`, a
+`schemaVersion` (`IR_SCHEMA_VERSION` from `@figma-exporter/schema`, a
 literal `1` matching this schema's `v1` path segment) is threaded all the
 way from `extractSelection`'s return value into every exported artifact.
 Previously (backlog G6/G7) no exported `*.ir.json` carried its own schema
@@ -616,7 +616,7 @@ the TypeScript sources.
 1. Run `npm run build` in this package (or from the repo root).
 2. In the Figma desktop app: **Plugins → Development → Import plugin from
    manifest…**, then select `plugin/manifest.json` in this repo.
-3. Run the plugin from **Plugins → Development → Figma Normalizator**. See
+3. Run the plugin from **Plugins → Development → Figma Exporter**. See
    "Using the panel" above.
 
 Note: `manifest.json`'s `id` is a placeholder. It needs to be replaced with

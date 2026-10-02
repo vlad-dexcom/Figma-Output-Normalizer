@@ -2,7 +2,7 @@
 // from `ui.ts` (which only does DOM wiring) so it's testable headlessly
 // without a browser/jsdom environment — see plugin-validator-ui task notes
 // on why ui.ts itself stays thin.
-import type { UnresolvedEntry } from "@figma-normalizator/schema";
+import type { UnresolvedEntry } from "@figma-exporter/schema";
 
 /**
  * Human-readable labels for every `UnresolvedEntry.reason` the extractor (or

@@ -5,7 +5,7 @@ import type {
   StyledSegment,
   TextNode as IRTextNode,
   UnresolvedEntry,
-} from "@figma-normalizator/schema";
+} from "@figma-exporter/schema";
 import { resolveFillColor, resolveTypographyToken } from "./tokens.js";
 import type { FigmaAPI, FigmaNode, FigmaStyledTextSegment } from "./types.js";
 import { buildProvenance, type ProvenanceContext } from "./provenance.js";

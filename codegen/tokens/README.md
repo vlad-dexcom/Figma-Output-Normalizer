@@ -1,6 +1,6 @@
 # codegen/tokens
 
-`@figma-normalizator/codegen-tokens` turns a Token IR document
+`@figma-exporter/codegen-tokens` turns a Token IR document
 (`schema/tokens/v1/schema.json`, `*.tokens.json`, produced by
 `plugin/src/extractor/tokenExport.ts`'s `extractTokens()`) into Kotlin design
 tokens for the Android platform.
@@ -124,7 +124,7 @@ source), which a plain `node` cannot load directly — only `tsx` (or
 `vitest`) can. During development, run the CLI via:
 
 ```bash
-npm run cli --workspace=@figma-normalizator/codegen-tokens -- \
+npm run cli --workspace=@figma-exporter/codegen-tokens -- \
   --input path/to/export.tokens.json \
   --output path/to/output/dir \
   --package com.example.tokens \
@@ -164,7 +164,7 @@ whole monorepo (e.g. the DexFigmaPlugin IDE plugin), build a single
 dependency-free file with esbuild:
 
 ```bash
-npm run bundle --workspace=@figma-normalizator/codegen-tokens
+npm run bundle --workspace=@figma-exporter/codegen-tokens
 ```
 
 This writes `codegen/tokens/dist/codegen-tokens.cjs`, which bundles the CLI
@@ -196,7 +196,7 @@ To freeze new output after a deliberate emitter change, review the diff
 before committing:
 
 ```bash
-npm run golden:update --workspace=@figma-normalizator/codegen-tokens
+npm run golden:update --workspace=@figma-exporter/codegen-tokens
 git diff -- codegen/tokens/testdata/golden
 ```
 

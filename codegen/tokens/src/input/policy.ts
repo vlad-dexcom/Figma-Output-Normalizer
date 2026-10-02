@@ -13,8 +13,8 @@
 // `policy.unmatchedPatterns` is a different kind of signal — not staleness,
 // but a pattern that plausibly typo'd — so it is surfaced as a warning
 // rather than folded into the fatal mismatch list.
-import { collectionsPolicy } from "@figma-normalizator/mappings";
-import type { PolicyReport } from "@figma-normalizator/schema";
+import { collectionsPolicy } from "@figma-exporter/mappings";
+import type { PolicyReport } from "@figma-exporter/schema";
 
 export interface PolicyStalenessResult {
   stale: boolean;

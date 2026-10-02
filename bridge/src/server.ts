@@ -193,7 +193,7 @@ export class Bridge {
             reject(
               new BridgeError(
                 "No Figma plugin connected. Open the design-system file in Figma desktop and " +
-                  "run Plugins → Development → Figma Normalizator.",
+                  "run Plugins → Development → Figma Exporter.",
                 "no-plugin",
               ),
             );

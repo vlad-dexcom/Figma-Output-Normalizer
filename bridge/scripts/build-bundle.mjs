@@ -2,7 +2,7 @@
 // Bundles the tokens-sync CLI (including `serve` mode, `ws` and the
 // codegen-tokens generator) into one dependency-free file so external
 // hosts such as the DexFigmaPlugin IDE plugin can run it with a plain `node`.
-// Usage: npm run bundle --workspace=@figma-normalizator/bridge
+// Usage: npm run bundle --workspace=@figma-exporter/bridge
 import { build } from "esbuild";
 import path from "node:path";
 

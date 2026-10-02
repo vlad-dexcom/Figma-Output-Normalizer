@@ -8,7 +8,7 @@
 // how this generator looks it up, and the classify/graph layers record what
 // this generator decided to do about it. Keeping those three separate is
 // what stage 5's classification report can point back at.
-import type { TokenCollection, TokenDocumentEnvelope } from "@figma-normalizator/schema";
+import type { TokenCollection, TokenDocumentEnvelope } from "@figma-exporter/schema";
 
 export interface TokenModel {
   /** Passed through unchanged -- provenance (fileKey, content version). */

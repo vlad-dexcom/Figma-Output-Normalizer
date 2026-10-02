@@ -7,7 +7,7 @@
 // instance.test.ts for that).
 import { describe, expect, it } from "vitest";
 import { extractSelection } from "../index.js";
-import type { InstanceNode as IRInstanceNode, LayoutNode } from "@figma-normalizator/schema";
+import type { InstanceNode as IRInstanceNode, LayoutNode } from "@figma-exporter/schema";
 import {
   mockComponent,
   mockComponentSet,

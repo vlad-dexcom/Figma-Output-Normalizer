@@ -8,7 +8,7 @@
 // `unmapped-instance-recursion.test.ts`.
 import { describe, expect, it } from "vitest";
 import { extractSelection } from "../index.js";
-import type { LayoutNode } from "@figma-normalizator/schema";
+import type { LayoutNode } from "@figma-exporter/schema";
 import { mockFrame, mockText } from "../../test/nodeBuilders.js";
 import type { FigmaAPI } from "../types.js";
 

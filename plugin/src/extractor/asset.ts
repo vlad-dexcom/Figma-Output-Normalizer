@@ -1,7 +1,7 @@
 // Asset detection: vectors, and graphic-only frames/groups/instances, are
 // represented as an `asset` node (an export reference) rather than being
 // descended into. See concern #6 in the plugin-extractor task description.
-import type { AssetNode, UnresolvedEntry } from "@figma-normalizator/schema";
+import type { AssetNode, UnresolvedEntry } from "@figma-exporter/schema";
 import type { FigmaNode } from "./types.js";
 import { buildProvenance, type ProvenanceContext } from "./provenance.js";
 import { slugify } from "./slug.js";

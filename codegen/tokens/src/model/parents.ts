@@ -11,7 +11,7 @@
 // fall back to structural detection -- deliberately strict (identical
 // path/type set AND identical mode set, and exactly one candidate), because
 // a wrong match would silently retype a collection.
-import type { Token, TokenCollection, TokenDocument } from "@figma-normalizator/schema";
+import type { Token, TokenCollection, TokenDocument } from "@figma-exporter/schema";
 
 export class CollectionParentError extends Error {
   constructor(message: string) {

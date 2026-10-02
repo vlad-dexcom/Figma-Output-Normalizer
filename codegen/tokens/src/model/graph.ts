@@ -13,7 +13,7 @@
 // the platform filter survives only as a caller-supplied option, and if
 // more than one collection could plausibly drive theme variants after that
 // filter, this throws instead of guessing -- see `AmbiguousThemeSourceError`.
-import type { TokenCollection } from "@figma-normalizator/schema";
+import type { TokenCollection } from "@figma-exporter/schema";
 import type { ClassificationReport } from "./classify.js";
 import type { TokenModel } from "./types.js";
 

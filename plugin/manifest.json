@@ -1,5 +1,5 @@
 {
-  "name": "Figma Normalizator",
+  "name": "Figma Exporter",
   "id": "1679153211376984173",
   "api": "1.0.0",
   "main": "dist/code.js",

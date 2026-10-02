@@ -16,7 +16,7 @@ import {
   mockInstance,
   mockText,
 } from "../../test/nodeBuilders.js";
-import type { InstanceNode as IRInstanceNode, LayoutNode } from "@figma-normalizator/schema";
+import type { InstanceNode as IRInstanceNode, LayoutNode } from "@figma-exporter/schema";
 
 function readFixture(name: string): unknown {
   const path = fileURLToPath(new URL(`../../../../schema/fixtures/${name}`, import.meta.url));

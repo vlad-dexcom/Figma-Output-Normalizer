@@ -1,4 +1,4 @@
-// Public entry point for @figma-normalizator/codegen-tokens.
+// Public entry point for @figma-exporter/codegen-tokens.
 //
 // This package is being built out in stages (see the migration plan) on top
 // of schema/tokens/v1 Token IR: input validation (envelope/policy/unresolved

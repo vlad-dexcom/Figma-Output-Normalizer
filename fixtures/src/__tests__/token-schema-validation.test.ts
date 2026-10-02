@@ -12,13 +12,13 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import Ajv2020 from "ajv/dist/2020.js";
 import { describe, expect, it } from "vitest";
-import { tokensSchemaV1, TOKENS_SCHEMA_VERSION } from "@figma-normalizator/schema";
-import { extractTokens } from "@figma-normalizator/plugin/src/extractor/tokenExport.js";
+import { tokensSchemaV1, TOKENS_SCHEMA_VERSION } from "@figma-exporter/schema";
+import { extractTokens } from "@figma-exporter/plugin/src/extractor/tokenExport.js";
 import type {
   FigmaVariable,
   FigmaVariableCollection,
   TokenExportFigmaAPI,
-} from "@figma-normalizator/plugin/src/extractor/types.js";
+} from "@figma-exporter/plugin/src/extractor/types.js";
 
 const dumpPath = fileURLToPath(
   new URL(

@@ -15,8 +15,8 @@ import type {
   Padding,
   TokenValue,
   UnresolvedEntry,
-} from "@figma-normalizator/schema";
-import { IR_SCHEMA_VERSION } from "@figma-normalizator/schema";
+} from "@figma-exporter/schema";
+import { IR_SCHEMA_VERSION } from "@figma-exporter/schema";
 import { DEFAULT_NODE_BUDGET, NodeBudget } from "./budget.js";
 import { isAssetNode, buildAssetNode } from "./asset.js";
 import { buildInstanceNode } from "./instance.js";

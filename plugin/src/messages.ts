@@ -5,7 +5,7 @@
 // deliberately kept as plain types (no Figma or DOM imports) so either side
 // can depend on it without pulling in the other's runtime environment.
 import type { ExtractionResult } from "./extractor/index.js";
-import type { TokenDocument } from "@figma-normalizator/schema";
+import type { TokenDocument } from "@figma-exporter/schema";
 
 /** Minimal identity of the current Figma selection, shown at the top of the panel. */
 export interface SelectionSummary {

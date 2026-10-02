@@ -1,6 +1,6 @@
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import type { TokenDocument } from "@figma-normalizator/schema";
+import type { TokenDocument } from "@figma-exporter/schema";
 import { TokenDocumentValidationError, loadTokenDocument, parseTokenDocument } from "../load.js";
 import { TokenEnvelopeError } from "../guards.js";
 

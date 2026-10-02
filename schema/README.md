@@ -1,4 +1,4 @@
-# @figma-normalizator/schema
+# @figma-exporter/schema
 
 Versioned IR (Intermediate Representation) JSON Schema, generated TypeScript
 types, and fixtures shared between the Figma plugin (which produces IR) and
@@ -25,7 +25,7 @@ shapes. `src/generated/ir.ts` is generated from it — **never hand-edit it**.
 
 The schema is versioned by directory/`$id` path segment: this is
 **IR schema v1**, living at `schema/ir/v1/schema.json` with
-`$id: https://schemas.figma-normalizator.dev/ir/v1/schema.json`. A
+`$id: https://schemas.figma-exporter.dev/ir/v1/schema.json`. A
 backwards-incompatible change to any node shape must land as a new
 `schema/ir/v2/schema.json` (with its own generated types), not a mutation of
 v1. Additive, backwards-compatible changes (e.g. a new optional field) may be

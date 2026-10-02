@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Token } from "@figma-normalizator/schema";
+import type { Token } from "@figma-exporter/schema";
 import {
   buildPropertyTree,
   branchChildren,

@@ -1,5 +1,5 @@
 {
-  "name": "@figma-normalizator/plugin",
+  "name": "@figma-exporter/plugin",
   "version": "0.0.0",
   "private": true,
   "description": "Figma plugin that extracts a semantic, platform-neutral IR from Figma designs",
@@ -11,9 +11,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@figma-normalizator/mappings": "*",
-    "@figma-normalizator/schema": "*",
-    "@figma-normalizator/bridge": "*"
+    "@figma-exporter/mappings": "*",
+    "@figma-exporter/schema": "*",
+    "@figma-exporter/bridge": "*"
   },
   "devDependencies": {
     "@figma/plugin-typings": "^1.100.0",

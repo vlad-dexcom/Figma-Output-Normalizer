@@ -1,4 +1,4 @@
-# Figma-Normalizator — что не доделано и что можно улучшить
+# Figma Exporter — что не доделано и что можно улучшить
 
 Снимок состояния на коммит `f2cb9e7`. Как устроен пайплайн — см.
 **[ARCHITECTURE.md](./ARCHITECTURE.md)**; нумерация ссылается на его разделы.
@@ -114,7 +114,7 @@ nodeId (детерминированно, не зависит от порядк�
 
 **G7. ✅ Версия схемы не попадает в артефакт (исправлено).** `ExtractionResult`
 (и оба возврата `extractSelection`) теперь несут `schemaVersion: IR_SCHEMA_VERSION`
-(литерал `1`, уже существовавшая константа из `@figma-normalizator/schema`).
+(литерал `1`, уже существовавшая константа из `@figma-exporter/schema`).
 Экспортируемый `*.ir.json` — это теперь полноценный `IRDocument`, который можно
 провалидировать и различить по версии при появлении v2. См.
 `plugin/README.md` → «The export envelope: `IRDocument` and `schemaVersion`».

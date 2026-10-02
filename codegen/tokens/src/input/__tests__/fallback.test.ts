@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Token, TokenCollection, TokenDocument } from "@figma-normalizator/schema";
+import type { Token, TokenCollection, TokenDocument } from "@figma-exporter/schema";
 import {
   applyCollectionFallbacks,
   detectCollectionFallbacks,

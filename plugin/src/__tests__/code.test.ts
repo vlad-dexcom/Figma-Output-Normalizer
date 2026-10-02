@@ -231,7 +231,7 @@ describe("handleUIMessage: export", () => {
       source: { fileKey: "fk", nodeId: "1:1", version: "1" },
     });
 
-    expect(mockFigma.notify).toHaveBeenCalledWith("Figma Normalizator: IR exported.");
+    expect(mockFigma.notify).toHaveBeenCalledWith("Figma Exporter: IR exported.");
   });
 });
 
@@ -328,6 +328,6 @@ describe("handleUIMessage: extract-tokens", () => {
       type: "export-tokens",
       source: { fileKey: "f", version: "c1-0" },
     });
-    expect(mockFigma.notify).toHaveBeenCalledWith("Figma Normalizator: tokens exported.");
+    expect(mockFigma.notify).toHaveBeenCalledWith("Figma Exporter: tokens exported.");
   });
 });

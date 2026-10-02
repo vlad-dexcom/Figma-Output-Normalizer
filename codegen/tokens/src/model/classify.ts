@@ -15,7 +15,7 @@
 // detection is still structural (branch-set equality, then normalized token
 // path overlap), because a collection's Figma NAME is not a semantic
 // signal this generator is allowed to depend on.
-import type { TokenCollection } from "@figma-normalizator/schema";
+import type { TokenCollection } from "@figma-exporter/schema";
 import type { TokenModel } from "./types.js";
 
 export type CollectionRole = "primitive" | "semantic" | "product" | "leaf";

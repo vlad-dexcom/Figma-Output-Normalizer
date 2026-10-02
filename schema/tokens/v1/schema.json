@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.figma-normalizator.dev/tokens/v1/schema.json",
+  "$id": "https://schemas.figma-exporter.dev/tokens/v1/schema.json",
   "title": "TokenDocument",
   "description": "A semantic, platform-neutral description of a Figma file's design-token variables, produced by the Figma plugin (which can resolve alias chains, real mode names, and imported library variables that a raw REST/plugin variables dump cannot). Companion to ir/v1/schema.json: that schema describes a *selection* of the scene graph and changes constantly; this one describes the *file's* tokens and changes rarely. Kotlin/codegen concerns (package names, class shapes, factory functions, build order) are deliberately NOT modelled here - this document carries Figma-side facts only.",
   "$ref": "#/$defs/tokenDocument",

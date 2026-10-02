@@ -12,13 +12,13 @@
 import {
   extractSelection,
   type ExtractionResult,
-} from "@figma-normalizator/plugin/src/extractor/index.js";
+} from "@figma-exporter/plugin/src/extractor/index.js";
 import type {
   FigmaAPI,
   FigmaVariable,
   FigmaVariableCollection,
-} from "@figma-normalizator/plugin/src/extractor/types.js";
-import { resetAutoIds } from "@figma-normalizator/plugin/src/test/nodeBuilders.js";
+} from "@figma-exporter/plugin/src/extractor/types.js";
+import { resetAutoIds } from "@figma-exporter/plugin/src/test/nodeBuilders.js";
 import type { FixtureScenario } from "./scenario.js";
 
 function buildVariablesApi(

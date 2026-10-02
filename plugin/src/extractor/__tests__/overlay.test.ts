@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { computeOverlayAlign, groupOverlayChildren } from "../overlay.js";
 import { mockFrame } from "../../test/nodeBuilders.js";
-import type { TextNode as IRTextNode } from "@figma-normalizator/schema";
+import type { TextNode as IRTextNode } from "@figma-exporter/schema";
 
 const ctx = { fileKey: "fk", version: "1", ancestorPath: [], exportRefRegistry: new Map() };
 

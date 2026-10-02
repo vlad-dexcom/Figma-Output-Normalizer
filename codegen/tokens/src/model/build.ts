@@ -12,7 +12,7 @@
 //
 // What is left to do here is much smaller: index the document for this
 // generator's own use.
-import type { TokenCollection, TokenDocument } from "@figma-normalizator/schema";
+import type { TokenCollection, TokenDocument } from "@figma-exporter/schema";
 import type { TokenModel } from "./types.js";
 
 export class DuplicateCollectionIdError extends Error {

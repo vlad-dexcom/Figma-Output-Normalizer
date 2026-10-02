@@ -38,27 +38,27 @@ const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const artifacts = [
   {
     file: "mappings/src/generated/component-map.json",
-    regenerate: "npm run generate:map --workspace @figma-normalizator/mappings",
+    regenerate: "npm run generate:map --workspace @figma-exporter/mappings",
     generate: generateComponentMapJson,
   },
   {
     file: "mappings/src/generated/wiring-rules.json",
-    regenerate: "npm run generate:wiring-rules --workspace @figma-normalizator/mappings",
+    regenerate: "npm run generate:wiring-rules --workspace @figma-exporter/mappings",
     generate: generateWiringRulesJson,
   },
   {
     file: "mappings/src/generated/collections-policy.json",
-    regenerate: "npm run generate:collections-policy --workspace @figma-normalizator/mappings",
+    regenerate: "npm run generate:collections-policy --workspace @figma-exporter/mappings",
     generate: generateCollectionsPolicyJson,
   },
   {
     file: "schema/src/generated/ir.ts",
-    regenerate: "npm run generate:types --workspace @figma-normalizator/schema",
+    regenerate: "npm run generate:types --workspace @figma-exporter/schema",
     generate: generateIrTypesFile,
   },
   {
     file: "schema/src/generated/tokens.ts",
-    regenerate: "npm run generate:types --workspace @figma-normalizator/schema",
+    regenerate: "npm run generate:types --workspace @figma-exporter/schema",
     generate: generateTokenTypesFile,
   },
 ];

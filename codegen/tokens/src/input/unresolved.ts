@@ -8,7 +8,7 @@
 // project exists to prevent. The table below is the plan's default; a CLI
 // flag (`--on-unresolved`, wired in the CLI stage) may override it per
 // reason for a specific run.
-import type { UnresolvedToken } from "@figma-normalizator/schema";
+import type { UnresolvedToken } from "@figma-exporter/schema";
 
 export type UnresolvedReason = UnresolvedToken["reason"];
 

@@ -12,7 +12,7 @@
 // generator's `graph`/`builders` reconstructed this by hand, from alias
 // paths, as a side effect of dependency-graph construction. Here it is a
 // direct, first-class read of the recorded edge.
-import type { AliasTarget, Token, TokenCollection } from "@figma-normalizator/schema";
+import type { AliasTarget, Token, TokenCollection } from "@figma-exporter/schema";
 import type { TokenModel } from "./types.js";
 
 /** The literal value domain a token can carry per mode — same shape as schema `Token.value`/`modes`. */

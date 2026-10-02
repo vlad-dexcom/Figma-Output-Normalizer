@@ -18,7 +18,7 @@ describe("schema package", () => {
     const mod = await import("./index.js");
     expect(mod).toBeDefined();
     expect(IR_SCHEMA_VERSION).toBe(1);
-    expect(irSchemaV1["$id"]).toBe("https://schemas.figma-normalizator.dev/ir/v1/schema.json");
+    expect(irSchemaV1["$id"]).toBe("https://schemas.figma-exporter.dev/ir/v1/schema.json");
   });
 
   it("every fixture validates against ir/v1/schema.json", async () => {

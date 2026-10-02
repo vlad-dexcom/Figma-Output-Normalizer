@@ -14,14 +14,14 @@ import type {
   InstanceNode as IRInstanceNode,
   PropValue,
   UnresolvedEntry,
-} from "@figma-normalizator/schema";
+} from "@figma-exporter/schema";
 import {
   lookupComponentMapEntry,
   resolveRouting,
   resolveStateValue,
   resolveVariantValue,
-} from "@figma-normalizator/mappings";
-import type { ComponentMapEntry } from "@figma-normalizator/mappings";
+} from "@figma-exporter/mappings";
+import type { ComponentMapEntry } from "@figma-exporter/mappings";
 import type { FigmaComponentPropertyValue, FigmaNode } from "./types.js";
 import { buildProvenance, type ProvenanceContext } from "./provenance.js";
 import { resolveSizing } from "./layout.js";

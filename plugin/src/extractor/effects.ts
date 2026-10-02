@@ -2,7 +2,7 @@
 // silently dropped entirely with no `UnresolvedEntry` at all (see backlog
 // item B5, docs/BACKLOG.md). Kept in their own module since neither
 // concern is really "layout" (spacing/alignment/sizing).
-import type { Border, ShadowEffect, UnresolvedEntry } from "@figma-normalizator/schema";
+import type { Border, ShadowEffect, UnresolvedEntry } from "@figma-exporter/schema";
 import { colorToHex, resolveStrokeColor, resolveTokenValue } from "./tokens.js";
 import { isMixed } from "./mixed.js";
 import type { FigmaAPI, FigmaNode } from "./types.js";

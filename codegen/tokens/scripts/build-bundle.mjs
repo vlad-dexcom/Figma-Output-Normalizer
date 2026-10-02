@@ -14,7 +14,7 @@
 // so it can be built once and then invoked directly by external consumers
 // such as the DexFigmaPlugin IDE plugin.
 //
-// Usage: npm run bundle --workspace=@figma-normalizator/codegen-tokens
+// Usage: npm run bundle --workspace=@figma-exporter/codegen-tokens
 import { build } from "esbuild";
 import path from "node:path";
 

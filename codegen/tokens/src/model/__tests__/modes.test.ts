@@ -1,6 +1,6 @@
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import type { Token, TokenCollection, TokenDocument } from "@figma-normalizator/schema";
+import type { Token, TokenCollection, TokenDocument } from "@figma-exporter/schema";
 import { loadTokenDocument } from "../../input/load.js";
 import { buildTokenModel } from "../build.js";
 import { AliasExpansionError, expandTokenModes } from "../modes.js";

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { collectionsPolicy } from "@figma-normalizator/mappings";
-import type { PolicyReport } from "@figma-normalizator/schema";
+import { collectionsPolicy } from "@figma-exporter/mappings";
+import type { PolicyReport } from "@figma-exporter/schema";
 import {
   assertPolicyFresh,
   checkPolicyStaleness,

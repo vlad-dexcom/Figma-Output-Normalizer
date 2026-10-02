@@ -16,7 +16,7 @@
 // `baseLight(...)` vs `baseDark(...)`) is what a reference resolves
 // against, so there is nothing to "expand" here. A literal is only emitted
 // when there is no alias, or the alias's target was excluded by policy.
-import type { Token, TokenCollection } from "@figma-normalizator/schema";
+import type { Token, TokenCollection } from "@figma-exporter/schema";
 import {
   kdocBlock,
   kotlinGeneratedHeader,

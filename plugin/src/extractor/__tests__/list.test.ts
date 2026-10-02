@@ -8,7 +8,7 @@ import {
   mockInstanceWithUnreadableComponentProperties,
   mockText,
 } from "../../test/nodeBuilders.js";
-import type { TextNode as IRTextNode } from "@figma-normalizator/schema";
+import type { TextNode as IRTextNode } from "@figma-exporter/schema";
 
 const ctx = { fileKey: "fk", version: "1", ancestorPath: [], exportRefRegistry: new Map() };
 

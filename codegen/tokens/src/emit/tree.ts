@@ -1,7 +1,7 @@
 // A per-collection property tree, grouping tokens by their slash-separated
 // path into nested Kotlin data classes (migration plan, stage 6.2). Ported
 // from the old generator's `pipeline/tree.py` `TreeNode`/`insert_token`.
-import type { Token } from "@figma-normalizator/schema";
+import type { Token } from "@figma-exporter/schema";
 
 export interface PropertyTreeNode {
   /** The raw path segment this node represents (e.g. "color", "surface"). */

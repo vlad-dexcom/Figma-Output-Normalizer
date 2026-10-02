@@ -1,6 +1,6 @@
 // Wire protocol between the bridge server (Node) and the plugin UI iframe.
 // Deliberately dependency-free (types + constants only) so the plugin bundle
-// can import it via `@figma-normalizator/bridge/protocol` without pulling
+// can import it via `@figma-exporter/bridge/protocol` without pulling
 // in `ws` or any Node API.
 
 export const BRIDGE_PROTOCOL_VERSION = 1;

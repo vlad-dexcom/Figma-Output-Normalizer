@@ -6,7 +6,7 @@
 export class NodeBudgetExceededError extends Error {
   constructor(public readonly limit: number) {
     super(
-      `Figma Normalizator: this selection has more than ${limit} nodes. ` +
+      `Figma Exporter: this selection has more than ${limit} nodes. ` +
         `Extraction was stopped rather than silently truncating the output — ` +
         `select a smaller region, or split the export into multiple smaller selections.`,
     );
@@ -52,7 +52,7 @@ export class NodeBudget {
 export class VariableBudgetExceededError extends Error {
   constructor(public readonly limit: number) {
     super(
-      `Figma Normalizator: this file has more than ${limit} design-token variables. ` +
+      `Figma Exporter: this file has more than ${limit} design-token variables. ` +
         `Extraction was stopped rather than silently truncating the output — ` +
         `exclude collections you don't need in mappings/collections-policy.yaml, ` +
         `or raise the budget.`,

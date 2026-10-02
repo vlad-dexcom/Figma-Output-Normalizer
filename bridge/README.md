@@ -1,4 +1,4 @@
-# @figma-normalizator/bridge
+# @figma-exporter/bridge
 
 Removes the manual export/download/CLI steps from token re-generation.
 The plugin panel keeps a WebSocket open to a local bridge; `tokens:sync`
@@ -43,7 +43,7 @@ status and trigger syncs without a process per run. The plugin sends a `hello`
   (or `"bridge":"error","message"`), `{"type":"log","id","level","text"}`,
   `{"type":"result","id","exitCode","tokensChanged","version"}`, `{"type":"error","id","code","message"}`
 
-`npm run bundle --workspace=@figma-normalizator/bridge` builds a dependency-free
+`npm run bundle --workspace=@figma-exporter/bridge` builds a dependency-free
 `bridge/dist/tokens-sync.cjs` (bridge + generator) runnable with a plain `node`.
 
 ## Guarantees

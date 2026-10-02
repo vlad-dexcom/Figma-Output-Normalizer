@@ -9,7 +9,7 @@ import type {
   SizeDimensions,
   Sizing,
   SizingMode,
-} from "@figma-normalizator/schema";
+} from "@figma-exporter/schema";
 import type { FigmaNode } from "./types.js";
 
 /** Maps `layoutMode` to IR `direction`. A node with no Auto Layout at all is "stack" if it still has 2+ children (unordered overlap), else it's a leaf. */

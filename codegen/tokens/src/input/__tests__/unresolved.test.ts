@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import type { TokenDocument, UnresolvedToken } from "@figma-normalizator/schema";
+import type { TokenDocument, UnresolvedToken } from "@figma-exporter/schema";
 import {
   UnresolvedTokensError,
   assertNoUnresolvedFailures,

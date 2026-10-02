@@ -21,7 +21,7 @@ import type {
   TokenCollection,
   TokenDocument,
   UnresolvedToken,
-} from "@figma-normalizator/schema";
+} from "@figma-exporter/schema";
 
 export type FallbackMapping = ReadonlyMap<string, string>;
 

@@ -7,7 +7,7 @@
 // `extractSelection` (`index.ts`) stamps every entry in the flattened
 // `unresolved[]` with a severity in one pass at the very end, right before
 // returning.
-import type { UnresolvedEntry } from "@figma-normalizator/schema";
+import type { UnresolvedEntry } from "@figma-exporter/schema";
 
 export type UnresolvedSeverity = "error" | "warning" | "info";
 

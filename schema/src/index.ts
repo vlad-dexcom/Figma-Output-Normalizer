@@ -1,4 +1,4 @@
-// Public entry point for @figma-normalizator/schema.
+// Public entry point for @figma-exporter/schema.
 //
 // Consumers should import IR node types from here, and use
 // `irSchemaV1` (the raw JSON Schema document) if they need to validate IR

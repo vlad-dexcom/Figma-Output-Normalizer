@@ -1,5 +1,5 @@
 {
-  "name": "@figma-normalizator/fixtures",
+  "name": "@figma-exporter/fixtures",
   "version": "0.0.0",
   "private": true,
   "description": "Captured real-screen node data and expected IR snapshots used in tests",
@@ -11,9 +11,9 @@
     "fixtures:update": "tsx scripts/update-fixtures.ts"
   },
   "dependencies": {
-    "@figma-normalizator/mappings": "*",
-    "@figma-normalizator/plugin": "*",
-    "@figma-normalizator/schema": "*"
+    "@figma-exporter/mappings": "*",
+    "@figma-exporter/plugin": "*",
+    "@figma-exporter/schema": "*"
   },
   "devDependencies": {
     "ajv": "^8.20.0",

@@ -5,12 +5,12 @@
 // modules under `./ui/` that this file just calls and renders.
 import type { ExtractionResult } from "./extractor/index.js";
 import { canonicalStringify } from "./extractor/canonical.js";
-import type { TokenDocument, UnresolvedEntry } from "@figma-normalizator/schema";
+import type { TokenDocument, UnresolvedEntry } from "@figma-exporter/schema";
 import { buildExportFilename, buildTokenExportFilename } from "./ui/filename.js";
 import { buildWarningsViewModel } from "./ui/warnings.js";
 import { copyToClipboard, type ClipboardDeps } from "./ui/clipboard.js";
 import { createBridgeClient } from "./ui/bridgeClient.js";
-import { BRIDGE_PLUGIN_URL } from "@figma-normalizator/bridge/protocol";
+import { BRIDGE_PLUGIN_URL } from "@figma-exporter/bridge/protocol";
 import type {
   ExportSource,
   PluginToUIMessage,

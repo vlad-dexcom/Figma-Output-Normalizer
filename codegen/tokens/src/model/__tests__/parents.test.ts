@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Token, TokenCollection, TokenDocument } from "@figma-normalizator/schema";
+import type { Token, TokenCollection, TokenDocument } from "@figma-exporter/schema";
 import { CollectionParentError, resolveCollectionParents } from "../parents.js";
 
 function tokens(paths: string[], type: Token["type"] = "COLOR"): Token[] {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { severityForReason, withSeverity } from "../severity.js";
-import type { UnresolvedEntry } from "@figma-normalizator/schema";
+import type { UnresolvedEntry } from "@figma-exporter/schema";
 
 describe("severityForReason", () => {
   it("classifies design-system-breaking reasons as error", () => {

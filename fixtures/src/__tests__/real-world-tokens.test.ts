@@ -17,8 +17,8 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import Ajv2020 from "ajv/dist/2020.js";
 import { describe, expect, it } from "vitest";
-import { tokensSchemaV1, TOKENS_SCHEMA_VERSION } from "@figma-normalizator/schema";
-import type { TokenDocument } from "@figma-normalizator/schema";
+import { tokensSchemaV1, TOKENS_SCHEMA_VERSION } from "@figma-exporter/schema";
+import type { TokenDocument } from "@figma-exporter/schema";
 
 const REAL_WORLD_TOKENS_PATH = path.join(
   import.meta.dirname,

@@ -2,7 +2,7 @@
 // structurally identical (ignoring text content) and collapses them into a
 // single `list` node. See concern #5 in the plugin-extractor task
 // description.
-import type { IRNode, ListNode } from "@figma-normalizator/schema";
+import type { IRNode, ListNode } from "@figma-exporter/schema";
 import type { FigmaNode } from "./types.js";
 import { buildProvenance, type ProvenanceContext } from "./provenance.js";
 import { safeReadComponentProperties } from "./instance.js";

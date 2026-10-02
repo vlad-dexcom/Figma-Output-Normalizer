@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { computeContentVersion, withVersion } from "../versioning.js";
-import type { LayoutNode } from "@figma-normalizator/schema";
+import type { LayoutNode } from "@figma-exporter/schema";
 
 function makeNode(overrides: Partial<LayoutNode["source"]> = {}): LayoutNode {
   return {

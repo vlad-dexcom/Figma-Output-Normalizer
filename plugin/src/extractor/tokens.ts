@@ -8,8 +8,8 @@ import type {
   TokenRef,
   TypographyLiteral,
   UnresolvedEntry,
-} from "@figma-normalizator/schema";
-import { resolveTokenSymbol } from "@figma-normalizator/mappings";
+} from "@figma-exporter/schema";
+import { resolveTokenSymbol } from "@figma-exporter/mappings";
 import type { FigmaAPI, FigmaPaint, VariableAliasBinding } from "./types.js";
 import { isMixed } from "./mixed.js";
 
@@ -188,7 +188,7 @@ async function resolveModeValue(
  * also what `symbol` resolution keys on.
  *
  * `symbol` comes from evaluating the declarative wiring rules
- * (`@figma-normalizator/mappings`'s `resolveTokenSymbol`) against this
+ * (`@figma-exporter/mappings`'s `resolveTokenSymbol`) against this
  * exact `(collection, token)` pair — the outer/semantic variable's own
  * name, never an inner primitive it aliases through, since alias resolution
  * above only ever affects `value`/`modes`. When no rule derives a symbol

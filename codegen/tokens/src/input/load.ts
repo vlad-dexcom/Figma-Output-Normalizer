@@ -10,7 +10,7 @@
 import { readFile } from "node:fs/promises";
 import Ajv2020 from "ajv/dist/2020.js";
 import type { ErrorObject, ValidateFunction } from "ajv";
-import { tokensSchemaV1, type TokenDocument } from "@figma-normalizator/schema";
+import { tokensSchemaV1, type TokenDocument } from "@figma-exporter/schema";
 import { assertTokenEnvelope } from "./guards.js";
 
 export class TokenDocumentValidationError extends Error {

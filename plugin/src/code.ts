@@ -17,7 +17,7 @@ import { extractTokens, serializeTokenDocument } from "./extractor/tokenExport.j
 import { VariableBudgetExceededError } from "./extractor/budget.js";
 import type { TokenExportFigmaAPI } from "./extractor/types.js";
 import type { PluginToUIMessage, SelectionSummary, UIToPluginMessage } from "./messages.js";
-import type { UnresolvedEntry } from "@figma-normalizator/schema";
+import type { UnresolvedEntry } from "@figma-exporter/schema";
 
 /** The minimal slice of the real Figma plugin API this entry point depends on. */
 export interface ExtractFigmaAPI {
@@ -266,12 +266,12 @@ async function handleSelectNode(api: ExtractFigmaAPI, nodeId: string): Promise<v
  * `ui.ts`.
  */
 function handleExport(api: ExtractFigmaAPI): void {
-  api.notify("Figma Normalizator: IR exported.");
+  api.notify("Figma Exporter: IR exported.");
 }
 
 /** Same observe-only hook as `handleExport`, for the token document. */
 function handleExportTokens(api: ExtractFigmaAPI): void {
-  api.notify("Figma Normalizator: tokens exported.");
+  api.notify("Figma Exporter: tokens exported.");
 }
 
 export async function handleUIMessage(

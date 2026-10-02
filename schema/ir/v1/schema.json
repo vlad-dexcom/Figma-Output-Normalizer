@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.figma-normalizator.dev/ir/v1/schema.json",
-  "title": "Figma Normalizator IR v1",
-  "description": "Versioned schema for the semantic, platform-neutral Intermediate Representation (IR) emitted by the Figma Normalizator plugin. IR produced from the same input Figma node MUST always be byte-identical: no timestamps, no random ids, and no non-deterministic ordering of object keys or array elements. Any value that cannot be resolved (a missing token, an unmapped variant, etc.) MUST be recorded as an entry in the nearest `unresolved[]` array rather than silently substituted or omitted. This file is IR schema version 1 (see the `v1` path segment in `$id`); a breaking change to any node shape requires a new `v2` sibling schema.",
+  "$id": "https://schemas.figma-exporter.dev/ir/v1/schema.json",
+  "title": "Figma Exporter IR v1",
+  "description": "Versioned schema for the semantic, platform-neutral Intermediate Representation (IR) emitted by the Figma Exporter plugin. IR produced from the same input Figma node MUST always be byte-identical: no timestamps, no random ids, and no non-deterministic ordering of object keys or array elements. Any value that cannot be resolved (a missing token, an unmapped variant, etc.) MUST be recorded as an entry in the nearest `unresolved[]` array rather than silently substituted or omitted. This file is IR schema version 1 (see the `v1` path segment in `$id`); a breaking change to any node shape requires a new `v2` sibling schema.",
   "$ref": "#/$defs/irNode",
   "$defs": {
     "irNode": {

@@ -8,7 +8,7 @@
 // which is technically correct and useless to read. Catching the two named
 // mistakes here, before ajv sees the document, turns that into one line
 // naming the actual problem.
-import { TOKENS_SCHEMA_VERSION } from "@figma-normalizator/schema";
+import { TOKENS_SCHEMA_VERSION } from "@figma-exporter/schema";
 
 export class TokenEnvelopeError extends Error {
   constructor(message: string) {

@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { runCli, type CliIo } from "@figma-normalizator/codegen-tokens";
+import { runCli, type CliIo } from "@figma-exporter/codegen-tokens";
 import { Bridge, BridgeError } from "./server.js";
 import { DEFAULT_BRIDGE_PORT, type TokensPayload } from "./protocol.js";
 
@@ -118,7 +118,7 @@ export async function syncTokens(options: SyncOptions): Promise<SyncResult> {
   io.stdout(
     ownsBridge
       ? `Bridge listening on 127.0.0.1:${bridge.port}. Waiting for the Figma plugin ` +
-          `(open the file and run Plugins → Development → Figma Normalizator)…`
+          `(open the file and run Plugins → Development → Figma Exporter)…`
       : `Requesting tokens from the connected Figma plugin…`,
   );
 

@@ -1,6 +1,6 @@
 # Token IR → generator contract
 
-**Status: migration complete.** `codegen/tokens` (`@figma-normalizator/codegen-tokens`,
+**Status: migration complete.** `codegen/tokens` (`@figma-exporter/codegen-tokens`,
 in this repository, npm workspaces) now reads Token IR documents
 (`schema/tokens/v1/schema.json`) directly and emits Kotlin; the Python
 `tools/figma-tokens` pipeline this document originally described has been

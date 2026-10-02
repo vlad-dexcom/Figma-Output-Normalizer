@@ -5,7 +5,7 @@
 // emitter behavior and reviewing the new output for correctness -- never
 // run automatically in CI. Mirrors fixtures/scripts/update-fixtures.ts.
 //
-// Usage: npm run golden:update --workspace=@figma-normalizator/codegen-tokens
+// Usage: npm run golden:update --workspace=@figma-exporter/codegen-tokens
 import { mkdir, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { loadTokenDocument } from "../src/input/load.js";

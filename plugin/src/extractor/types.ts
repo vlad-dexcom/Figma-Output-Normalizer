@@ -14,7 +14,7 @@
 // this module; real Figma nodes are a structural superset of `FigmaNode`, so
 // that cast is safe in practice (real nodes have every field below, plus
 // many more we don't read).
-import type { CollectionsPolicy } from "@figma-normalizator/mappings";
+import type { CollectionsPolicy } from "@figma-exporter/mappings";
 
 /** A Figma variable/style binding, as found in `boundVariables`. */
 export interface VariableAliasBinding {

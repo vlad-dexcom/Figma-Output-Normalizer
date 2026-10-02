@@ -1,5 +1,5 @@
 {
-  "name": "@figma-normalizator/bridge",
+  "name": "@figma-exporter/bridge",
   "version": "0.0.0",
   "private": true,
   "description": "Local WebSocket bridge between the Figma plugin and Node tooling, plus the tokens:sync CLI",
@@ -16,7 +16,7 @@
     "bundle": "node scripts/build-bundle.mjs"
   },
   "dependencies": {
-    "@figma-normalizator/codegen-tokens": "*",
+    "@figma-exporter/codegen-tokens": "*",
     "ws": "^8.18.0"
   },
   "devDependencies": {

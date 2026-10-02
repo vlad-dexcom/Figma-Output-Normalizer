@@ -9,7 +9,7 @@ import {
   isBridgeRequest,
   type BridgeResponse,
   type TokensPayload,
-} from "@figma-normalizator/bridge/protocol";
+} from "@figma-exporter/bridge/protocol";
 import type { PluginToUIMessage, UIToPluginMessage } from "../messages.js";
 
 export type BridgeStatus = "connected" | "disconnected";
