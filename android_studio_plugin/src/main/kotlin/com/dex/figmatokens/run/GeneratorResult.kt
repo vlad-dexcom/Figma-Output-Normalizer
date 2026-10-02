@@ -25,7 +25,12 @@ object LogLineClassifier {
 
 /** Outcome of a generator run. */
 sealed interface GeneratorResult {
-    data class Success(val dryRun: Boolean, val warnings: List<String>) : GeneratorResult
+    data class Success(
+        val dryRun: Boolean,
+        val warnings: List<String>,
+        /** True when generation was skipped because tokens and settings were unchanged. */
+        val upToDate: Boolean = false,
+    ) : GeneratorResult
     data class Failure(val exitCode: Int, val message: String) : GeneratorResult
     data object Cancelled : GeneratorResult
 }

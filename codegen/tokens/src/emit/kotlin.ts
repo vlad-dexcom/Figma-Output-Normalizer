@@ -274,20 +274,80 @@ function docFor(token: Token, rescaledOpacity: boolean): string | undefined {
   return parts.length > 0 ? parts.join(" ") : undefined;
 }
 
+function refOrThrow(
+  collection: TokenCollection,
+  token: Token,
+  targetCollection: string,
+  targetPath: string,
+  depParamByName: ReadonlyMap<string, string>,
+): string {
+  const param = depParamByName.get(targetCollection);
+  if (!param) throw new MissingDependencyParamError(collection.name, token.path, targetCollection);
+  return `${param}.${kotlinPropertyPath(targetPath)}`;
+}
+
+const tokensByPathCache = new WeakMap<TokenCollection, ReadonlyMap<string, Token>>();
+
+function tokensByPath(collection: TokenCollection): ReadonlyMap<string, Token> {
+  let map = tokensByPathCache.get(collection);
+  if (!map) {
+    map = new Map(collection.tokens.map((t) => [t.path, t]));
+    tokensByPathCache.set(collection, map);
+  }
+  return map;
+}
+
+/**
+ * A same-collection edge can't be a property reference: the factory builds
+ * the whole data class in one constructor call, so a sibling property isn't
+ * addressable yet. The target's own value expression is inlined instead
+ * (its cross-collection reference, or its literal), following chains.
+ */
+function inlineSameCollectionTarget(
+  collection: TokenCollection,
+  targetPath: string,
+  mode: string,
+  depParamByName: ReadonlyMap<string, string>,
+  opacityPlan: OpacityPlan,
+  visiting: ReadonlySet<string>,
+): string {
+  const target = tokensByPath(collection).get(targetPath);
+  if (!target) {
+    throw new Error(
+      `token alias in collection "${collection.name}" points at "${targetPath}", which is not a token in that collection.`,
+    );
+  }
+  if (visiting.has(targetPath)) {
+    throw new Error(
+      `alias cycle in collection "${collection.name}" through token "${targetPath}" (mode "${mode}").`,
+    );
+  }
+  return valueExpressionFor(collection, target, mode, depParamByName, opacityPlan, visiting);
+}
+
 function valueExpressionFor(
   collection: TokenCollection,
   token: Token,
   mode: string,
   depParamByName: ReadonlyMap<string, string>,
   opacityPlan: OpacityPlan,
+  visiting: ReadonlySet<string> = new Set(),
 ): string {
   const aliasTarget = token.alias?.byMode[mode];
   if (aliasTarget && !aliasTarget.excluded && aliasTarget.collection && aliasTarget.path) {
-    const depParam = depParamByName.get(aliasTarget.collection);
-    if (!depParam) {
-      throw new MissingDependencyParamError(collection.name, token.path, aliasTarget.collection);
-    }
-    const base = `${depParam}.${kotlinPropertyPath(aliasTarget.path)}`;
+    const chain = new Set(visiting).add(token.path);
+    const resolve = (targetCollection: string, targetPath: string): string =>
+      targetCollection === collection.name
+        ? inlineSameCollectionTarget(
+            collection,
+            targetPath,
+            mode,
+            depParamByName,
+            opacityPlan,
+            chain,
+          )
+        : refOrThrow(collection, token, targetCollection, targetPath, depParamByName);
+    const base = resolve(aliasTarget.collection, aliasTarget.path);
 
     // COMPOSE_COLOR: the color is aliased AND the opacity applied to it is
     // itself a named variable (not a bare number baked into the literal).
@@ -295,11 +355,7 @@ function valueExpressionFor(
     // both source tokens stay wired up in generated code.
     const opacity = aliasTarget.opacity;
     if (opacity && !opacity.excluded && opacity.collection && opacity.path) {
-      const opacityParam = depParamByName.get(opacity.collection);
-      if (!opacityParam) {
-        throw new MissingDependencyParamError(collection.name, token.path, opacity.collection);
-      }
-      return `${base}.copy(alpha = ${opacityParam}.${kotlinPropertyPath(opacity.path)})`;
+      return `${base}.copy(alpha = ${resolve(opacity.collection, opacity.path)})`;
     }
     return base;
   }

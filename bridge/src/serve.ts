@@ -7,7 +7,7 @@
 //   bridge -> host (stdout): {"type":"status","bridge":"listening","port":8765,"plugins":[...]}
 //                            {"type":"status","bridge":"error","message":"..."}
 //                            {"type":"log","id":"1","level":"info|error|system","text":"..."}
-//                            {"type":"result","id":"1","exitCode":0,"tokensChanged":true,"version":"..."}
+//                            {"type":"result","id":"1","exitCode":0,"tokensChanged":true,"skipped":false,"version":"...","fileKey":"..."}
 //                            {"type":"error","id":"1","code":"no-plugin","message":"..."}
 //
 // stdout carries ONLY protocol lines; everything human-readable is a "log".
@@ -22,6 +22,8 @@ export interface SyncCommand {
   config: SyncConfig;
   dryRun?: boolean;
   check?: boolean;
+  skipIfUnchanged?: boolean;
+  useLocal?: boolean;
   timeoutMs?: number;
 }
 
@@ -64,9 +66,11 @@ export async function serve(options: ServeOptions): Promise<number> {
         config: command.config,
         baseDir: process.cwd(),
         bridge,
-        timeoutMs: command.timeoutMs ?? 30_000,
+        timeoutMs: command.timeoutMs ?? 120_000,
         dryRun: command.dryRun,
         check: command.check,
+        skipIfUnchanged: command.skipIfUnchanged,
+        useLocal: command.useLocal,
         io: { stdout: log("info"), stderr: log("error") },
       });
       emit({
@@ -74,6 +78,7 @@ export async function serve(options: ServeOptions): Promise<number> {
         id: command.id,
         exitCode: result.exitCode,
         tokensChanged: result.tokensChanged,
+        skipped: result.skipped,
         version: result.version,
         fileKey: result.fileKey,
       });

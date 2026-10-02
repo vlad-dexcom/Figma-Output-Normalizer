@@ -64,6 +64,42 @@ function sameModeSet(a: TokenCollection, b: TokenCollection): boolean {
 }
 
 /**
+ * Figma lets the same theme name (e.g. `stelo`) extend several parents, so a
+ * document can hold `stelo` extending `base` AND `stelo` extending
+ * `components`. Everything downstream keys collections by name -- class,
+ * file, package and factory names, the parent map -- so such twins would
+ * overwrite each other and mix into one folder. Every extension whose name
+ * is shared with another collection is renamed `<parent>-<name>`
+ * (`base-stelo`, `components-stelo`), which keeps them apart everywhere.
+ * Uniquely named extensions keep their name.
+ */
+export function qualifyAmbiguousExtensionNames(document: TokenDocument): {
+  document: TokenDocument;
+  renamed: string[];
+} {
+  const counts = new Map<string, number>();
+  for (const c of document.collections) counts.set(c.name, (counts.get(c.name) ?? 0) + 1);
+
+  const renamed: string[] = [];
+  const used = new Set(document.collections.map((c) => c.name));
+  const collections = document.collections.map((c) => {
+    if (c.extends === undefined || (counts.get(c.name) ?? 0) < 2) return c;
+    const name = `${c.extends}-${c.name}`;
+    if (used.has(name)) {
+      throw new CollectionParentError(
+        `cannot disambiguate extension "${c.name}" of "${c.extends}": "${name}" already exists.`,
+      );
+    }
+    used.add(name);
+    renamed.push(`"${c.name}" (extends "${c.extends}") renamed to "${name}"`);
+    return { ...c, name };
+  });
+  return renamed.length > 0
+    ? { document: { ...document, collections }, renamed }
+    : { document, renamed };
+}
+
+/**
  * Resolves every sub-collection's parent. Throws when a Figma-recorded
  * `extends` link cannot be honoured structurally (e.g. policy excluded a
  * branch in one collection but not the other) -- emitting the child as

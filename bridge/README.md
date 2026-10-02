@@ -58,11 +58,16 @@ Each message is one JSON object per line. For example, the host sends:
 {"cmd":"shutdown"}
 ```
 
+A `sync` with `"skipIfUnchanged":true` skips code generation (`result.skipped: true`) when
+the tokens are byte-identical to the last run and the generator settings are unchanged
+(tracked in a `<tokensJson>.stamp` file). With `"useLocal":true` the bridge does not ask the
+Figma plugin at all and generates from the previously saved `tokensJson` document.
+
 The bridge emits `status` (`bridge`, `port`, `plugins`, or an error
 `message`), `log` (`id`, `level`, `text`), `result` (`id`, `exitCode`,
-`tokensChanged`, `version`, `fileKey`), and `error` (`id` when available,
+`tokensChanged`, `skipped`, `version`, `fileKey`), and `error` (`id` when available,
 `code`, `message`) objects. Sync commands may also carry `check` and
-`timeoutMs` (default 30000); relative config paths in serve mode resolve
+`timeoutMs` (default 120000); relative config paths in serve mode resolve
 against the bridge process's working directory.
 
 `npm run bundle --workspace=@figma-exporter/bridge` builds a dependency-free

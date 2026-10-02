@@ -182,6 +182,8 @@ async function handleExtract(api: ExtractFigmaAPI): Promise<void> {
  * `getLocalVariableCollectionsAsync` must surface as a readable panel
  * message, not an uncaught rejection that leaves the UI spinning.
  */
+let inFlightExtraction: ReturnType<typeof extractTokens> | null = null;
+
 async function handleExtractTokens(api: ExtractFigmaAPI, requestId?: string): Promise<void> {
   if (typeof api.variables.getLocalVariableCollectionsAsync !== "function") {
     api.ui.postMessage({
@@ -195,10 +197,15 @@ async function handleExtractTokens(api: ExtractFigmaAPI, requestId?: string): Pr
   }
 
   try {
-    const result = await extractTokens(
+    // Requests that arrive while an extraction is running (e.g. a version check and a
+    // generate) share it: running them side by side makes every one of them slower.
+    inFlightExtraction ??= extractTokens(
       { variables: api.variables as unknown as TokenExportFigmaAPI["variables"] },
       { fileKey: api.fileKey ?? "" },
-    );
+    ).finally(() => {
+      inFlightExtraction = null;
+    });
+    const result = await inFlightExtraction;
 
     api.ui.postMessage({
       type: "token-result",

@@ -25,6 +25,10 @@ data class FigmaTokensState(
     /** `--layout legacy` instead of the default `flat` (see codegen/tokens/README.md). */
     var legacyLayout: Boolean = false,
     var dryRun: Boolean = false,
+    /** Regenerate even when the tokens and settings are unchanged since the last successful run. */
+    var alwaysRegenerate: Boolean = false,
+    /** Generate from the previously downloaded tokens file instead of downloading a fresh one from Figma. */
+    var useLocalTokens: Boolean = false,
     /**
      * Space/comma-separated `<reason>=<silent|warn|fail>` pairs, one `--on-unresolved` flag per
      * entry. Overrides the generator's default triage for a specific unresolved-token reason code

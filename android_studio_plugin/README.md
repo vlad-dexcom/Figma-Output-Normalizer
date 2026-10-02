@@ -22,6 +22,7 @@ design-system file in Figma with the plugin running, and press **Generate**.
 - **Build Generator** builds the standalone bridge bundle once (or after pulling repo changes),
   so day-to-day runs need only a plain `node` — no `npm install`, no workspace resolution
 - Live log console (stdout as info, stderr as error), and a cancellable background task
+- **Fresh or local tokens** — by default Generate downloads fresh tokens from the connected Figma file and skips regeneration when nothing changed (tick **Always regenerate** to force it); tick **Use the previously downloaded tokens** to regenerate from the last downloaded file without Figma
 - **Dry run** — see exactly what would be generated without writing a single file
 - **`--layout legacy`** toggle for consumers still coupled to the old per-branch package shape
 - **`--exclude-mode`** field for excluding modes by regex

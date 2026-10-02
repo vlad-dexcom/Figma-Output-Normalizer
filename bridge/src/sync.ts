@@ -1,4 +1,5 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { runCli, type CliIo } from "@figma-exporter/codegen-tokens";
 import { Bridge, BridgeError } from "./server.js";
@@ -60,6 +61,14 @@ export interface SyncOptions {
   timeoutMs?: number;
   dryRun?: boolean;
   check?: boolean;
+  /**
+   * Skip code generation when the tokens are byte-identical to the last successful run and the
+   * generator settings are unchanged (tracked in a `.stamp` file next to the tokens document).
+   * Ignored for `dryRun`/`check`.
+   */
+  skipIfUnchanged?: boolean;
+  /** Generate from the previously downloaded tokens document instead of asking the Figma plugin. */
+  useLocal?: boolean;
   io?: CliIo;
 }
 
@@ -69,6 +78,8 @@ export interface SyncResult {
   version: string;
   /** False when the fetched document is byte-identical to the previously saved one. */
   tokensChanged: boolean;
+  /** True when code generation was skipped because nothing changed since the last run. */
+  skipped: boolean;
   tokensJsonPath: string;
   summary: TokensPayload["summary"];
 }
@@ -108,44 +119,77 @@ export async function syncTokens(options: SyncOptions): Promise<SyncResult> {
   const resolve = (p: string): string => path.resolve(baseDir, p);
   const tokensJsonPath = resolve(config.tokensJson ?? "figma.tokens.json");
 
-  const ownsBridge = options.bridge === undefined;
-  const bridge =
-    options.bridge ??
-    (await Bridge.start({
-      port: options.port ?? DEFAULT_BRIDGE_PORT,
-      log: (m) => io.stderr(`bridge: ${m}`),
-    }));
-  io.stdout(
-    ownsBridge
-      ? `Bridge listening on 127.0.0.1:${bridge.port}. Waiting for the Figma plugin ` +
-          `(open the file and run Plugins → Development → Figma Exporter)…`
-      : `Requesting tokens from the connected Figma plugin…`,
-  );
-
   let payload: TokensPayload;
-  try {
-    payload = await bridge.requestTokens({
-      expectedFileKey: config.fileKey,
-      timeoutMs: options.timeoutMs,
-    });
-  } finally {
-    if (ownsBridge) await bridge.close();
+  if (options.useLocal) {
+    io.stdout(`Using the previously downloaded tokens from ${tokensJsonPath}.`);
+    payload = await readLocalPayload(tokensJsonPath);
+  } else {
+    const ownsBridge = options.bridge === undefined;
+    const bridge =
+      options.bridge ??
+      (await Bridge.start({
+        port: options.port ?? DEFAULT_BRIDGE_PORT,
+        log: (m) => io.stderr(`bridge: ${m}`),
+      }));
+    io.stdout(
+      ownsBridge
+        ? `Bridge listening on 127.0.0.1:${bridge.port}. Waiting for the Figma plugin ` +
+            `(open the file and run Plugins → Development → Figma Exporter)…`
+        : `Requesting tokens from the connected Figma plugin…`,
+    );
+    try {
+      payload = await bridge.requestTokens({
+        expectedFileKey: config.fileKey,
+        timeoutMs: options.timeoutMs,
+      });
+    } finally {
+      if (ownsBridge) await bridge.close();
+    }
   }
 
   const previous = await readFile(tokensJsonPath, "utf8").catch(() => undefined);
   const tokensChanged = previous !== payload.json;
-  const skipWrite = options.dryRun || options.check;
+  const skipWrite = options.dryRun || options.check || options.useLocal;
   if (!skipWrite) {
     await mkdir(path.dirname(tokensJsonPath), { recursive: true });
     await writeFile(tokensJsonPath, payload.json, "utf8");
   }
 
-  const { variableCount, skippedCollections } = payload.summary;
-  io.stdout(
-    `Received ${variableCount} variables (version ${payload.version}, ` +
-      `${skippedCollections.length} collection(s) skipped by policy); tokens ` +
-      `${tokensChanged ? "CHANGED" : "unchanged"} since the last sync.`,
-  );
+  if (!options.useLocal) {
+    const { variableCount, skippedCollections } = payload.summary;
+    io.stdout(
+      `Received ${variableCount} variables (version ${payload.version}, ` +
+        `${skippedCollections.length} collection(s) skipped by policy); tokens ` +
+        `${tokensChanged ? "CHANGED" : "unchanged"} since the last sync.`,
+    );
+  }
+
+  const outputDir = resolve(config.output);
+  const stampPath = `${tokensJsonPath}.stamp`;
+  const stamp = createHash("sha256")
+    .update(JSON.stringify(buildCodegenArgs(config, "", outputDir)))
+    .update("\n")
+    .update(payload.json)
+    .digest("hex");
+  if (options.skipIfUnchanged && !options.dryRun && !options.check && !tokensChanged) {
+    const previousStamp = await readFile(stampPath, "utf8").catch(() => undefined);
+    const outputExists = await stat(outputDir).then(
+      (s) => s.isDirectory(),
+      () => false,
+    );
+    if (previousStamp === stamp && outputExists) {
+      io.stdout("Tokens and generator settings are unchanged; generated code is up to date.");
+      return {
+        exitCode: 0,
+        fileKey: payload.fileKey,
+        version: payload.version,
+        tokensChanged,
+        skipped: true,
+        tokensJsonPath,
+        summary: payload.summary,
+      };
+    }
+  }
 
   // `--dry-run`/`--check` must not touch disk, so hand codegen a temp-free
   // path: the saved file when it is current, otherwise the fresh document.
@@ -155,13 +199,33 @@ export async function syncTokens(options: SyncOptions): Promise<SyncResult> {
     io,
   );
 
+  if (exitCode === 0 && !options.dryRun && !options.check)
+    await writeFile(stampPath, stamp, "utf8");
+
   return {
     exitCode,
     fileKey: payload.fileKey,
     version: payload.version,
     tokensChanged,
+    skipped: false,
     tokensJsonPath,
     summary: payload.summary,
+  };
+}
+
+async function readLocalPayload(tokensJsonPath: string): Promise<TokensPayload> {
+  const json = await readFile(tokensJsonPath, "utf8").catch(() => {
+    throw new ConfigError(
+      `No downloaded tokens found at ${tokensJsonPath}. Generate once with "download fresh" first.`,
+    );
+  });
+  const envelope = (JSON.parse(json) as { envelope?: { fileKey?: string; version?: string } })
+    .envelope;
+  return {
+    fileKey: envelope?.fileKey ?? "",
+    version: envelope?.version ?? "",
+    json,
+    summary: { variableCount: 0, skippedCollections: [] },
   };
 }
 

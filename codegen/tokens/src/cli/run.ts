@@ -11,7 +11,7 @@ import { loadTokenDocument } from "../input/load.js";
 import { assertPolicyFresh, warnAboutUnmatchedPolicyPatterns } from "../input/policy.js";
 import { assertNoUnresolvedFailures } from "../input/unresolved.js";
 import { buildTokenModel } from "../model/build.js";
-import { resolveCollectionParents } from "../model/parents.js";
+import { qualifyAmbiguousExtensionNames, resolveCollectionParents } from "../model/parents.js";
 import { generateKotlinFiles, generateLegacyKotlinFiles, type KotlinFile } from "../emit/kotlin.js";
 import { CliArgError, HELP_TEXT, parseArgs, type CliOptions } from "./args.js";
 
@@ -114,6 +114,10 @@ export async function runCli(argv: readonly string[], io: CliIo = defaultIo): Pr
 
   try {
     let document = await loadTokenDocument(options.input);
+
+    const qualified = qualifyAmbiguousExtensionNames(document);
+    document = qualified.document;
+    for (const line of qualified.renamed) io.stderr(`sub-collection: ${line}`);
 
     const { detected, ambiguous } = detectCollectionFallbacks(document);
     for (const [child, candidates] of ambiguous) {

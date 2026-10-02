@@ -27,6 +27,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -221,24 +222,44 @@ class GeneratorRunner(private val project: Project) {
         indicator.text = "Checking the Figma bridge"
         bridge.startIfNeeded()
         awaitBridgeSettled(bridge, indicator)
-        val readiness = ReadinessEvaluator.evaluate(bridge.state, bridge.selectedFileKey)
-        if (readiness !is Readiness.Ready) {
-            return failWith(log, ReadinessEvaluator.describe(readiness))
+        val tokensPath = tokensJsonPath(project)
+        val fileKey: String?
+        if (state.useLocalTokens) {
+            if (bridge.state !is BridgeState.Listening) {
+                return failWith(log, ReadinessEvaluator.describe(ReadinessEvaluator.evaluate(bridge.state, null)))
+            }
+            if (!Files.isRegularFile(tokensPath)) {
+                return failWith(log, "No downloaded tokens found at $tokensPath. Generate once with fresh tokens first.")
+            }
+            fileKey = null
+            log.system("Using the previously downloaded tokens at $tokensPath")
+        } else {
+            val readiness = ReadinessEvaluator.evaluate(bridge.state, bridge.selectedFileKey)
+            if (readiness !is Readiness.Ready) {
+                return failWith(log, ReadinessEvaluator.describe(readiness))
+            }
+            fileKey = readiness.file.fileKey
+            log.system("Fetching tokens from ${readiness.file.fileName ?: "the connected Figma file"} through the bridge…")
         }
 
         val config = try {
-            GeneratorCommandBuilder.buildSyncConfig(state, tokensJsonPath(repoRoot), readiness.file.fileKey)
+            GeneratorCommandBuilder.buildSyncConfig(state, tokensPath, fileKey)
         } catch (e: GeneratorCommandBuilder.InvalidConfigurationException) {
             return failWith(log, e.message ?: "Invalid configuration")
         }
 
-        log.system("Fetching tokens from ${readiness.file.fileName ?: "the connected Figma file"} through the bridge…")
         indicator.text = "Generating design tokens"
-        return when (val result = bridge.sync(config, state.dryRun, log, indicator)) {
+        return when (val result = bridge.sync(config, state.dryRun, !state.dryRun && !state.alwaysRegenerate, state.useLocalTokens, log, indicator)) {
             is GeneratorResult.Success -> {
-                if (!state.dryRun) refreshOutput(state.outputDir)
-                log.system(if (state.dryRun) "Dry run finished." else "Done.")
-                GeneratorResult.Success(state.dryRun, result.warnings)
+                if (!state.dryRun && !result.upToDate) refreshOutput(state.outputDir)
+                log.system(
+                    when {
+                        state.dryRun -> "Dry run finished."
+                        result.upToDate -> "Already up to date; nothing was regenerated."
+                        else -> "Done."
+                    },
+                )
+                GeneratorResult.Success(state.dryRun, result.warnings, result.upToDate)
             }
             is GeneratorResult.Failure -> {
                 log.error("Failed.")
@@ -248,9 +269,6 @@ class GeneratorRunner(private val project: Project) {
         }
     }
 
-    /** Where the bridge keeps the last fetched token document (handy for diffing what changed in Figma). */
-    private fun tokensJsonPath(repoRoot: Path): Path =
-        Path.of(project.basePath ?: repoRoot.toString()).resolve(".idea/dexFigmaTokens/figma.tokens.json")
 
     /** Gives a just-started bridge a few seconds to report that it is listening (or that it failed). */
     private fun awaitBridgeSettled(bridge: BridgeService, indicator: ProgressIndicator) {
@@ -293,7 +311,9 @@ class GeneratorRunner(private val project: Project) {
         val notification = when (result) {
             is GeneratorResult.Success -> {
                 val suffix = if (result.warnings.isEmpty()) "" else " (${result.warnings.size} warning(s))"
-                val text = if (result.dryRun) {
+                val text = if (result.upToDate) {
+                    "Already up to date; tokens are unchanged since the last generation."
+                } else if (result.dryRun) {
                     "Dry run completed$suffix. No files were written."
                 } else {
                     "Design tokens generated into ${state.outputDir}$suffix"
@@ -310,6 +330,11 @@ class GeneratorRunner(private val project: Project) {
 
     companion object {
         private val LOG = logger<GeneratorRunner>()
+
+        /** Where the bridge keeps the last downloaded token document (also what "use local tokens" reads). */
+        fun tokensJsonPath(project: Project): Path =
+            Path.of(project.basePath ?: System.getProperty("user.home")).resolve(".idea/dexFigmaTokens/figma.tokens.json")
+
         private const val POLL_INTERVAL_MS = 200L
         private const val BRIDGE_START_TIMEOUT_MS = 5_000L
         const val NOTIFICATION_GROUP = "DexFigmaTokens"

@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, readdir } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -112,6 +112,61 @@ describe("Bridge", () => {
 });
 
 describe("syncTokens", () => {
+  it("skips generation when tokens and settings are unchanged", async () => {
+    const dir = await mkdtemp(path.join(tmpdir(), "sync-skip-"));
+    const json = await readFile(FIXTURE, "utf8");
+    const fileKey = (JSON.parse(json) as { envelope: { fileKey: string } }).envelope.fileKey;
+    const config: SyncConfig = {
+      fileKey,
+      output: "kotlin",
+      package: "com.example.tokens",
+      excludeMode: "[iI][oO][sS]",
+      onUnresolved: { "unsupported-value": "warn" },
+    };
+    const io = { stdout: () => {}, stderr: () => {} };
+    const bridge = await Bridge.start({ port: 0 });
+    open.push(bridge);
+    await connectFakePlugin(bridge.port, (id) => ok(id, fileKey, json));
+    const run = (overrides: Partial<SyncConfig> = {}, skipIfUnchanged = true) =>
+      syncTokens({
+        config: { ...config, ...overrides },
+        baseDir: dir,
+        bridge,
+        timeoutMs: 5000,
+        skipIfUnchanged,
+        io,
+      });
+
+    const first = await run();
+    expect(first).toMatchObject({ exitCode: 0, skipped: false });
+    expect(await run()).toMatchObject({ exitCode: 0, skipped: true, tokensChanged: false });
+    expect(await run({ package: "com.example.other" })).toMatchObject({ skipped: false });
+    expect(await run({}, false)).toMatchObject({ skipped: false });
+  });
+
+  it("generates from the downloaded tokens without a plugin", async () => {
+    const dir = await mkdtemp(path.join(tmpdir(), "sync-local-"));
+    const json = await readFile(FIXTURE, "utf8");
+    const config: SyncConfig = {
+      output: "kotlin",
+      package: "com.example.tokens",
+      excludeMode: "[iI][oO][sS]",
+      onUnresolved: { "unsupported-value": "warn" },
+    };
+    const io = { stdout: () => {}, stderr: () => {} };
+    await expect(syncTokens({ config, baseDir: dir, useLocal: true, io })).rejects.toThrow(
+      /No downloaded tokens/,
+    );
+
+    await writeFile(path.join(dir, "figma.tokens.json"), json, "utf8");
+    const result = await syncTokens({ config, baseDir: dir, useLocal: true, io });
+    expect(result).toMatchObject({ exitCode: 0, skipped: false });
+    expect(result.version).toMatch(/^c1-/);
+    expect(await readFile(path.join(dir, "figma.tokens.json"), "utf8")).toBe(json);
+    const written = await readdir(path.join(dir, "kotlin"), { recursive: true });
+    expect(written.some((f) => f.endsWith("Primitives.kt"))).toBe(true);
+  });
+
   it("fetches tokens and generates Kotlin end to end", async () => {
     const dir = await mkdtemp(path.join(tmpdir(), "sync-test-"));
     const json = await readFile(FIXTURE, "utf8");

@@ -20,7 +20,12 @@ sealed interface BridgeEvent {
     ) : BridgeEvent
 
     data class Log(val id: String?, val level: String, val text: String) : BridgeEvent
-    data class Result(val id: String, val exitCode: Int, val tokensChanged: Boolean, val version: String?) : BridgeEvent
+    data class Result(
+        val id: String,
+        val exitCode: Int,
+        val tokensChanged: Boolean,
+        val skipped: Boolean,
+    ) : BridgeEvent
     data class Failed(val id: String?, val code: String, val message: String) : BridgeEvent
 }
 
@@ -63,7 +68,7 @@ object BridgeProtocol {
                     id = it,
                     exitCode = obj.get("exitCode")?.asInt ?: -1,
                     tokensChanged = obj.get("tokensChanged")?.asBoolean ?: true,
-                    version = obj.str("version"),
+                    skipped = obj.get("skipped")?.asBoolean ?: false,
                 )
             }
             "error" -> BridgeEvent.Failed(obj.str("id"), obj.str("code") ?: "failed", obj.str("message").orEmpty())
@@ -71,7 +76,14 @@ object BridgeProtocol {
         }
     }
 
-    fun syncCommand(id: String, config: SyncRequestConfig, dryRun: Boolean, timeoutMs: Long = 30_000): String {
+    fun syncCommand(
+        id: String,
+        config: SyncRequestConfig,
+        dryRun: Boolean,
+        skipIfUnchanged: Boolean = false,
+        useLocal: Boolean = false,
+        timeoutMs: Long = 120_000,
+    ): String {
         val cfg = JsonObject().apply {
             config.fileKey?.let { addProperty("fileKey", it) }
             addProperty("output", config.output)
@@ -89,6 +101,8 @@ object BridgeProtocol {
             addProperty("id", id)
             add("config", cfg)
             addProperty("dryRun", dryRun)
+            addProperty("skipIfUnchanged", skipIfUnchanged)
+            addProperty("useLocal", useLocal)
             addProperty("timeoutMs", timeoutMs)
         }.toString()
     }

@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { Token, TokenCollection, TokenDocument } from "@figma-exporter/schema";
-import { CollectionParentError, resolveCollectionParents } from "../parents.js";
+import {
+  CollectionParentError,
+  qualifyAmbiguousExtensionNames,
+  resolveCollectionParents,
+} from "../parents.js";
 
 function tokens(paths: string[], type: Token["type"] = "COLOR"): Token[] {
   return paths.map((path) => ({ path, type, value: "#000000", modes: { light: "#000000" } }));
@@ -95,5 +99,37 @@ describe("resolveCollectionParents", () => {
       ]),
     );
     expect([...parents]).toEqual([["stelo", "base"]]);
+  });
+});
+
+describe("qualifyAmbiguousExtensionNames", () => {
+  it("qualifies same-named extensions of different parents and keeps unique names", () => {
+    const doc = document([
+      collection("base"),
+      collection("components"),
+      collection("stelo", { id: "s1", extends: "base" }),
+      collection("stelo", { id: "s2", extends: "components" }),
+      collection("solo", { extends: "base" }),
+    ]);
+    const { document: out, renamed } = qualifyAmbiguousExtensionNames(doc);
+    expect(out.collections.map((c) => c.name)).toEqual([
+      "base",
+      "components",
+      "base-stelo",
+      "components-stelo",
+      "solo",
+    ]);
+    expect(renamed).toHaveLength(2);
+    const { parents } = resolveCollectionParents(out);
+    expect([...parents]).toEqual([
+      ["base-stelo", "base"],
+      ["components-stelo", "components"],
+      ["solo", "base"],
+    ]);
+  });
+
+  it("returns the same document when nothing is ambiguous", () => {
+    const doc = document([collection("base"), collection("stelo", { extends: "base" })]);
+    expect(qualifyAmbiguousExtensionNames(doc).document).toBe(doc);
   });
 });

@@ -23,6 +23,7 @@ export {
 } from "./graph.js";
 export {
   CollectionParentError,
+  qualifyAmbiguousExtensionNames,
   resolveCollectionParents,
   type CollectionParents,
 } from "./parents.js";

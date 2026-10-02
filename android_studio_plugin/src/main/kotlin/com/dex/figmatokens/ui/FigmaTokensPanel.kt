@@ -32,6 +32,7 @@ import com.intellij.ui.dsl.builder.RightGap
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
+import java.nio.file.Files
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -57,6 +58,10 @@ class FigmaTokensPanel(private val project: Project, parent: Disposable) : JPane
     private val legacyLayoutCheckBox = JBCheckBox("Legacy layout (--layout legacy; matches the old per-branch package shape)")
     private val dryRunCheckBox = JBCheckBox("Dry run (show what would be generated, write nothing)")
 
+    private val alwaysRegenerateCheckBox = JBCheckBox("Always regenerate (don't skip when tokens and settings are unchanged)")
+    private val useLocalTokensCheckBox = JBCheckBox("Use the previously downloaded tokens instead of downloading fresh ones from Figma")
+    private val localTokensLabel = JBLabel()
+
     private val bridgeStatusLabel = JBLabel()
     private val pluginStatusLabel = JBLabel()
     private val bridge = BridgeService.getInstance(project)
@@ -70,6 +75,7 @@ class FigmaTokensPanel(private val project: Project, parent: Disposable) : JPane
         setupBrowseButtons()
         loadState()
         generateButton.addActionListener { generate() }
+        useLocalTokensCheckBox.addActionListener { refreshStatus(bridge.state) }
         cancelButton.addActionListener { GeneratorRunner.getInstance(project).cancel() }
         fileCombo.addActionListener {
             if (!updatingFileCombo) {
@@ -144,6 +150,13 @@ class FigmaTokensPanel(private val project: Project, parent: Disposable) : JPane
             cell(dryRunCheckBox)
         }
         row {
+            cell(alwaysRegenerateCheckBox)
+        }
+        row {
+            cell(useLocalTokensCheckBox).gap(RightGap.SMALL)
+            cell(localTokensLabel)
+        }
+        row {
             cell(generateButton).gap(RightGap.SMALL)
             cell(cancelButton).gap(RightGap.SMALL)
             button("Build Generator") { buildGenerator() }.gap(RightGap.SMALL)
@@ -180,6 +193,8 @@ class FigmaTokensPanel(private val project: Project, parent: Disposable) : JPane
         npmField.text = state.npmPath
         legacyLayoutCheckBox.isSelected = state.legacyLayout
         dryRunCheckBox.isSelected = state.dryRun
+        alwaysRegenerateCheckBox.isSelected = state.alwaysRegenerate
+        useLocalTokensCheckBox.isSelected = state.useLocalTokens
     }
 
     private fun saveState() {
@@ -193,6 +208,8 @@ class FigmaTokensPanel(private val project: Project, parent: Disposable) : JPane
         state.npmPath = npmField.text.trim()
         state.legacyLayout = legacyLayoutCheckBox.isSelected
         state.dryRun = dryRunCheckBox.isSelected
+        state.alwaysRegenerate = alwaysRegenerateCheckBox.isSelected
+        state.useLocalTokens = useLocalTokensCheckBox.isSelected
     }
 
     /** Runs with the current form values, saving them first. */
@@ -255,9 +272,19 @@ class FigmaTokensPanel(private val project: Project, parent: Disposable) : JPane
             Readiness.WaitingForPlugin -> status(AMBER, ReadinessEvaluator.describe(readiness))
             is Readiness.BridgeDown -> status(GRAY, "Not available until the bridge is running.")
         }
-        generateButton.isEnabled = !running && readiness.isReady
+        val localTokens = GeneratorRunner.tokensJsonPath(project)
+        val localExists = Files.isRegularFile(localTokens)
+        useLocalTokensCheckBox.isEnabled = localExists && !running
+        localTokensLabel.text = if (localExists) {
+            "(downloaded ${Files.getLastModifiedTime(localTokens).toString().substringBefore('.').replace('T', ' ')} UTC)"
+        } else {
+            "(nothing downloaded yet)"
+        }
+        val useLocal = localExists && useLocalTokensCheckBox.isSelected
+        val canGenerate = if (useLocal) state is BridgeState.Listening else readiness.isReady
+        generateButton.isEnabled = !running && canGenerate
         generateButton.toolTipText =
-            if (readiness.isReady) null else ReadinessEvaluator.describe(readiness)
+            if (canGenerate) null else ReadinessEvaluator.describe(readiness)
     }
 
     private fun updateFileSelector(state: BridgeState, selected: PluginConnection?) {

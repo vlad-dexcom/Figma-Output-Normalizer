@@ -43,8 +43,8 @@ class BridgeProtocolTest {
             BridgeProtocol.parse("""{"type":"log","id":"1","level":"error","text":"boom"}"""),
         )
         assertEquals(
-            BridgeEvent.Result("1", 0, false, "c1-x"),
-            BridgeProtocol.parse("""{"type":"result","id":"1","exitCode":0,"tokensChanged":false,"version":"c1-x"}"""),
+            BridgeEvent.Result("1", 0, false, true),
+            BridgeProtocol.parse("""{"type":"result","id":"1","exitCode":0,"tokensChanged":false,"skipped":true,"version":"c1-x"}"""),
         )
         assertEquals(
             BridgeEvent.Failed("1", "no-plugin", "No Figma plugin connected."),
@@ -73,6 +73,8 @@ class BridgeProtocolTest {
         assertEquals("sync", json.get("cmd").asString)
         assertEquals("7", json.get("id").asString)
         assertTrue(json.get("dryRun").asBoolean)
+        assertFalse(json.get("skipIfUnchanged").asBoolean)
+        assertFalse(json.get("useLocal").asBoolean)
         assertEquals("com.x", config.get("package").asString)
         assertEquals("ios", config.get("excludeMode").asString)
         assertEquals("warn", config.getAsJsonObject("onUnresolved").get("unsupported-value").asString)

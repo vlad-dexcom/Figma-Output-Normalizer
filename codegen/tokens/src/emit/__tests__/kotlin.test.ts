@@ -395,6 +395,76 @@ describe("generateCollectionKotlinFile — synthetic", () => {
     );
   });
 
+  it("inlines same-collection alias and opacity edges instead of requiring a dependsOn entry", () => {
+    const primitives = collection({
+      id: "p",
+      name: "primitives",
+      modes: ["value"],
+      tokens: [token({ path: "color/red", modes: { value: "#FF0000" } })],
+    });
+    const base = collection({
+      id: "b",
+      name: "base",
+      modes: ["light"],
+      dependsOn: ["primitives"],
+      tokens: [
+        token({
+          path: "color/a",
+          modes: { light: "#FF0000" },
+          alias: { byMode: { light: { collection: "primitives", path: "color/red" } } },
+        }),
+        token({
+          path: "color/b",
+          modes: { light: "#FF0000" },
+          alias: { byMode: { light: { collection: "base", path: "color/a" } } },
+        }),
+        token({ path: "opacity/40", type: "FLOAT", scopes: ["OPACITY"], modes: { light: 40 } }),
+        token({
+          path: "color/c",
+          modes: { light: "#FF000066" },
+          alias: {
+            byMode: {
+              light: {
+                collection: "base",
+                path: "color/b",
+                opacity: { collection: "base", path: "opacity/40" },
+              },
+            },
+          },
+        }),
+      ],
+    });
+    const model = buildTokenModel(document([primitives, base]));
+    const file = generateCollectionKotlinFile(model, base, { packageName: "com.test" })!;
+    expect(file.contents).toContain("a = primitives.color.red,");
+    expect(file.contents).toContain("b = primitives.color.red,");
+    expect(file.contents).toContain("c = primitives.color.red.copy(alpha = 0.4f),");
+  });
+
+  it("throws on a same-collection alias cycle", () => {
+    const base = collection({
+      id: "b",
+      name: "base",
+      modes: ["light"],
+      tokens: [
+        token({
+          path: "x",
+          modes: { light: "#000000" },
+          alias: { byMode: { light: { collection: "base", path: "y" } } },
+        }),
+        token({
+          path: "y",
+          modes: { light: "#000000" },
+          alias: { byMode: { light: { collection: "base", path: "x" } } },
+        }),
+      ],
+    });
+    const model = buildTokenModel(document([base]));
+    expect(() => generateCollectionKotlinFile(model, base, { packageName: "com.test" })).toThrow(
+      /cycle/,
+    );
+  });
+
   it("makes a leaf property nullable and emits a null literal when a token has no alias and a null value in an emitted mode", () => {
     const base = collection({
       id: "b",

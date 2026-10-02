@@ -113,7 +113,14 @@ class BridgeService(private val project: Project) : Disposable {
      * Runs one sync through the bridge, blocking until it finishes, streaming the bridge's log to
      * [log]. Requires [state] to be [BridgeState.Listening]; the caller checks [Readiness] first.
      */
-    fun sync(config: SyncRequestConfig, dryRun: Boolean, log: GeneratorLog, indicator: ProgressIndicator): GeneratorResult {
+    fun sync(
+        config: SyncRequestConfig,
+        dryRun: Boolean,
+        skipIfUnchanged: Boolean,
+        useLocal: Boolean,
+        log: GeneratorLog,
+        indicator: ProgressIndicator,
+    ): GeneratorResult {
         val process = handler?.takeIf { !it.isProcessTerminated }
             ?: return GeneratorResult.Failure(-1, "The bridge is not running.")
         val id = UUID.randomUUID().toString()
@@ -121,7 +128,7 @@ class BridgeService(private val project: Project) : Disposable {
         pending[id] = request
         try {
             val input = process.processInput ?: return GeneratorResult.Failure(-1, "The bridge has no input stream.")
-            input.write((BridgeProtocol.syncCommand(id, config, dryRun) + "\n").toByteArray())
+            input.write((BridgeProtocol.syncCommand(id, config, dryRun, skipIfUnchanged, useLocal) + "\n").toByteArray())
             input.flush()
             while (true) {
                 try {
@@ -159,7 +166,11 @@ class BridgeService(private val project: Project) : Disposable {
             is BridgeEvent.Result -> pending[event.id]?.let { request ->
                 request.future.complete(
                     if (event.exitCode == 0) {
-                        GeneratorResult.Success(dryRun = false, warnings = emptyList())
+                        GeneratorResult.Success(
+                            dryRun = false,
+                            warnings = emptyList(),
+                            upToDate = event.skipped,
+                        )
                     } else {
                         GeneratorResult.Failure(event.exitCode, request.errors.lastOrNull() ?: "Generator exited with code ${event.exitCode}")
                     },
