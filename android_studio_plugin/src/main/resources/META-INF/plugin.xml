@@ -1,0 +1,58 @@
+<idea-plugin>
+    <id>com.dex.figmatokens</id>
+    <name>Dex Figma Tokens</name>
+    <vendor>Dex</vendor>
+
+    <description><![CDATA[
+        Generates Kotlin design-token source straight from the open Figma file, without leaving the
+        IDE and without exporting any file.
+        <br/><br/>
+        Point this plugin at a local checkout of the <code>Figma-Output-Normalizer</code>
+        repository and press <b>Build Generator</b> once. The IDE then runs a local bridge that the
+        repo's Figma plugin connects to; pressing <b>Generate</b> pulls the tokens from Figma and
+        streams the generator's output into an embedded console.
+        <br/><br/>
+        Features:
+        <ul>
+            <li>Live bridge and Figma plugin status; <b>Generate</b> is enabled only when a Figma
+                file is connected and ready</li>
+            <li>Optional Figma file key pin</li>
+            <li>Dry-run preview that writes nothing</li>
+            <li><code>--layout legacy</code> toggle for consumers coupled to the old per-branch
+                package shape</li>
+            <li><b>Check Environment</b> validates npm, node and the configured checkout</li>
+        </ul>
+        Requires Node.js (with npm), Figma desktop and a Figma-Output-Normalizer checkout.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow
+            id="Figma Tokens"
+            anchor="right"
+            factoryClass="com.dex.figmatokens.ui.FigmaTokensToolWindowFactory"/>
+
+        <notificationGroup
+            id="DexFigmaTokens"
+            displayType="BALLOON"
+            bundle="messages.FigmaTokensBundle"
+            key="notification.group.name"/>
+    </extensions>
+
+    <actions>
+        <group id="DexFigmaTokens.Group" text="Figma Tokens" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <action
+                id="DexFigmaTokens.Generate"
+                class="com.dex.figmatokens.actions.GenerateTokensAction"
+                text="Generate Design Tokens"
+                description="Generate Kotlin design tokens from the connected Figma file"/>
+            <action
+                id="DexFigmaTokens.DryRun"
+                class="com.dex.figmatokens.actions.DryRunTokensAction"
+                text="Generate Design Tokens (Dry Run)"
+                description="Show what would be generated without writing any files"/>
+        </group>
+    </actions>
+</idea-plugin>

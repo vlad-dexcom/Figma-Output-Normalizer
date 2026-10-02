@@ -20,7 +20,7 @@ Each scenario lives in `src/corpus/<scenario-name>/`:
 
 - `input.mock.ts` — exports a `FixtureScenario` (see `src/scenario.ts`): the
   mock node tree plus `fileKey`/`version`/optional bound variables.
-- `expected.ir.json` — the frozen `ExtractionResult` (`{ nodes, unresolved }`)
+- `expected.ir.json` — the frozen `ExtractionResult` (`{ schemaVersion, nodes, unresolved, version }`)
   produced by running that mock tree through the real extractor
   (`extractSelection`).
 
@@ -60,15 +60,22 @@ intentionally changes.
    green, then commit the diff to `expected.ir.json` alongside your
    extractor change so reviewers can see exactly what changed.
 
-`fixtures:update` is for this deliberate, human-reviewed workflow only — it
-is never run automatically in CI. CI only ever runs `npm test`, which fails
-loudly on any drift between the extractor and the frozen snapshots.
+Use `fixtures:update` locally for deliberate, human-reviewed updates. CI
+also regenerates snapshots through `npm run verify:generated`, then fails
+if they differ from committed files; it never commits or accepts updated
+snapshots automatically. `npm test` independently compares extractor output
+with the frozen snapshots.
 
 ## Schema validation
 
-Every fixture's root IR node(s) are also validated against
-`schema/ir/v1/schema.json` directly (`src/__tests__/schema-validation.test.ts`,
+Every corpus fixture is also validated as a complete `irDocument` against
+`schema/ir/v1/schema.json` (`src/__tests__/schema-validation.test.ts`,
 reusing the same ajv-based approach as `schema/src/ir-schema.test.ts`). This
 catches a fixture that's internally consistent with extractor output but
 happens to violate the schema — e.g. after a schema change lands without a
 matching extractor update.
+
+Captured production exports live separately under
+[`src/real-world/`](./src/real-world/README.md). They are schema-regression
+inputs, not re-extractable mock scenarios, and are not rewritten by
+`fixtures:update`.

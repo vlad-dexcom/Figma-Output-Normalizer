@@ -6,7 +6,7 @@ This package documents the mapping from Figma component sets (in the
 (`com.dexcom.platform.design.component.*`).
 
 The mapping itself lives in [`component-map.yaml`](./component-map.yaml). It
-is data, not code: a later Stage-1 task (the plugin-extractor) reads this
+is data, not code: the plugin extractor reads this
 file to resolve a Figma node's `component` name and its `props.type` /
 `props.size` / etc. fields when building the IR.
 

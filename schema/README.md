@@ -1,9 +1,9 @@
 # @figma-exporter/schema
 
 Versioned IR (Intermediate Representation) JSON Schema, generated TypeScript
-types, and fixtures shared between the Figma plugin (which produces IR) and
-any future consumer of that IR (a later stage — e.g. a Compose code-gen
-pipeline).
+types, and fixtures shared between the Figma plugin (which produces IR),
+the Kotlin token generator, and future node-IR consumers (e.g. a Compose
+screen-generation pipeline).
 
 ## Layout
 
@@ -39,10 +39,11 @@ cd schema
 npm run generate:types
 ```
 
-This reads `ir/v1/schema.json` and rewrites `src/generated/ir.ts` using
-`json-schema-to-typescript`. Run it after every schema change and commit the
-diff. `npm test` (via `schema/src/ir-schema.test.ts`) fails CI if the
-generated file is stale relative to the schema, so this can't silently drift.
+This reads both `ir/v1/schema.json` and `tokens/v1/schema.json` and rewrites
+`src/generated/ir.ts` and `src/generated/tokens.ts` using
+`json-schema-to-typescript`. Run it after either schema changes and commit
+the diff. The schema tests and root `npm run verify:generated` detect stale
+generated types.
 
 ## Node kind contract
 
@@ -77,11 +78,11 @@ Every IR node shares a common envelope:
 Whenever the plugin cannot resolve a value — a missing variable binding, an
 unmapped component variant from the component-map, etc. — it must **never**
 silently substitute a literal or omit the field. Instead it emits an
-`UnresolvedEntry { nodeId, reason, detail? }` into the nearest `unresolved[]`
-array (currently only present on `instance` nodes, since that's where
-variant/property mapping happens). This keeps IR generation total: every
-input node produces _some_ IR, and anything uncertain is flagged rather than
-guessed at.
+`UnresolvedEntry { nodeId, reason, detail?, severity? }` into the document's
+top-level `unresolved[]`. Instance-specific entries are also carried on
+`InstanceNode.unresolved`. Unsupported or intentionally skipped node kinds
+are not guaranteed their own IR node; representable uncertainty is flagged
+rather than guessed at.
 
 ## Determinism requirement
 
@@ -95,15 +96,15 @@ determinism.test.ts` and the "Determinism guarantee" section of
 `plugin/README.md`); the schema itself is designed so nothing in it could
 violate the guarantee.
 
-## Forward-compat plan: adding `symbol` later
+## Symbol wiring (additive within v1)
 
-A later stage will map each `TokenValue`/`TokenRef.token` (a raw Figma
+The plugin maps supported `TokenValue`/`TokenRef.token` paths (a raw Figma
 variable/style path, e.g. `"color/text/base/default"`) to a generated
 design-system symbol name (e.g. `"AppTheme.semanticColors.text.base.default"`).
-To make that additive rather than breaking:
+This remains additive rather than breaking:
 
 - Both `TokenValue` and `TokenRef` already declare an **optional** `symbol`
-  field in v1, even though nothing populates it yet.
+  field in v1; it is populated only when a wiring rule confidently matches.
 - Because it's optional, no existing IR document needs to change shape when
   a producer starts populating it, and no consumer that ignores unknown
   optional fields needs to change either.
@@ -112,8 +113,7 @@ To make that additive rather than breaking:
   side, since the generated `TokenValue`/`TokenRef` TypeScript types already
   include `symbol?: string`).
 
-**Update: this "later stage" has now happened, partially.** The plugin
-extractor (`plugin/src/extractor/tokens.ts`'s `resolveVariable`) resolves
+The plugin extractor (`plugin/src/extractor/tokens.ts`'s `resolveVariable`) resolves
 each token's **qualified** identity — `(collection, path)`, since a bare
 path is ambiguous across collections — against the declarative wiring rules
 in `mappings/wiring-rules/wiring-rules.yaml`, and populates
@@ -147,7 +147,7 @@ Shape, briefly:
 TokenDocument
   envelope     { schemaVersion, kind: "tokens", fileKey, version }
   policy       the exclusion policy actually applied, incl. unmatchedPatterns
-  collections  [{ name, id, remote, defaultMode, modes, branches, dependsOn, tokens }]
+  collections  [{ name, id, remote, extends?, defaultMode, modes, branches, dependsOn, tokens }]
   unresolved   [{ collection, path, reason, detail }]
 ```
 
@@ -163,15 +163,21 @@ Design decisions worth knowing:
   collection has a flattened value that is misleading on its own.
 - **Mode order is Figma's declared order, never sorted**, and
   `defaultMode` is always carried.
+- **Extended collections carry `extends`**, the parent collection's name.
+  This is Figma's extension relationship, not a Kotlin class name; the
+  generator uses it to reuse the parent's types for theme factories.
 - **Kotlin/codegen concerns are out of scope**: package names, class
   shapes, factory functions and build order stay in the generator. The
   document carries the observed raw material (`branches`, `dependsOn`,
   `modes`, `defaultMode`) those are derived from, because that is measured
   Figma structure rather than a codegen decision.
-- **Nothing is ever silently dropped**: a variable that cannot be
+- **In-policy variables are not silently dropped**: a variable that cannot be
   represented appears in `unresolved` with a stable reason code
   (`missing-alias-target`, `unresolvable-alias-chain`,
   `excluded-collection-alias`, `excluded-by-policy`, `unsupported-value`).
+  Entire collections excluded by policy are currently reported in the
+  extraction summary/UI rather than the document; collection-level
+  reporting remains an open gap (see `docs/BACKLOG.md` G12).
 
 ## Fixtures
 

@@ -6,6 +6,9 @@ designer can act on directly.
 
 ## Status
 
+- **Token generation integration**: the panel connects to the local
+  [`bridge/`](../bridge/README.md), used by `npm run tokens:sync` and the
+  integrated [Android Studio plugin](../android_studio_plugin/README.md).
 - **Extraction** (`src/extractor/`): implemented. See its own PR/task
   (`plugin-extractor`) for details on layout/token/instance/list/overlay
   resolution and the node budget.
@@ -187,6 +190,12 @@ answers `extract-tokens` requests from the `bridge/` package, so
 results are tagged with a `requestId` and never touch the panel's own
 state. See `bridge/README.md`.
 
+In Android Studio, **Build Generator** builds the bridge from this
+repository, then **Generate** requests a fresh token document through it.
+Keep the Figma file open with **Figma Exporter** running; no manual
+**Extract tokens** or **Export tokens** click is needed. Use only one
+bridge on port 8765 at a time.
+
 ## Token export (file-scoped)
 
 Alongside the selection-scoped IR export, the plugin can export the file's
@@ -241,6 +250,17 @@ The applied policy is echoed into the exported document's `policy` block,
 including `unmatchedPatterns` — a pattern that matches nothing is reported
 rather than silently ignored, because it looks like a working exclusion and
 behaves like a typo.
+
+### Extended collections
+
+Figma extended collections are exported with an optional `extends` field
+naming their parent collection. The exporter reads the parent's variables
+and resolves the extended collection's mode overrides and inherited values;
+its default mode is preserved even when the API reports a parent-mode id.
+The Kotlin generator can therefore emit theme factories returning the
+parent's type rather than duplicate data classes. See
+[`codegen/tokens/README.md`](../codegen/tokens/README.md) for type reuse,
+structural detection for older exports, and sparse-value fallback behavior.
 
 ## Typography literal fallback
 
@@ -606,8 +626,7 @@ npm run build
 Bundles `src/code.ts` with esbuild into `dist/code.js`. Separately bundles
 `src/ui.ts` and inlines the result into `dist/ui.html` in place of the
 `<!-- BUILD:UI_SCRIPT -->` placeholder in `src/ui.html` — Figma's plugin UI
-iframe has no external resource loading (and this manifest declares no
-network access), so the UI's JS must live inline in the HTML file it ships
+iframe does not load an external script, so the UI's JS must live inline in the HTML file it ships
 in. `manifest.json`'s `main` and `ui` fields point at these built files, not
 the TypeScript sources.
 
@@ -619,8 +638,9 @@ the TypeScript sources.
 3. Run the plugin from **Plugins → Development → Figma Exporter**. See
    "Using the panel" above.
 
-Note: `manifest.json`'s `id` is a placeholder. It needs to be replaced with
-a real plugin id once/if this plugin is published to a Figma org.
+`manifest.json` already declares a plugin id. Production network access is
+disabled (`allowedDomains: ["none"]`); the local bridge is permitted only
+for development via `devAllowedDomains: ["ws://localhost:8765"]`.
 
 ## Running the headless test harness
 

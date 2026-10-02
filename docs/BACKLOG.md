@@ -1,6 +1,8 @@
 # Figma Exporter — что не доделано и что можно улучшить
 
-Снимок состояния на коммит `f2cb9e7`. Как устроен пайплайн — см.
+Обновлено для текущего TypeScript-генератора, bridge и интегрированного
+Android Studio-плагина. Исторические замеры ниже относятся к зафиксированным
+экспортам, а не к каждому актуальному Figma-файлу. Как устроен пайплайн — см.
 **[ARCHITECTURE.md](./ARCHITECTURE.md)**; нумерация ссылается на его разделы.
 
 Отсортировано по влиянию на конечную цель — IR, пригодный для кодогенерации.
@@ -36,7 +38,9 @@ ARCHITECTURE.md): 134 ноды, 361 запись в `unresolved`, 80% токен
 `Badge`/`Badges` и подобный дрейф без ложных срабатываний на действительно
 немаппленных наборах (`Section Header`, `Container` по-прежнему `null`).
 Сопоставление по `figmaComponentKey` не сделано — в `component-map.yaml` нет
-устойчивого across-file key, только `figmaNodeId` (per-file, бесполезен здесь).
+устойчивого across-file key, только `figmaNodeId`. Lookup теперь использует
+node id первым и имя как fallback, сообщая о дрейфе имени; это не заменяет
+устойчивый across-file component key и не добавляет отсутствующие записи.
 
 **B3. ✅ (исправлено) Потеря литеральных значений типографики.** ~~При
 `typography.token === null` (20 случаев) в IR не остаётся ничего.~~ `TokenRef`
@@ -97,7 +101,8 @@ nodeId (детерминированно, не зависит от порядк�
 «Asset type classification» как сознательно не покрытый этой эвристикой.
 
 **G4. Ассеты не экспортируются.** `exportRef` — это только _предложенное имя_.
-Реальных SVG/PNG байт нет (`exportAsync` не вызывается), `networkAccess: none`.
+Реальных SVG/PNG байт нет (`exportAsync` не вызывается). Development WebSocket
+для токен-моста это не меняет: ассеты по нему не передаются.
 Кодогенератору нечего положить в ресурсы.
 
 **G5. `INSTANCE_SWAP`-слоты всегда `null`.** Содержимое подставленного компонента
@@ -119,23 +124,27 @@ nodeId (детерминированно, не зависит от порядк�
 провалидировать и различить по версии при появлении v2. См.
 `plugin/README.md` → «The export envelope: `IRDocument` and `schemaVersion`».
 
-**G8. `symbol` заполняется у 14 объектов из 313.** Только ветка `base/color`
+**G8. Ограниченное покрытие symbol wiring.** В зафиксированном экспорте узлов
+`symbol` заполнен у 14 объектов из 313. Подтверждена только ветка `base/color`
 Android_Avalon. Для `components/*` (а на реальном экране это большинство токенов:
 `components/section-header/size/padding/...`) символов нет вообще.
 
-**G9. Продукт захардкожен.** Плагин бандлит только `android-avalon.token-map.json`;
-выбора продукта (Avalon/Stelo) при экспорте нет. Задокументировано как известное
-ограничение, но при появлении второго потребителя сломается.
+**G9. Исправлено: старый product-specific token-map удалён.** Вместо
+`android-avalon.token-map.json` используются декларативные wiring rules по
+`(collection, path)`. Theme/extended collections экспортируются с `extends`,
+а генератор переиспользует тип родителя. Недостаточное покрытие call-site
+символов остаётся отдельной задачей G8.
 
-**G10. token-map обновляется вручную и межрепозиторно.** `tools/figma-tokens/json/
-tokens.json` не коммитится, генерация требует локальный чекаут Android_*,
-`bundle:token-map` запускается руками. Бандл может незаметно протухнуть
-относительно живого файла Figma — и при этом `symbol` просто молча отсутствует.
+**G10. Исправлено: token-map больше не требует внешнего дампа/checkout.**
+`mappings/wiring-rules/wiring-rules.yaml` компилируется в
+`mappings/src/generated/wiring-rules.json`; `verify:generated` проверяет
+его актуальность в CI. Символ выводится из правила при экспорте, а не берётся
+из устаревающей таблицы токенов.
 
-**G11. `tools/figma-tokens` не интегрирован.** Папка лежит в корне, но её нет в
-`workspaces`, нет в CI, нет npm-скрипта-обёртки, `.gitignore` не покрывает
-`__pycache__`/`.pytest_cache` (они уже в рабочем дереве), а `mappings/token-map/
-README.md` всё ещё ссылается на неё как на «репозиторий DexFigmaPlugin».
+**G11. Закрыто миграцией: Python-генератор больше не часть пайплайна.**
+`codegen/tokens` и `bridge` — npm workspaces; IDE-плагин находится в
+`android_studio_plugin/` этого же Git-репозитория, но собирается отдельно
+Gradle. Python-кэши покрыты корневым `.gitignore`. CI-пробел IDE-плагина — S8.
 
 **G12. Исключённая политикой _коллекция_ исчезает из токен-документа бесследно.**
 `tokenExport.ts` собирает исключённые коллекции в `skippedCollections` — поле
@@ -165,13 +174,13 @@ README.md` всё ещё ссылается на неё как на «репоз
 коллекции (например, `policy.excludedCollections` с `{name, id, remote,
 variableCount, reason}`), что требует правки схемы `tokens/v1`.
 
-**G13. `codegen/tokens`'s Kotlin output shape doesn't match what real
-consumers (Android_Stelo) expect — needs a deliberate redesign decision.**
-Verified by generating the new emitter's real output against Android_Stelo's
-production fixture and diffing it against what's actually on disk there.
+**G13. Historical output-shape compatibility gap — `--layout legacy` now
+implemented; full legacy API parity remains out of scope.**
+The gap was measured by comparing the new emitter's output against
+Android_Stelo's production fixture and its generated files at migration time.
 
-Old (retired `_legacy-python` generator, still what `Android_Stelo` builds
-against today): one `.kt` file **per top-level branch** (e.g.
+Old (retired `_legacy-python` generator, used by `Android_Stelo` at the
+time of that comparison): one `.kt` file **per top-level branch** (e.g.
 `base/color/Color.kt`), a separate per-mode factory file per branch
 (`base/color/ColorLight.kt` → `colorLight(palette: Palette)`,
 `base/color/ColorDark.kt` → `colorDark(palette: Palette)`), a root aggregator
@@ -323,16 +332,17 @@ merely happens to carry `color`/`opacity` keys still surfaces as a loud
 `unsupported-value` rather than being silently mis-parsed. Covered by two
 new cases in `tokenExport.test.ts`.
 
-Worth noting for the next shape: the reason this was a one-line symptom and
-not a silent corruption is `--on-unresolved unsupported-value=fail`. The
-default triage warns, which is what let the earlier bad export generate a
-degraded file at exit code 0; running the generator with that override in
-CI is what turns "Figma changed a shape" into a build failure instead of
-`null`s landing in the app.
+The current default triage **fails** on `unsupported-value`,
+`missing-alias-target`, and `unresolvable-alias-chain`. An explicit
+`--on-unresolved unsupported-value=warn` permits a degraded export;
+the bridge example config uses that override, so review it before adopting
+the example for production or CI.
 
-**G16. Token re-generation still needs a human-attended Figma session.**
-`bridge/` (`npm run tokens:sync`) removes the download/CLI/flag steps, but
-Figma desktop must be open with the plugin running. Follow-ups: (a) plugin
+**G18. Token re-generation still needs a human-attended Figma session.**
+`bridge/` (`npm run tokens:sync`) and the integrated `android_studio_plugin/`
+remove the download/CLI/flag steps, but Figma desktop must be open with
+Figma Exporter running. The IDE keeps the bridge alive in `serve` mode and
+shows connection readiness; it does not make Figma headless. Follow-ups: (a) plugin
 pushes tokens.json to GitHub and CI opens the app PR; (b) fully headless via
 the REST Variables API behind an adapter for `FigmaVariablesAPI` (Figma
 Enterprise, `file_variables:read`; watch extended-collection and remote
@@ -395,8 +405,9 @@ component-свойствами), но после мемоизации (Q1) вы�
 решает заявленную проблему «шум прячет реальные проблемы» без потери ни одной
 записи.
 
-**Q10. Два `*.token-map.json` по 35 000 строк каждый и побайтово идентичны.**
-Задокументировано, но 70 000 строк дублирующегося JSON в репозитории.
+**Q10. Исправлено: дублирующиеся token-map JSON удалены.**
+Их заменили декларативные wiring rules; исторические замеры сохранены в
+`mappings/wiring-rules/README.md`.
 
 ## 🟢 Инфраструктура и следующие этапы
 
@@ -405,20 +416,20 @@ component-свойствами), но после мемоизации (Q1) вы�
 **S2. Нет кодогенерации** Compose/SwiftUI из IR (Stage 3).
 
 **S3. ✅ (исправлено) Нет CI-проверки актуальности сгенерированных артефактов.**
-Добавлен корневой скрипт `npm run generate` (регенерирует, в порядке зависимостей,
-`schema/src/generated/ir.ts`, `mappings/src/generated/component-map.json`,
-`mappings/src/generated/token-map.json` и все 5 `fixtures/src/corpus/*/expected.ir.json`
-— всё из уже закоммиченных источников, без внешних входов) и
-`npm run verify:generated` (`generate` + `git diff --exit-code` по этим трём
-директориям). `.github/workflows/ci.yml` теперь запускает `verify:generated`
-последним шагом: PR с рассинхронизированным сгенерированным артефактом красный.
-Намеренно не включает `generate:token-map` (требует внешний `tokens.json` из
-другого репозитория — не воспроизводимо в CI, см. G10/wire-python-tool).
+`npm run generate` регенерирует оба набора schema types, component-map,
+wiring-rules, collections-policy и corpus snapshots из закоммиченных источников.
+`npm run verify:generated` сравнивает schema/mappings с генераторами без
+перезаписи, затем регенерирует corpus и проверяет `git diff --exit-code`.
+CI запускает этот gate до и после build/test; Kotlin goldens отдельно
+обновляются через `golden:update` и проверяются тестами/CLI.
 
-**S4. Нет Python-части в CI.** `tools/figma-tokens/tests` (pytest) не запускается.
+**S4. Закрыто миграцией: Python-часть удалена.** Актуальный генератор
+тестируется Vitest и CLI/standalone bundle smoke checks.
 
-**S5. Нет версионирования/релизов плагина.** Все `package.json` — `0.0.0`,
-`manifest.json.id` подставлен, но README всё ещё называет его плейсхолдером.
+**S5. Нет автоматизированных релизов плагинов.** npm-пакеты остаются `0.0.0`,
+Figma manifest уже содержит id, IDE-плагин имеет `pluginVersion = 1.0.0`
+и собирается в ZIP через `buildPlugin`. Установка/обновление пока ручные;
+после установки нового IDE ZIP требуется перезапуск IDE.
 
 **S6. ✅ (исправлено) Нет сквозного e2e-теста на реальном файле.** Приложенный
 `daily_*.ir.json` перемещён из корня (был неотслеживаемым файлом) в
@@ -432,6 +443,12 @@ component-свойствами), но после мемоизации (Q1) вы�
 `fixtures:update`/snapshot-тесте, как остальной корпус — это дополнение, а не замена
 существующих 5 синтетических фикстур.
 
-**S7. Документация фрагментирована.** `plugin/README.md` — 26 КБ, куда попало и
+**S7. Документация фрагментирована.** В большой `plugin/README.md` попало и
 описание UI, и ADR-обоснования (версионирование, алиасы, detached instances).
 Стоит вынести решения в `docs/adr/`, оставив README справочником.
+
+**S8. IDE-плагин пока не собирается в GitHub Actions.** Он теперь часть
+exporter-репозитория, но root npm scripts и `.github/workflows/ci.yml`
+покрывают TypeScript workspaces, не Kotlin/Gradle. Для изменений в
+`android_studio_plugin/` нужен отдельный `./gradlew test`/`buildPlugin`
+с JDK 21; автоматизацию этого и публикацию ZIP ещё предстоит добавить.

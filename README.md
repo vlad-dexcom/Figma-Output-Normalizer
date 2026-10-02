@@ -1,8 +1,8 @@
 # Figma Exporter
 
 A Figma plugin + intermediate representation (IR) schema that extracts a
-**semantic, platform-neutral** description of a Figma design, for use in
-design-to-code pipelines.
+**semantic, platform-neutral** description of a Figma design, plus a Kotlin
+token generator, local WebSocket bridge, and Android Studio / IntelliJ plugin.
 
 ## Why this exists
 
@@ -39,6 +39,7 @@ mappings/   # Figma component set -> design system component map,
 fixtures/   # captured real-screen node data + expected IR snapshots, used
             # in tests
 bridge/     # local WebSocket bridge + `tokens:sync` (plugin -> tokens -> Kotlin)
+android_studio_plugin/  # Android Studio / IntelliJ plugin, built separately with Gradle
 codegen/tokens/  # TypeScript generator that turns a *.tokens.json document
             # into Kotlin data classes + factory functions (CLI: codegen-tokens)
 scripts/    # repo-wide checks (verify-generated.mjs)
@@ -84,7 +85,7 @@ End-to-end, from a Figma file to generated Kotlin:
    for the full flag list.
 
    External consumers that don't want to `npm install`/check out the whole
-   monorepo (e.g. an IDE plugin) can instead build a standalone, dependency-
+   monorepo at runtime can instead build a standalone, dependency-
    free bundle once with `npm run bundle --workspace=@figma-exporter/codegen-tokens`
    and invoke `node codegen/tokens/dist/codegen-tokens.cjs <same flags>` —
    see "Building a standalone bundle" in `codegen/tokens/README.md`.
@@ -93,6 +94,15 @@ End-to-end, from a Figma file to generated Kotlin:
    `npm run tokens:sync -- --config bridge/tokens-sync.config.json` fetches
    the tokens over a local WebSocket and runs the generator in one go — see
    `bridge/README.md`.
+
+   **Generate from Android Studio:** the integrated
+   [`android_studio_plugin/`](./android_studio_plugin/README.md) runs the
+   bridge in long-lived `serve` mode. Install its Gradle-built plugin ZIP,
+   set **Generator repository** to this repository's root (not the
+   `android_studio_plugin/` folder), and press **Build Generator**. With
+   **Figma Exporter** running in Figma desktop, press **Generate** in the
+   IDE's **Figma Tokens** tool window. Do not run the standalone
+   `tokens:sync` command at the same time: both use port 8765.
 
 4. **Wire the generated data classes into the app.** v1 emits one file per
    collection only — there is no root aggregator by default (see "Status:
@@ -128,15 +138,19 @@ alphabetized mode names (destroying the default-mode signal), and flattened
 leaf-collection values in a way that collapsed light/dark. See
 `schema/tokens/MIGRATION.md` for the full field-by-field contract.
 
-This is an npm workspaces monorepo. Each package has its own
-`package.json` and extends the shared root `tsconfig.json`.
+The six TypeScript packages are npm workspaces. Each has its own
+`package.json` and extends the shared root `tsconfig.json`. The
+`android_studio_plugin/` Kotlin project shares this Git repository but uses
+its own Gradle build; it is not an npm workspace. Repository/folder names
+do not determine npm package names: the package scope remains
+`@figma-exporter`, including `@figma-exporter/bridge`.
 
 ## Documentation
 
 - [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — step-by-step walkthrough
   of the whole pipeline: the export lifecycle inside the plugin, layout/token/
   instance/list/overlay/asset resolution, the IR v1 schema, the mappings
-  packages, the `codegen/tokens` Kotlin generator, and measurements taken
+  packages, the Kotlin token generator, bridge and IDE integration, and measurements taken
   against a real exported screen.
 - [`docs/BACKLOG.md`](./docs/BACKLOG.md) — known gaps, limitations, and
   improvement ideas, grouped by severity.
@@ -144,7 +158,8 @@ This is an npm workspaces monorepo. Each package has its own
 Both documents are written in Russian, matching the team working on this
 repository. Per-package READMEs (`plugin/README.md`, `schema/README.md`,
 `mappings/README.md`, `mappings/wiring-rules/README.md`, `fixtures/README.md`,
-`codegen/tokens/README.md`) remain the authoritative reference for each
+`codegen/tokens/README.md`, `bridge/README.md`,
+`android_studio_plugin/README.md`) remain the authoritative reference for each
 package's own design decisions.
 
 ## Status: Stage 1
@@ -152,7 +167,8 @@ package's own design decisions.
 This repository is being built in stages. **Stage 1 (this stage) covers
 Figma-side extraction** (a correct, well-typed IR + token document from a
 Figma document) **plus the Kotlin token generator** (`codegen/tokens`, turns
-the token document into Kotlin data classes). It does _not_ include:
+the token document into Kotlin data classes), the local bridge, and the
+Android Studio integration. It does _not_ include:
 
 - An MCP server for exposing the IR to external tools/agents.
 - Code generation for the node IR (e.g. Jetpack Compose screens/components).
@@ -169,7 +185,15 @@ npm run lint              # ESLint across all packages
 npm run typecheck         # tsc --noEmit in every package
 npm run verify:generated  # regenerate + fail if anything below doesn't match what's committed
 npm test                  # vitest, run once
-npm run generate          # regenerate schema types, component-map, wiring-rules, collections-policy, and golden fixtures
+npm run generate          # regenerate schema types, component-map, wiring-rules, collections-policy, and corpus snapshots
+```
+
+Build and test the IDE plugin separately (JDK 21 required):
+
+```bash
+cd android_studio_plugin
+./gradlew test
+./gradlew buildPlugin      # build/distributions/dex-figma-tokens-plugin-<version>.zip
 ```
 
 CI (`.github/workflows/ci.yml`) runs install, lint, typecheck,
@@ -184,6 +208,11 @@ regenerating and committing the derived artifacts (`schema/src/generated/ir.ts`,
 `schema/src/generated/tokens.ts`, `mappings/src/generated/*.json`,
 `fixtures/src/corpus/*/expected.ir.json`) fails CI instead of silently
 drifting.
+
+CI also checks the standalone codegen bundle and smoke-tests the bridge
+bundle in `serve` mode. It does not currently run the IDE plugin's Gradle
+build or tests; the root npm build/test commands cover TypeScript workspaces,
+not the Kotlin IDE plugin.
 
 `verify:generated` exists because of a measured failure, not a hypothetical
 one: a checked-in generated artifact was bundled into the plugin and then

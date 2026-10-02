@@ -159,8 +159,8 @@ still requires updating those call sites. See `docs/BACKLOG.md` G13.
 
 ### Building a standalone bundle
 
-For external consumers that don't want to `npm install` or check out the
-whole monorepo (e.g. the DexFigmaPlugin IDE plugin), build a single
+For consumers that need file-based generation without workspace resolution
+or a TypeScript loader at runtime, build a single
 dependency-free file with esbuild:
 
 ```bash
@@ -182,6 +182,13 @@ node codegen/tokens/dist/codegen-tokens.cjs \
 
 `dist/` is gitignored (a build artifact, not source); rebuild the bundle
 after pulling changes to this package or its workspace dependencies.
+
+For live generation from Figma, use [`bridge/`](../../bridge/README.md)
+instead. The integrated [Android Studio plugin](../../android_studio_plugin/README.md)
+builds `@figma-exporter/bridge` into `bridge/dist/tokens-sync.cjs`, which
+includes this generator plus WebSocket and `serve` support. The standalone
+codegen bundle above only reads an existing token document; it is not the
+bundle used by the IDE's **Build Generator** button.
 
 ## Golden-output tests
 

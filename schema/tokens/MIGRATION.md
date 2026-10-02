@@ -20,9 +20,15 @@ Figma ──dump──► figma-raw.json ──Python: resolve + normalize + sha
 After:
 
 ```
-Figma ──plugin: resolve + normalize──► tokens.ir.json ──Python: shape──► Kotlin
-        (aliases, modes, scopes, policy)                 (codegen only)
+Figma ──plugin: resolve + normalize──► *.tokens.json ──codegen/tokens (TypeScript)──► Kotlin
+        (aliases, modes, scopes, policy)              (codegen only)
 ```
+
+The token document can be downloaded manually or delivered through the
+[`local bridge`](../../bridge/README.md), including from the integrated
+[`Android Studio plugin`](../../android_studio_plugin/README.md). All paths
+feed the same generator; neither the bridge nor the IDE resolves Figma
+semantics independently.
 
 The generator stops doing **resolution** and keeps doing **codegen**. It
 gets smaller, and the parts it loses are the parts that were losing data.

@@ -15,11 +15,17 @@ Figma desktop ─ plugin sandbox (extractTokens)
 
 ## Usage
 
+Run the commands below from the exporter repository root, after `npm install`.
+
 1. Build and (re)import the plugin (`npm run build --workspace=plugin`); the
    manifest allows `ws://localhost:8765` in development only.
-2. Copy `tokens-sync.config.example.json` to `tokens-sync.config.json`
+2. Copy `bridge/tokens-sync.config.example.json` to `bridge/tokens-sync.config.json`
    (relative paths resolve against the config's directory) and set `output`
-   to the Kotlin directory inside your local app checkout.
+   to the Kotlin directory inside your local app checkout. Set `package` and
+   either replace the example's `fileKey` with your Figma file key or remove it
+   to accept whichever file has the plugin running. The sample's
+   `onUnresolved.unsupported-value: "warn"` is an explicit override; remove
+   it to keep the generator's default failure on unsupported values.
 3. Run:
    ```bash
    npm run tokens:sync -- --config bridge/tokens-sync.config.json
@@ -31,20 +37,47 @@ Figma desktop ─ plugin sandbox (extractTokens)
 Flags: `--output`, `--port`, `--timeout <sec>` (default 60), `--dry-run`,
 `--check` (non-zero when the output is stale; writes nothing).
 
+Config fields: `output` and `package` are required; `fileKey`, `layout`
+(`flat` or `legacy`), `prefix`, `excludeMode` (string or array),
+`onUnresolved`, `fallbackCollections` (`{ "child": "parent" }`), and
+`tokensJson` (default `figma.tokens.json`) are optional. Relative `output`
+and `tokensJson` paths resolve against the config directory; a CLI
+`--output` override resolves against the caller's working directory.
+
 ## Serve mode (IDE integrations)
 
-`tokens:sync serve --port 8765` keeps the bridge running and speaks JSON lines on
-stdio, so a host such as the DexFigmaPlugin Android Studio plugin can show live
+`npm run tokens:sync -- serve --port 8765` keeps the bridge running and speaks JSON lines on
+stdio, so the integrated [Dex Figma Tokens IDE plugin](../android_studio_plugin/README.md) can show live
 status and trigger syncs without a process per run. The plugin sends a `hello`
 (file key + name) on connect, so status includes which Figma file is attached.
 
-- host → bridge: `{"cmd":"sync","id","config":{…},"dryRun":false}`, `{"cmd":"shutdown"}`
-- bridge → host: `{"type":"status","bridge":"listening","port","plugins":[{"fileKey","fileName"}]}`
-  (or `"bridge":"error","message"`), `{"type":"log","id","level","text"}`,
-  `{"type":"result","id","exitCode","tokensChanged","version"}`, `{"type":"error","id","code","message"}`
+Each message is one JSON object per line. For example, the host sends:
+
+```jsonl
+{"cmd":"sync","id":"1","config":{"output":"/app/tokens","package":"com.example.tokens"},"dryRun":false}
+{"cmd":"shutdown"}
+```
+
+The bridge emits `status` (`bridge`, `port`, `plugins`, or an error
+`message`), `log` (`id`, `level`, `text`), `result` (`id`, `exitCode`,
+`tokensChanged`, `version`, `fileKey`), and `error` (`id` when available,
+`code`, `message`) objects. Sync commands may also carry `check` and
+`timeoutMs` (default 30000); relative config paths in serve mode resolve
+against the bridge process's working directory.
 
 `npm run bundle --workspace=@figma-exporter/bridge` builds a dependency-free
 `bridge/dist/tokens-sync.cjs` (bridge + generator) runnable with a plain `node`.
+
+```bash
+node bridge/dist/tokens-sync.cjs serve --port 8765
+```
+
+The IDE's **Build Generator** button builds this bridge bundle, not the
+file-input-only `codegen/tokens/dist/codegen-tokens.cjs` bundle. Rebuild
+after pulling changes to the bridge or its workspace dependencies.
+Only one bridge may own port 8765 at a time: stop a standalone CLI run
+before starting the IDE bridge (or vice versa). The Figma plugin's URL and
+development manifest currently use that port.
 
 ## Guarantees
 

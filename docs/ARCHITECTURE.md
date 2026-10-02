@@ -1,7 +1,8 @@
 # Figma Exporter — как оно работает (по шагам)
 
 Состояние: миграция `codegen/tokens` на TS-генератор из документа токенов
-завершена (см. `schema/tokens/MIGRATION.md`). Все 388 тестов проходят (`npm test`).
+завершена (см. `schema/tokens/MIGRATION.md`). Добавлены локальный WebSocket-мост
+и Android Studio / IntelliJ-плагин в этом же репозитории.
 
 ---
 
@@ -20,16 +21,17 @@ Representation), который потом сможет потреблять к�
 
 **Stage 1** = извлечение на стороне Figma (IR узлов + документ токенов). С
 миграцией `codegen/tokens` (см. §6) добавилась и первая кодогенерация: Kotlin
-data class'ы из документа токенов. MCP-сервера и LLM внутри плагина по-прежнему
-нет.
+data class'ы из документа токенов, а `bridge/` и `android_studio_plugin/`
+автоматизируют повторную генерацию из открытого Figma-файла. MCP-сервера и
+LLM внутри плагина по-прежнему нет.
 
 ---
 
 ## 1. Структура монорепозитория
 
-npm workspaces, 5 пакетов, всё на TypeScript — внешнего Python-инструмента
-больше нет (см. §6, ранее `tools/figma-tokens`, затем
-`codegen/tokens/_legacy-python/`, удалён этой миграцией):
+Шесть npm workspaces на TypeScript и отдельный Kotlin/Gradle-проект IDE-плагина.
+Все находятся в одном Git-репозитории. Старый Python-генератор больше не
+используется (см. §6):
 
 ```
 schema/         @figma-exporter/schema         — JSON Schema (IR v1 + Token v1) + сгенерированные TS-типы
@@ -37,13 +39,21 @@ plugin/         @figma-exporter/plugin         — сам плагин Figma (ex
 mappings/       @figma-exporter/mappings       — component-map.yaml, wiring-rules (токен → Kotlin-символ), collections-policy
 fixtures/       @figma-exporter/fixtures       — корпус мок-сценариев + real-world-фикстуры + замороженные снапшоты IR
 codegen/tokens/ @figma-exporter/codegen-tokens — TS-генератор Kotlin data class'ов из документа токенов (*.tokens.json), CLI `codegen-tokens`
+bridge/         @figma-exporter/bridge         — WebSocket-мост, CLI `tokens:sync`, JSON-lines `serve`
+android_studio_plugin/                        — Dex Figma Tokens, Kotlin/Gradle, не npm workspace
 ```
+
+Имена репозитория и локальной папки не задают имена npm-пакетов:
+scope остаётся `@figma-exporter`, в том числе `@figma-exporter/bridge`.
+В `android_studio_plugin/` не должно быть отдельного `.git` или submodule.
 
 CI (`.github/workflows/ci.yml`): `npm install` → `lint` → `typecheck` →
 `verify:generated` → `build` → `test` → `verify:generated` →
 `codegen-tokens --check` (смок-тест реального CLI против замороженного
 `codegen/tokens/testdata/golden/real-world/`, см. §6) на каждый push в main и
-на каждый PR. Node 20.
+на каждый PR. Node 20. Также проверяются standalone codegen bundle и запуск
+bridge bundle в `serve`-режиме. Gradle-сборка и тесты IDE-плагина пока не
+включены в этот workflow; запускаются отдельно с JDK 21.
 
 ---
 
@@ -62,7 +72,7 @@ flowchart TD
     E --> F2["*.tokens.json<br/>файл / буфер обмена"]
 
     M1["mappings/component-map.yaml"] -.-> C
-    M2["mappings/wiring-rules.yaml"] -.-> C2
+    M2["mappings/wiring-rules/wiring-rules.yaml"] -.-> C2
     M3["mappings/collections-policy.yaml"] -.-> C2
 
     F2 --> G["codegen/tokens<br/>(TS CLI, читает только *.tokens.json)"]
@@ -80,6 +90,13 @@ flowchart TD
 (алиасы, режимы, политика исключений, символы) уже произошла на стороне
 плагина.
 
+Ручная загрузка `*.tokens.json` не обязательна: `bridge/` запрашивает тот же
+канонический документ у UI плагина по `ws://localhost:8765` и передаёт его
+генератору. Одноразовый `npm run tokens:sync` запускает мост на время синхронизации;
+IDE-плагин держит `node bridge/dist/tokens-sync.cjs serve --port 8765` постоянно
+и отправляет команды через JSON lines на stdin. Одновременно порт может занять
+только один мост. Figma desktop и плагин Figma Exporter должны оставаться открыты.
+
 ---
 
 ## 3. Шаг за шагом: жизненный цикл одного экспорта
@@ -90,7 +107,10 @@ flowchart TD
 
 - `main: dist/code.js`, `ui: dist/ui.html`
 - `editorType: ["figma", "dev"]`, `capabilities: ["inspect"]` (панель Dev Mode)
-- `documentAccess: "dynamic-page"`, `networkAccess.allowedDomains: ["none"]` — сеть запрещена
+- `documentAccess: "dynamic-page"`, `networkAccess.allowedDomains: ["none"]` —
+  production-сеть запрещена; `devAllowedDomains: ["ws://localhost:8765"]`
+  разрешает локальный мост в development
+- `enablePrivatePluginApi: true` — доступ к `figma.fileKey` там, где его разрешает Figma
 
 `code.ts → initializePlugin(figma)`:
 
@@ -103,6 +123,11 @@ flowchart TD
 - Plugin → UI: `selection-changed`, `ir-result`, `error` (коды: `empty-selection`,
   `budget-exceeded`, `node-not-found`, `unsupported`, `unknown`, `symbol-leak`).
 - UI → Plugin: `extract`, `select-node`, `export`.
+
+Токен-ветка использует `extract-tokens`/`export-tokens` и `token-result`;
+`file-info` сообщает UI ключ и имя файла для bridge handshake. Запросы
+моста несут `requestId`, ответ содержит канонический `json`; подробный
+протокол — `plugin/src/messages.ts` и `bridge/src/protocol.ts`.
 
 ### Шаг 3.2. Нажатие Extract → `handleExtract()`
 
@@ -185,7 +210,7 @@ GROUP/BOOLEAN_OPERATION/SECTION
   (эмитится только если режимов > 1);
 - `value` = значение режима по умолчанию коллекции;
 - `symbol` = `resolveTokenSymbol(collection, variable.name)` из скомпилированных
-  `mappings/wiring-rules.yaml` (см. §5.2).
+  `mappings/wiring-rules/wiring-rules.yaml` (см. §5.2).
 
 **Резолв алиасов** (`resolveModeValue`) — самая нетривиальная часть:
 
@@ -368,7 +393,7 @@ YAML компилируется в `src/generated/component-map.json` скрип
 
 ### 5.2. wiring-rules (было: token-map)
 
-`mappings/wiring-rules.yaml` — декларативные правила, сопоставляющие
+`mappings/wiring-rules/wiring-rules.yaml` — декларативные правила, сопоставляющие
 **квалифицированный** токен `(collection, path)` (например, `base` +
 `color/surface/action/primary/default`) с Kotlin call-site символом
 (`AppTheme.semanticColors.surface.action.primary.default`). Компилируются в
@@ -422,6 +447,8 @@ YAML компилируется в `src/generated/component-map.json` скрип
    (`excluded-by-policy`/`excluded-collection-alias`/`missing-alias-target`/
    `unresolvable-alias-chain`/`unsupported-value` → `silent`/`warn`/`fail`,
    настраивается через `--on-unresolved <reason>=<action>`).
+   По умолчанию `missing-alias-target`, `unresolvable-alias-chain` и
+   `unsupported-value` останавливают генерацию; `warn` для них — явный override.
 2. **`model/`** — строит `TokenModel`: раскрывает алиасы по режимам
    (`modes.ts`), классифицирует коллекции и считает граф зависимостей
    (`classify.ts`, `graph.ts`, порт классификации без хардкода имён из
@@ -439,12 +466,20 @@ YAML компилируется в `src/generated/component-map.json` скрип
    Kotlin-ключевыми словами (порт `to_camel_case`/`to_pascal_case` из
    Python-версии). При наличии `token.symbol` (см. §5.2) он попадает в KDoc
    как аннотация происхождения, но не используется для наименования.
-   **v1 генерирует только файлы на коллекцию** — корневой класс,
+   **По умолчанию v1 генерирует файлы на коллекцию** — корневой класс,
    агрегирующий все коллекции в одно дерево приложения, сознательно не
    генерируется (решение согласовано с пользователем на этапе 7); сборка
    финального дерева токенов — задача написанного вручную Android-кода.
+   `--layout legacy` возвращает разбиение по веткам и режимам, но фабрики
+   по-прежнему принимают целую upstream-коллекцию, не старые узкие параметры.
+   Extended collection с `extends` переиспользует тип родителя: например,
+   `steloLight(primitives): Base` вместо отдельного класса `Stelo`.
+   Для старых экспортов есть структурное определение родителя; sparse values
+   могут наследоваться автоматически или через `--fallback-collection child=parent`.
+   Неоднозначные случаи не угадываются (см. `codegen/tokens/README.md`).
 4. **`cli/`** — `--input`, `--output`, `--package`, `--prefix`,
-   `--exclude-mode <regex>`, `--on-unresolved`, `--dry-run`, `--check`.
+   `--exclude-mode <regex>`, `--on-unresolved`, `--fallback-collection`,
+   `--layout <flat|legacy>`, `--dry-run`, `--check`, `--help`.
    `--exclude-mode` всегда матчится регистронезависимо: имя режима —
    свободный текст, который дизайнер вписал в Figma, и один и тот же по
    смыслу режим встречается в разном регистре (в реальном экспорте
@@ -474,11 +509,37 @@ YAML компилируется в `src/generated/component-map.json` скрип
 
 Swift-генератор Python-версии в v1 не портирован — отложен (этап 11).
 
+### 6.1. Bridge и Android Studio
+
+`bridge/` объединяет получение документа и кодогенерацию. Конфигурация задаёт
+`output`, `package`, опциональный `fileKey`, layout/mode/unresolved/fallback
+настройки и путь сохранения `tokensJson`. В CLI относительные пути считаются
+от каталога конфигурации (кроме `--output`, который считается от cwd);
+в `serve` — от cwd процесса.
+
+`android_studio_plugin/` — интегрированный Gradle-проект **Dex Figma Tokens**.
+Он сохраняет настройки в проекте Android-приложения, показывает статус моста
+и Figma-файла и отправляет `sync` по нажатию **Generate**. Последний документ
+сохраняется в `.idea/dexFigmaTokens/figma.tokens.json`.
+
+**Generator repository** должен указывать на корень exporter checkout,
+не на каталог IDE-плагина. **Build Generator** при необходимости запускает
+`npm install`, затем `npm run bundle --workspace=@figma-exporter/bridge`
+и перезапускает мост. ZIP IDE-плагина не содержит генератор; ежедневный запуск
+готового `bridge/dist/tokens-sync.cjs` требует только Node.js.
+
+После обновления Kotlin-кода IDE-плагина нужно собрать/установить новый ZIP
+и перезапустить IDE. После изменений TypeScript-моста/генератора достаточно
+повторить **Build Generator**; после изменений Figma-плагина — пересобрать
+`plugin/` и перезапустить его в Figma. Подробности:
+[`bridge/README.md`](../bridge/README.md),
+[`android_studio_plugin/README.md`](../android_studio_plugin/README.md).
+
 ---
 
 ## 7. Тесты и фикстуры
 
-- **plugin**: 20 spec-файлов на каждый модуль экстрактора + `code.ts` + чистые UI-функции.
+- **plugin**: spec-файлы модулей экстрактора + `code.ts` + чистые UI-функции.
   Реального `figma` нет — есть `test/mockFigma.ts` (`createMockFigma()`) и
   `test/nodeBuilders.ts` (`mockFrame/mockInstance/mockText/...` + `resetAutoIds()`).
 - **fixtures**: 5 сценариев (`card-with-button`, `instance-list`,
@@ -492,6 +553,10 @@ Swift-генератор Python-версии в v1 не портирован —
 - **codegen/tokens**: input-валидация, построение модели, классификация
   коллекций/граф зависимостей, Kotlin-эмиттер, CLI и golden-тесты Kotlin-вывода
   (`testdata/golden/`, см. §6) — все под `codegen/tokens/src/**/__tests__/`.
+- **bridge**: WebSocket-протокол, синхронизация и JSON-lines serve —
+  `bridge/src/__tests__/`.
+- **android_studio_plugin**: JUnit/platform-тесты конфигурации, команд,
+  поиска Node.js, bridge-протокола и IDE-интеграции; отдельный `./gradlew test`.
 
 Важно: все «экраны» в корпусе — **синтетические моки**, а не захваты реальной Figma
 (в CI нет доступа к Figma API).
@@ -528,20 +593,28 @@ Swift-генератор Python-версии в v1 не портирован —
 npm install                      # корень, все workspaces
 npm run lint                     # eslint по всему репо
 npm run typecheck                # tsc --noEmit в каждом пакете
-npm test                         # vitest run (388 тестов)
-npm run build                    # сборка всех пакетов
+npm test                         # vitest run (TypeScript workspaces)
+npm run build                    # сборка npm-пакетов, не Gradle IDE-плагина
 npm run format / format:check    # prettier
 npm run verify:generated         # падает, если закоммиченный сгенерированный файл разошёлся с источником
 
 npm run build -w plugin                    # → plugin/dist/{code.js,ui.html}
 npm run generate:map -w mappings           # component-map.yaml → JSON
-npm run generate:wiring-rules -w mappings  # wiring-rules.yaml → JSON
+npm run generate:wiring-rules -w mappings  # wiring-rules/wiring-rules.yaml → JSON
 npm run generate:collections-policy -w mappings  # collections-policy.yaml → JSON
 npm run fixtures:update -w fixtures        # перезапись замороженных снапшотов IR
 
 npm run cli --workspace=@figma-exporter/codegen-tokens -- --input <tokens.json> --output <dir> --package <pkg>
                                             # генерация Kotlin из документа токенов (см. §6)
 npm run golden:update -w @figma-exporter/codegen-tokens  # перезапись замороженного golden Kotlin-вывода
+
+npm run tokens:sync -- --config bridge/tokens-sync.config.json  # конфигурация из example, см. bridge/README.md
+npm run bundle --workspace=@figma-exporter/bridge  # → bridge/dist/tokens-sync.cjs
+
+# IDE-плагин, отдельно от npm (JDK 21):
+cd android_studio_plugin
+./gradlew test
+./gradlew buildPlugin             # → build/distributions/dex-figma-tokens-plugin-<version>.zip
 
 # Загрузка в Figma: Plugins → Development → Import plugin from manifest…
 #                   → выбрать plugin/manifest.json
