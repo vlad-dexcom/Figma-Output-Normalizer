@@ -84,11 +84,15 @@ interface SubCollectionTarget {
   parentModes: readonly string[];
 }
 
+function compareCodePoints(a: string, b: string): number {
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
 function modesToEmitFor(collection: TokenCollection, options: KotlinEmitOptions): string[] {
   const filtered = options.excludeModePattern
     ? collection.modes.filter((m) => !options.excludeModePattern?.test(m))
     : collection.modes;
-  return filtered.length > 0 ? filtered : collection.modes;
+  return [...(filtered.length > 0 ? filtered : collection.modes)].sort(compareCodePoints);
 }
 
 function subCollectionTarget(

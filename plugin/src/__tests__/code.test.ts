@@ -279,6 +279,40 @@ describe("handleUIMessage: extract-tokens", () => {
     expect(posted.tokens.collections[0]?.tokens[0]?.path).toBe("color/text/base/default");
   });
 
+  it("echoes a bridge requestId and attaches the canonical json", async () => {
+    const mockFigma = createMockFigma({
+      fileKey: "file-key",
+      variables,
+      variableCollections: collections,
+    });
+
+    await handleUIMessage(mockFigma, { type: "extract-tokens", requestId: "r1" });
+
+    const posted = vi.mocked(mockFigma.ui.postMessage).mock.calls.at(-1)?.[0];
+    if (posted?.type !== "token-result") throw new Error("expected a token-result");
+    expect(posted.requestId).toBe("r1");
+    expect(JSON.parse(posted.json ?? "")).toEqual(JSON.parse(JSON.stringify(posted.tokens)));
+  });
+
+  it("omits requestId/json for panel-initiated extractions", async () => {
+    const mockFigma = createMockFigma({
+      fileKey: "file-key",
+      variables,
+      variableCollections: collections,
+    });
+    await handleUIMessage(mockFigma, { type: "extract-tokens" });
+    const posted = vi.mocked(mockFigma.ui.postMessage).mock.calls.at(-1)?.[0];
+    expect(posted).not.toHaveProperty("requestId");
+    expect(posted).not.toHaveProperty("json");
+  });
+
+  it("tags errors with the bridge requestId", async () => {
+    const mockFigma = createMockFigma({ supportsLocalVariableCollections: false });
+    await handleUIMessage(mockFigma, { type: "extract-tokens", requestId: "r2" });
+    const posted = vi.mocked(mockFigma.ui.postMessage).mock.calls.at(-1)?.[0];
+    expect(posted).toMatchObject({ type: "error", requestId: "r2" });
+  });
+
   it("reports a missing variables API instead of throwing", async () => {
     const mockFigma = createMockFigma({ supportsLocalVariableCollections: false });
 

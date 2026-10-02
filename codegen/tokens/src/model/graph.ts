@@ -22,19 +22,21 @@ export function resolveDependsOn(
   model: TokenModel,
   collection: TokenCollection,
 ): TokenCollection[] {
-  return collection.dependsOn.map((depName) => {
-    const ids = model.idsByName.get(depName) ?? [];
-    if (ids.length !== 1) {
-      throw new Error(
-        ids.length === 0
-          ? `collection "${collection.name}" depends on "${depName}", which is not present in this document.`
-          : `collection "${collection.name}" depends on "${depName}", but ${ids.length} collections ` +
-              `share that name in this document (ids: ${ids.join(", ")}) -- dependsOn records a name, ` +
-              `not an id, so which one is meant cannot be determined here.`,
-      );
-    }
-    return model.byId.get(ids[0] as string) as TokenCollection;
-  });
+  return collection.dependsOn
+    .map((depName) => {
+      const ids = model.idsByName.get(depName) ?? [];
+      if (ids.length !== 1) {
+        throw new Error(
+          ids.length === 0
+            ? `collection "${collection.name}" depends on "${depName}", which is not present in this document.`
+            : `collection "${collection.name}" depends on "${depName}", but ${ids.length} collections ` +
+                `share that name in this document (ids: ${ids.join(", ")}) -- dependsOn records a name, ` +
+                `not an id, so which one is meant cannot be determined here.`,
+        );
+      }
+      return model.byId.get(ids[0] as string) as TokenCollection;
+    })
+    .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 }
 
 /**

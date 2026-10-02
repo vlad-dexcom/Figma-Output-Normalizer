@@ -9,6 +9,8 @@ import type { TokenDocument, UnresolvedEntry } from "@figma-normalizator/schema"
 import { buildExportFilename, buildTokenExportFilename } from "./ui/filename.js";
 import { buildWarningsViewModel } from "./ui/warnings.js";
 import { copyToClipboard, type ClipboardDeps } from "./ui/clipboard.js";
+import { createBridgeClient } from "./ui/bridgeClient.js";
+import { BRIDGE_PLUGIN_URL } from "@figma-normalizator/bridge/protocol";
 import type {
   ExportSource,
   PluginToUIMessage,
@@ -34,6 +36,7 @@ const irPreviewEl = byId<HTMLPreElement>("ir-preview");
 const extractTokensButton = byId<HTMLButtonElement>("extract-tokens-button");
 const exportTokensButton = byId<HTMLButtonElement>("export-tokens-button");
 const tokensStatusEl = byId<HTMLSpanElement>("tokens-status");
+const bridgeStatusEl = byId<HTMLSpanElement>("bridge-status");
 
 let copyStatusResetTimer: number | undefined;
 
@@ -154,7 +157,19 @@ function renderWarnings(unresolved: readonly UnresolvedEntry[]): void {
   }
 }
 
+const bridgeClient = createBridgeClient({
+  url: BRIDGE_PLUGIN_URL,
+  createSocket: (url) => new WebSocket(url) as never,
+  postToPlugin,
+  onStatus: (status) => {
+    bridgeStatusEl.textContent = status === "connected" ? "Bridge: connected" : "Bridge: offline";
+  },
+});
+
 function handlePluginMessage(message: PluginToUIMessage): void {
+  // Results of bridge-initiated extractions go to the bridge only; they
+  // must not overwrite what the designer sees or exports in the panel.
+  if (bridgeClient.handlePluginMessage(message)) return;
   switch (message.type) {
     case "selection-changed":
       renderSelection(message.name, message.nodeType);
@@ -329,3 +344,5 @@ window.onmessage = (event: MessageEvent<{ pluginMessage?: PluginToUIMessage }>) 
   const message = event.data.pluginMessage;
   if (message) handlePluginMessage(message);
 };
+
+bridgeClient.start();

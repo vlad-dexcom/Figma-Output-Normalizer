@@ -8,330 +8,330 @@ package com.dexcom.tokens
 
 @androidx.compose.runtime.Immutable
 data class Typography(
-    val largeTitle: LargeTitle,
-    val title1: Title1,
-    val title2: Title2,
-    val title3: Title3,
     val body: Body,
     val callout: Callout,
-    val subheadline: Subheadline,
-    val footnote: Footnote,
     val caption1: Caption1,
     val caption2: Caption2,
     val expressive: Expressive,
+    val footnote: Footnote,
+    val largeTitle: LargeTitle,
+    val subheadline: Subheadline,
+    val title1: Title1,
+    val title2: Title2,
+    val title3: Title3,
     val weight: Weight,
 ) {
     /**
-     * @property family iOS typography — headline 5 style, font-family (primary). Resolves to sf pro display.
-     * @property size iOS typography — headline 5 style, font-size (default). Resolves to 34.
-     * @property lineHeight iOS typography — headline 5 style, line-height (default). Resolves to 40.
-     * @property letterSpacing iOS typography — headline 5 style, letter-spacing (default). Resolves to 0.4000000059604645.
-     */
-    @androidx.compose.runtime.Immutable
-    data class LargeTitle(
-        val family: String,
-        val size: Float,
-        val lineHeight: Float,
-        val letterSpacing: Float,
-    )
-    /**
-     * @property family iOS typography — title 2 style, font-family (primary). Resolves to sf pro display.
-     * @property size iOS typography — title 2 style, font-size (default). Resolves to 26.
-     * @property lineHeight iOS typography — title 2 style, line-height (default). Resolves to 32.
-     * @property letterSpacing iOS typography — title 2 style, letter-spacing (default). Resolves to 0.4000000059604645.
-     */
-    @androidx.compose.runtime.Immutable
-    data class Title1(
-        val family: String,
-        val size: Float,
-        val lineHeight: Float,
-        val letterSpacing: Float,
-    )
-    /**
-     * @property family iOS typography — title 3 style, font-family (primary). Resolves to sf pro display.
-     * @property size iOS typography — title 3 style, font-size (default). Resolves to 22.
-     * @property lineHeight iOS typography — title 3 style, line-height (default). Resolves to 28.
-     * @property letterSpacing iOS typography — title 3 style, letter-spacing (default). Resolves to -0.25999999046325684.
-     */
-    @androidx.compose.runtime.Immutable
-    data class Title2(
-        val family: String,
-        val size: Float,
-        val lineHeight: Float,
-        val letterSpacing: Float,
-    )
-    /**
-     * @property family iOS typography — title 4 style, font-family (primary). Resolves to sf pro display.
-     * @property size iOS typography — title 4 style, font-size (default). Resolves to 20.
-     * @property lineHeight iOS typography — title 4 style, line-height (default). Resolves to 24.
-     * @property letterSpacing iOS typography — title 4 style, letter-spacing (default). Resolves to -0.44999998807907104.
-     */
-    @androidx.compose.runtime.Immutable
-    data class Title3(
-        val family: String,
-        val size: Float,
-        val lineHeight: Float,
-        val letterSpacing: Float,
-    )
-    /**
      * @property family iOS typography — body 2 style, font-family (primary). Resolves to sf pro text.
-     * @property size iOS typography — body 2 style, font-size (default). Resolves to 17.
-     * @property lineHeight iOS typography — body 2 style, line-height (default). Resolves to 22.
      * @property letterSpacing iOS typography — body 2 style, letter-spacing (default). Resolves to -0.4300000071525574.
+     * @property lineHeight iOS typography — body 2 style, line-height (default). Resolves to 22.
+     * @property size iOS typography — body 2 style, font-size (default). Resolves to 17.
      */
     @androidx.compose.runtime.Immutable
     data class Body(
         val family: String,
-        val size: Float,
-        val lineHeight: Float,
         val letterSpacing: Float,
+        val lineHeight: Float,
+        val size: Float,
     )
     /**
      * @property family iOS typography — body 3 style, font-family (primary). Resolves to sf pro text.
-     * @property size iOS typography — body 3 style, font-size (default). Resolves to 16.
-     * @property lineHeight iOS typography — body 3 style, line-height (default). Resolves to 20.
      * @property letterSpacing iOS typography — body 3 style, letter-spacing (default). Resolves to -0.3100000023841858.
+     * @property lineHeight iOS typography — body 3 style, line-height (default). Resolves to 20.
+     * @property size iOS typography — body 3 style, font-size (default). Resolves to 16.
      */
     @androidx.compose.runtime.Immutable
     data class Callout(
         val family: String,
-        val size: Float,
-        val lineHeight: Float,
         val letterSpacing: Float,
-    )
-    /**
-     * @property family iOS typography — footnote 1 style, font-family (primary). Resolves to sf pro text.
-     * @property size iOS typography — footnote 1 style, font-size (default). Resolves to 15.
-     * @property lineHeight iOS typography — footnote 1 style, line-height (default). Resolves to 20.
-     * @property letterSpacing iOS typography — footnote 1 style, letter-spacing (default). Resolves to -0.23000000417232513.
-     */
-    @androidx.compose.runtime.Immutable
-    data class Subheadline(
-        val family: String,
-        val size: Float,
         val lineHeight: Float,
-        val letterSpacing: Float,
-    )
-    /**
-     * @property family iOS typography — footnote 3 style, font-family (primary). Resolves to sf pro text.
-     * @property size iOS typography — footnote 3 style, font-size (default). Resolves to 13.
-     * @property lineHeight iOS typography — footnote 3 style, line-height (default). Resolves to 18.
-     * @property letterSpacing iOS typography — footnote 3 style, letter-spacing (default). Resolves to -0.07999999821186066.
-     */
-    @androidx.compose.runtime.Immutable
-    data class Footnote(
-        val family: String,
         val size: Float,
-        val lineHeight: Float,
-        val letterSpacing: Float,
     )
     /**
      * @property family iOS typography — caption 1 style, font-family (primary). Resolves to sf pro text.
-     * @property size iOS typography — caption 1 style, font-size (default). Resolves to 12.
-     * @property lineHeight iOS typography — caption 1 style, line-height (default). Resolves to 16.
      * @property letterSpacing iOS typography — caption 1 style, letter-spacing (default). Resolves to 0.
+     * @property lineHeight iOS typography — caption 1 style, line-height (default). Resolves to 16.
+     * @property size iOS typography — caption 1 style, font-size (default). Resolves to 12.
      */
     @androidx.compose.runtime.Immutable
     data class Caption1(
         val family: String,
-        val size: Float,
-        val lineHeight: Float,
         val letterSpacing: Float,
+        val lineHeight: Float,
+        val size: Float,
     )
     /**
      * @property family iOS typography — caption 2 style, font-family (primary). Resolves to sf pro text.
-     * @property size iOS typography — caption 2 style, font-size (default). Resolves to 11.
-     * @property lineHeight iOS typography — caption 2 style, line-height (default). Resolves to 13.
      * @property letterSpacing iOS typography — caption 2 style, letter-spacing (default). Resolves to 0.05999999865889549.
+     * @property lineHeight iOS typography — caption 2 style, line-height (default). Resolves to 13.
+     * @property size iOS typography — caption 2 style, font-size (default). Resolves to 11.
      */
     @androidx.compose.runtime.Immutable
     data class Caption2(
         val family: String,
-        val size: Float,
-        val lineHeight: Float,
         val letterSpacing: Float,
+        val lineHeight: Float,
+        val size: Float,
     )
     @androidx.compose.runtime.Immutable
     data class Expressive(
+        val body: Body,
         val display: Display,
         val displaySmall: DisplaySmall,
         val largeTitle: LargeTitle,
         val title1: Title1,
         val title2: Title2,
         val title3: Title3,
-        val body: Body,
     ) {
+        @androidx.compose.runtime.Immutable
+        data class Body(
+            val family: String,
+            val letterSpacing: Float,
+            val lineHeight: Float,
+            val size: Float,
+        )
         @androidx.compose.runtime.Immutable
         data class Display(
             val family: String,
-            val size: Float,
-            val lineHeight: Float,
             val letterSpacing: Float,
+            val lineHeight: Float,
+            val size: Float,
         )
         @androidx.compose.runtime.Immutable
         data class DisplaySmall(
             val family: String,
-            val size: Float,
-            val lineHeight: Float,
             val letterSpacing: Float,
+            val lineHeight: Float,
+            val size: Float,
         )
         @androidx.compose.runtime.Immutable
         data class LargeTitle(
             val family: String,
-            val size: Float,
-            val lineHeight: Float,
             val letterSpacing: Float,
+            val lineHeight: Float,
+            val size: Float,
         )
         @androidx.compose.runtime.Immutable
         data class Title1(
             val family: String,
-            val size: Float,
-            val lineHeight: Float,
             val letterSpacing: Float,
+            val lineHeight: Float,
+            val size: Float,
         )
         @androidx.compose.runtime.Immutable
         data class Title2(
             val family: String,
-            val size: Float,
-            val lineHeight: Float,
             val letterSpacing: Float,
+            val lineHeight: Float,
+            val size: Float,
         )
         @androidx.compose.runtime.Immutable
         data class Title3(
             val family: String,
-            val size: Float,
-            val lineHeight: Float,
             val letterSpacing: Float,
-        )
-        @androidx.compose.runtime.Immutable
-        data class Body(
-            val family: String,
-            val size: Float,
             val lineHeight: Float,
-            val letterSpacing: Float,
+            val size: Float,
         )
     }
+    /**
+     * @property family iOS typography — footnote 3 style, font-family (primary). Resolves to sf pro text.
+     * @property letterSpacing iOS typography — footnote 3 style, letter-spacing (default). Resolves to -0.07999999821186066.
+     * @property lineHeight iOS typography — footnote 3 style, line-height (default). Resolves to 18.
+     * @property size iOS typography — footnote 3 style, font-size (default). Resolves to 13.
+     */
+    @androidx.compose.runtime.Immutable
+    data class Footnote(
+        val family: String,
+        val letterSpacing: Float,
+        val lineHeight: Float,
+        val size: Float,
+    )
+    /**
+     * @property family iOS typography — headline 5 style, font-family (primary). Resolves to sf pro display.
+     * @property letterSpacing iOS typography — headline 5 style, letter-spacing (default). Resolves to 0.4000000059604645.
+     * @property lineHeight iOS typography — headline 5 style, line-height (default). Resolves to 40.
+     * @property size iOS typography — headline 5 style, font-size (default). Resolves to 34.
+     */
+    @androidx.compose.runtime.Immutable
+    data class LargeTitle(
+        val family: String,
+        val letterSpacing: Float,
+        val lineHeight: Float,
+        val size: Float,
+    )
+    /**
+     * @property family iOS typography — footnote 1 style, font-family (primary). Resolves to sf pro text.
+     * @property letterSpacing iOS typography — footnote 1 style, letter-spacing (default). Resolves to -0.23000000417232513.
+     * @property lineHeight iOS typography — footnote 1 style, line-height (default). Resolves to 20.
+     * @property size iOS typography — footnote 1 style, font-size (default). Resolves to 15.
+     */
+    @androidx.compose.runtime.Immutable
+    data class Subheadline(
+        val family: String,
+        val letterSpacing: Float,
+        val lineHeight: Float,
+        val size: Float,
+    )
+    /**
+     * @property family iOS typography — title 2 style, font-family (primary). Resolves to sf pro display.
+     * @property letterSpacing iOS typography — title 2 style, letter-spacing (default). Resolves to 0.4000000059604645.
+     * @property lineHeight iOS typography — title 2 style, line-height (default). Resolves to 32.
+     * @property size iOS typography — title 2 style, font-size (default). Resolves to 26.
+     */
+    @androidx.compose.runtime.Immutable
+    data class Title1(
+        val family: String,
+        val letterSpacing: Float,
+        val lineHeight: Float,
+        val size: Float,
+    )
+    /**
+     * @property family iOS typography — title 3 style, font-family (primary). Resolves to sf pro display.
+     * @property letterSpacing iOS typography — title 3 style, letter-spacing (default). Resolves to -0.25999999046325684.
+     * @property lineHeight iOS typography — title 3 style, line-height (default). Resolves to 28.
+     * @property size iOS typography — title 3 style, font-size (default). Resolves to 22.
+     */
+    @androidx.compose.runtime.Immutable
+    data class Title2(
+        val family: String,
+        val letterSpacing: Float,
+        val lineHeight: Float,
+        val size: Float,
+    )
+    /**
+     * @property family iOS typography — title 4 style, font-family (primary). Resolves to sf pro display.
+     * @property letterSpacing iOS typography — title 4 style, letter-spacing (default). Resolves to -0.44999998807907104.
+     * @property lineHeight iOS typography — title 4 style, line-height (default). Resolves to 24.
+     * @property size iOS typography — title 4 style, font-size (default). Resolves to 20.
+     */
+    @androidx.compose.runtime.Immutable
+    data class Title3(
+        val family: String,
+        val letterSpacing: Float,
+        val lineHeight: Float,
+        val size: Float,
+    )
     @androidx.compose.runtime.Immutable
     data class Weight(
-        val light: String,
-        val regular: String,
-        val medium: String,
-        val semibold: String,
         val bold: String,
+        val light: String,
+        val medium: String,
+        val regular: String,
+        val semibold: String,
     )
 }
 
 fun typographyAndroid(primitives: Primitives): Typography =
     Typography(
-        largeTitle = Typography.LargeTitle(
-            family = primitives.typography.fontFamily.roboto,
-            size = primitives.typography.fontSize._34,
-            lineHeight = primitives.typography.lineHeight._41,
-            letterSpacing = primitives.typography.letterSpacing._0,
-        ),
-        title1 = Typography.Title1(
-            family = primitives.typography.fontFamily.roboto,
-            size = primitives.typography.fontSize._28,
-            lineHeight = primitives.typography.lineHeight._34,
-            letterSpacing = primitives.typography.letterSpacing._0,
-        ),
-        title2 = Typography.Title2(
-            family = primitives.typography.fontFamily.roboto,
-            size = primitives.typography.fontSize._22,
-            lineHeight = primitives.typography.lineHeight._28,
-            letterSpacing = primitives.typography.letterSpacing._0,
-        ),
-        title3 = Typography.Title3(
-            family = primitives.typography.fontFamily.roboto,
-            size = primitives.typography.fontSize._20,
-            lineHeight = primitives.typography.lineHeight._25,
-            letterSpacing = primitives.typography.letterSpacing._0,
-        ),
         body = Typography.Body(
             family = primitives.typography.fontFamily.roboto,
-            size = primitives.typography.fontSize._17,
-            lineHeight = primitives.typography.lineHeight._22,
             letterSpacing = primitives.typography.letterSpacing._0_5,
+            lineHeight = primitives.typography.lineHeight._22,
+            size = primitives.typography.fontSize._17,
         ),
         callout = Typography.Callout(
             family = primitives.typography.fontFamily.roboto,
-            size = primitives.typography.fontSize._16,
-            lineHeight = primitives.typography.lineHeight._21,
             letterSpacing = primitives.typography.letterSpacing._0_5,
-        ),
-        subheadline = Typography.Subheadline(
-            family = primitives.typography.fontFamily.roboto,
-            size = primitives.typography.fontSize._15,
-            lineHeight = primitives.typography.lineHeight._20,
-            letterSpacing = primitives.typography.letterSpacing._0_25,
-        ),
-        footnote = Typography.Footnote(
-            family = primitives.typography.fontFamily.roboto,
-            size = primitives.typography.fontSize._13,
-            lineHeight = primitives.typography.lineHeight._18,
-            letterSpacing = primitives.typography.letterSpacing._0_4,
+            lineHeight = primitives.typography.lineHeight._21,
+            size = primitives.typography.fontSize._16,
         ),
         caption1 = Typography.Caption1(
             family = primitives.typography.fontFamily.roboto,
-            size = primitives.typography.fontSize._12,
-            lineHeight = primitives.typography.lineHeight._16,
             letterSpacing = primitives.typography.letterSpacing._0_5,
+            lineHeight = primitives.typography.lineHeight._16,
+            size = primitives.typography.fontSize._12,
         ),
         caption2 = Typography.Caption2(
             family = primitives.typography.fontFamily.roboto,
-            size = primitives.typography.fontSize._11,
-            lineHeight = primitives.typography.lineHeight._13,
             letterSpacing = primitives.typography.letterSpacing._0_5,
+            lineHeight = primitives.typography.lineHeight._13,
+            size = primitives.typography.fontSize._11,
         ),
         expressive = Typography.Expressive(
+            body = Typography.Expressive.Body(
+                family = primitives.typography.fontFamily.pasticheGrotesque,
+                letterSpacing = primitives.typography.letterSpacing._0,
+                lineHeight = primitives.typography.lineHeight._22,
+                size = primitives.typography.fontSize._17,
+            ),
             display = Typography.Expressive.Display(
                 family = primitives.typography.fontFamily.pasticheGrotesque,
-                size = primitives.typography.fontSize._48,
-                lineHeight = primitives.typography.lineHeight._52,
                 letterSpacing = primitives.typography.letterSpacing._0,
+                lineHeight = primitives.typography.lineHeight._52,
+                size = primitives.typography.fontSize._48,
             ),
             displaySmall = Typography.Expressive.DisplaySmall(
                 family = primitives.typography.fontFamily.pasticheGrotesque,
-                size = primitives.typography.fontSize._42,
-                lineHeight = primitives.typography.lineHeight._48,
                 letterSpacing = primitives.typography.letterSpacing._0,
+                lineHeight = primitives.typography.lineHeight._48,
+                size = primitives.typography.fontSize._42,
             ),
             largeTitle = Typography.Expressive.LargeTitle(
                 family = primitives.typography.fontFamily.pasticheGrotesque,
-                size = primitives.typography.fontSize._34,
-                lineHeight = primitives.typography.lineHeight._41,
                 letterSpacing = primitives.typography.letterSpacing._0,
+                lineHeight = primitives.typography.lineHeight._41,
+                size = primitives.typography.fontSize._34,
             ),
             title1 = Typography.Expressive.Title1(
                 family = primitives.typography.fontFamily.pasticheGrotesque,
-                size = primitives.typography.fontSize._28,
-                lineHeight = primitives.typography.lineHeight._34,
                 letterSpacing = primitives.typography.letterSpacing._0,
+                lineHeight = primitives.typography.lineHeight._34,
+                size = primitives.typography.fontSize._28,
             ),
             title2 = Typography.Expressive.Title2(
                 family = primitives.typography.fontFamily.pasticheGrotesque,
-                size = primitives.typography.fontSize._22,
-                lineHeight = primitives.typography.lineHeight._28,
                 letterSpacing = primitives.typography.letterSpacing._0,
+                lineHeight = primitives.typography.lineHeight._28,
+                size = primitives.typography.fontSize._22,
             ),
             title3 = Typography.Expressive.Title3(
                 family = primitives.typography.fontFamily.pasticheGrotesque,
-                size = primitives.typography.fontSize._20,
+                letterSpacing = primitives.typography.letterSpacing._0,
                 lineHeight = primitives.typography.lineHeight._25,
-                letterSpacing = primitives.typography.letterSpacing._0,
-            ),
-            body = Typography.Expressive.Body(
-                family = primitives.typography.fontFamily.pasticheGrotesque,
-                size = primitives.typography.fontSize._17,
-                lineHeight = primitives.typography.lineHeight._22,
-                letterSpacing = primitives.typography.letterSpacing._0,
+                size = primitives.typography.fontSize._20,
             ),
         ),
+        footnote = Typography.Footnote(
+            family = primitives.typography.fontFamily.roboto,
+            letterSpacing = primitives.typography.letterSpacing._0_4,
+            lineHeight = primitives.typography.lineHeight._18,
+            size = primitives.typography.fontSize._13,
+        ),
+        largeTitle = Typography.LargeTitle(
+            family = primitives.typography.fontFamily.roboto,
+            letterSpacing = primitives.typography.letterSpacing._0,
+            lineHeight = primitives.typography.lineHeight._41,
+            size = primitives.typography.fontSize._34,
+        ),
+        subheadline = Typography.Subheadline(
+            family = primitives.typography.fontFamily.roboto,
+            letterSpacing = primitives.typography.letterSpacing._0_25,
+            lineHeight = primitives.typography.lineHeight._20,
+            size = primitives.typography.fontSize._15,
+        ),
+        title1 = Typography.Title1(
+            family = primitives.typography.fontFamily.roboto,
+            letterSpacing = primitives.typography.letterSpacing._0,
+            lineHeight = primitives.typography.lineHeight._34,
+            size = primitives.typography.fontSize._28,
+        ),
+        title2 = Typography.Title2(
+            family = primitives.typography.fontFamily.roboto,
+            letterSpacing = primitives.typography.letterSpacing._0,
+            lineHeight = primitives.typography.lineHeight._28,
+            size = primitives.typography.fontSize._22,
+        ),
+        title3 = Typography.Title3(
+            family = primitives.typography.fontFamily.roboto,
+            letterSpacing = primitives.typography.letterSpacing._0,
+            lineHeight = primitives.typography.lineHeight._25,
+            size = primitives.typography.fontSize._20,
+        ),
         weight = Typography.Weight(
-            light = primitives.typography.fontWeight.light,
-            regular = primitives.typography.fontWeight.regular,
-            medium = primitives.typography.fontWeight.medium,
-            semibold = primitives.typography.fontWeight.semibold,
             bold = primitives.typography.fontWeight.bold,
+            light = primitives.typography.fontWeight.light,
+            medium = primitives.typography.fontWeight.medium,
+            regular = primitives.typography.fontWeight.regular,
+            semibold = primitives.typography.fontWeight.semibold,
         ),
     )

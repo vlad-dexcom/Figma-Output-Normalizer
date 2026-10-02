@@ -8,9 +8,9 @@ package com.dexcom.tokens
 
 @androidx.compose.runtime.Immutable
 data class Components(
-    val banners: Banners,
-    val badges: Badges,
     val accordions: Accordions,
+    val badges: Badges,
+    val banners: Banners,
     val buttons: Buttons,
     val cards: Cards,
     val chips: Chips,
@@ -36,299 +36,6 @@ data class Components(
     val uploaders: Uploaders,
 ) {
     @androidx.compose.runtime.Immutable
-    data class Banners(
-        val type: Type,
-        val base: Base,
-    ) {
-        @androidx.compose.runtime.Immutable
-        data class Type(
-            val informative: Informative,
-            val warning: Warning,
-            val success: Success,
-            val danger: Danger,
-        ) {
-            @androidx.compose.runtime.Immutable
-            data class Informative(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Container fill for an informative banner.
-                 * @property icon Icon colour for an informative banner.
-                 * @property text Text colour for an informative banner.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val icon: androidx.compose.ui.graphics.Color,
-                    val text: androidx.compose.ui.graphics.Color,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Warning(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Container fill for an warning banner.
-                 * @property icon Icon colour for an warning banner.
-                 * @property text Text colour for an warning banner.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val icon: androidx.compose.ui.graphics.Color,
-                    val text: androidx.compose.ui.graphics.Color,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Success(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Container fill for an success banner.
-                 * @property icon Icon colour for an success banner.
-                 * @property text Text colour for an success banner.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val icon: androidx.compose.ui.graphics.Color,
-                    val text: androidx.compose.ui.graphics.Color,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Danger(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Container fill for a danger banner. PLACEHOLDER — palette/UNDEFINED until a value is chosen.
-                 * @property text Text colour for a danger banner. PLACEHOLDER — palette/UNDEFINED until a value is chosen.
-                 * @property icon Icon colour for a danger banner. PLACEHOLDER — palette/UNDEFINED until a value is chosen.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val text: androidx.compose.ui.graphics.Color,
-                    val icon: androidx.compose.ui.graphics.Color,
-                )
-            }
-        }
-        @androidx.compose.runtime.Immutable
-        data class Base(
-            val opacity: Opacity,
-            val typography: Typography,
-            val size: Size,
-            val shape: Shape,
-        ) {
-            /**
-             * @property container Banner container opacity. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
-            @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val container: Float,
-            )
-            /**
-             * @property fontFamily Banner text font-family.
-             * @property fontWeight Banner text font-weight.
-             * @property fontSize Banner text font-size.
-             * @property lineHeight Banner text line-height.
-             * @property letterSpacing Banner text letter-spacing.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Typography(
-                val fontFamily: String,
-                val fontWeight: String,
-                val fontSize: Float,
-                val lineHeight: Float,
-                val letterSpacing: Float,
-            )
-            /**
-             * @property icon Banner icon size.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Size(
-                val icon: Float,
-                val gap: Gap,
-                val padding: Padding,
-            ) {
-                /**
-                 * @property iconText Gap between icon and text.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Gap(
-                    val iconText: Float,
-                )
-                /**
-                 * @property horizontal Banner horizontal padding.
-                 * @property vertical Banner vertical padding.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Padding(
-                    val horizontal: Float,
-                    val vertical: Float,
-                )
-            }
-            /**
-             * @property radius Banner corner radius.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Float,
-            )
-        }
-    }
-    @androidx.compose.runtime.Immutable
-    data class Badges(
-        val type: Type,
-        val size: Size,
-        val base: Base,
-    ) {
-        @androidx.compose.runtime.Immutable
-        data class Type(
-            val new: New,
-            val important: Important,
-            val system: System,
-        ) {
-            @androidx.compose.runtime.Immutable
-            data class New(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Container fill for a new badge.
-                 * @property text Label colour for a new badge.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val text: androidx.compose.ui.graphics.Color,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Important(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Container fill for a important badge.
-                 * @property text Label colour for a important badge.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val text: androidx.compose.ui.graphics.Color,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class System(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Container fill for a system badge.
-                 * @property text Label colour for a system badge.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val text: androidx.compose.ui.graphics.Color,
-                )
-            }
-        }
-        @androidx.compose.runtime.Immutable
-        data class Size(
-            val large: Large,
-            val medium: Medium,
-            val small: Small,
-        ) {
-            /**
-             * @property minSize Minimum size of a large badge.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Large(
-                val minSize: Float,
-                val padding: Padding,
-                val typography: Typography,
-            ) {
-                /**
-                 * @property horizontal Horizontal padding of a large badge.
-                 * @property vertical Vertical padding of a large badge.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Padding(
-                    val horizontal: Float,
-                    val vertical: Float,
-                )
-                /**
-                 * @property fontFamily large badge label font-family.
-                 * @property fontWeight large badge label font-weight.
-                 * @property fontSize large badge label font-size.
-                 * @property lineHeight large badge label line-height.
-                 * @property letterSpacing large badge label letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Typography(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-            }
-            /**
-             * @property minSize Minimum size of a medium badge.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Medium(
-                val minSize: Float,
-                val padding: Padding,
-                val typography: Typography,
-            ) {
-                /**
-                 * @property horizontal Horizontal padding of a medium badge.
-                 * @property top Top padding of a medium badge (differs from bottom).
-                 * @property bottom Bottom padding of a medium badge (differs from top).
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Padding(
-                    val horizontal: Float,
-                    val top: Float,
-                    val bottom: Float,
-                )
-                /**
-                 * @property fontFamily medium badge label font-family.
-                 * @property fontWeight medium badge label font-weight.
-                 * @property fontSize medium badge label font-size.
-                 * @property lineHeight medium badge label line-height.
-                 * @property letterSpacing medium badge label letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Typography(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-            }
-            /**
-             * @property minSize Small badge size. Small badges render no text.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Small(
-                val minSize: Float,
-            )
-        }
-        @androidx.compose.runtime.Immutable
-        data class Base(
-            val shape: Shape,
-        ) {
-            /**
-             * @property radius Badge corner radius. Applies to all badges.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Float,
-            )
-        }
-    }
-    @androidx.compose.runtime.Immutable
     data class Accordions(
         val base: Base,
         val type: Type,
@@ -336,8 +43,8 @@ data class Components(
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val typography: Typography,
             val size: Size,
+            val typography: Typography,
         ) {
             /**
              * @property icon Accordion chevron/icon colour.
@@ -349,66 +56,14 @@ data class Components(
             ) {
                 /**
                  * @property body body text colour.
-                 * @property value value text colour.
                  * @property unitOfMeasure uom text colour.
+                 * @property value value text colour.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Text(
                     val body: androidx.compose.ui.graphics.Color,
-                    val value: androidx.compose.ui.graphics.Color,
                     val unitOfMeasure: androidx.compose.ui.graphics.Color,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Typography(
-                val body: Body,
-                val value: Value,
-                val unitOfMeasure: UnitOfMeasure,
-            ) {
-                /**
-                 * @property fontFamily body font-family.
-                 * @property fontWeight body font-weight.
-                 * @property fontSize body font-size.
-                 * @property lineHeight body line-height.
-                 * @property letterSpacing body letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Body(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily value font-family.
-                 * @property fontWeight value font-weight.
-                 * @property fontSize value font-size.
-                 * @property lineHeight value line-height.
-                 * @property letterSpacing value letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Value(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily uom font-family.
-                 * @property fontWeight uom font-weight.
-                 * @property fontSize uom font-size.
-                 * @property lineHeight uom line-height.
-                 * @property letterSpacing uom letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class UnitOfMeasure(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
+                    val value: androidx.compose.ui.graphics.Color,
                 )
             }
             /**
@@ -422,72 +77,81 @@ data class Components(
             ) {
                 /**
                  * @property row Gap: row.
-                 * @property valueUnitOfMeasure Gap: value uom.
                  * @property textIcon Gap: text icon.
+                 * @property valueUnitOfMeasure Gap: value uom.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Gap(
                     val row: Float,
-                    val valueUnitOfMeasure: Float,
                     val textIcon: Float,
+                    val valueUnitOfMeasure: Float,
                 )
                 @androidx.compose.runtime.Immutable
                 data class Padding(
-                    val unitOfMeasure: UnitOfMeasure,
                     val leftContent: LeftContent,
-                    val rightContent: RightContent,
                     val panelRow: PanelRow,
+                    val rightContent: RightContent,
+                    val unitOfMeasure: UnitOfMeasure,
                 ) {
-                    /**
-                     * @property bottom Bottom padding under the unit of measure.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class UnitOfMeasure(
-                        val bottom: Float,
-                    )
                     @androidx.compose.runtime.Immutable
                     data class LeftContent(
-                        val headerOptions: HeaderOptions,
                         val body: Body,
+                        val headerOptions: HeaderOptions,
                     ) {
-                        @androidx.compose.runtime.Immutable
-                        data class HeaderOptions(
-                            val noScore: NoScore,
-                            val hasScore: HasScore,
-                        ) {
-                            /**
-                             * @property vertical Header (no-score) vertical padding.
-                             * @property left Header (no-score) left padding.
-                             * @property right Header (no-score) right padding.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class NoScore(
-                                val vertical: Float,
-                                val left: Float,
-                                val right: Float,
-                            )
-                            /**
-                             * @property vertical Header (has-score) vertical padding.
-                             * @property left Header (has-score) left padding.
-                             * @property right Header (has-score) right padding.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class HasScore(
-                                val vertical: Float,
-                                val left: Float,
-                                val right: Float,
-                            )
-                        }
                         /**
-                         * @property vertical Body vertical padding.
                          * @property left Body left padding.
                          * @property right Body right padding.
+                         * @property vertical Body vertical padding.
                          */
                         @androidx.compose.runtime.Immutable
                         data class Body(
-                            val vertical: Float,
                             val left: Float,
                             val right: Float,
+                            val vertical: Float,
+                        )
+                        @androidx.compose.runtime.Immutable
+                        data class HeaderOptions(
+                            val hasScore: HasScore,
+                            val noScore: NoScore,
+                        ) {
+                            /**
+                             * @property left Header (has-score) left padding.
+                             * @property right Header (has-score) right padding.
+                             * @property vertical Header (has-score) vertical padding.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class HasScore(
+                                val left: Float,
+                                val right: Float,
+                                val vertical: Float,
+                            )
+                            /**
+                             * @property left Header (no-score) left padding.
+                             * @property right Header (no-score) right padding.
+                             * @property vertical Header (no-score) vertical padding.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class NoScore(
+                                val left: Float,
+                                val right: Float,
+                                val vertical: Float,
+                            )
+                        }
+                    }
+                    @androidx.compose.runtime.Immutable
+                    data class PanelRow(
+                        val body: Body,
+                    ) {
+                        /**
+                         * @property left Panel row left padding.
+                         * @property right Panel row right padding.
+                         * @property vertical Panel row vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Body(
+                            val left: Float,
+                            val right: Float,
+                            val vertical: Float,
                         )
                     }
                     @androidx.compose.runtime.Immutable
@@ -504,23 +168,66 @@ data class Components(
                             val vertical: Float,
                         )
                     }
+                    /**
+                     * @property bottom Bottom padding under the unit of measure.
+                     */
                     @androidx.compose.runtime.Immutable
-                    data class PanelRow(
-                        val body: Body,
-                    ) {
-                        /**
-                         * @property vertical Panel row vertical padding.
-                         * @property left Panel row left padding.
-                         * @property right Panel row right padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Body(
-                            val vertical: Float,
-                            val left: Float,
-                            val right: Float,
-                        )
-                    }
+                    data class UnitOfMeasure(
+                        val bottom: Float,
+                    )
                 }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Typography(
+                val body: Body,
+                val unitOfMeasure: UnitOfMeasure,
+                val value: Value,
+            ) {
+                /**
+                 * @property fontFamily body font-family.
+                 * @property fontSize body font-size.
+                 * @property fontWeight body font-weight.
+                 * @property letterSpacing body letter-spacing.
+                 * @property lineHeight body line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Body(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily uom font-family.
+                 * @property fontSize uom font-size.
+                 * @property fontWeight uom font-weight.
+                 * @property letterSpacing uom letter-spacing.
+                 * @property lineHeight uom line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class UnitOfMeasure(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily value font-family.
+                 * @property fontSize value font-size.
+                 * @property fontWeight value font-weight.
+                 * @property letterSpacing value letter-spacing.
+                 * @property lineHeight value line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Value(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
             }
         }
         @androidx.compose.runtime.Immutable
@@ -531,8 +238,8 @@ data class Components(
             @androidx.compose.runtime.Immutable
             data class Primary(
                 val color: Color,
-                val typography: Typography,
                 val state: State,
+                val typography: Typography,
             ) {
                 @androidx.compose.runtime.Immutable
                 data class Color(
@@ -540,13 +247,13 @@ data class Components(
                     val text: Text,
                 ) {
                     /**
-                     * @property header Header fill for a primary accordion.
                      * @property body Body fill for a primary accordion. PLACEHOLDER — palette/UNDEFINED until a value is chosen.
+                     * @property header Header fill for a primary accordion.
                      */
                     @androidx.compose.runtime.Immutable
                     data class Surface(
-                        val header: androidx.compose.ui.graphics.Color,
                         val body: androidx.compose.ui.graphics.Color,
+                        val header: androidx.compose.ui.graphics.Color,
                     )
                     /**
                      * @property header Header text colour for a primary accordion.
@@ -554,26 +261,6 @@ data class Components(
                     @androidx.compose.runtime.Immutable
                     data class Text(
                         val header: androidx.compose.ui.graphics.Color,
-                    )
-                }
-                @androidx.compose.runtime.Immutable
-                data class Typography(
-                    val header: Header,
-                ) {
-                    /**
-                     * @property fontFamily primary accordion header font-family.
-                     * @property fontWeight primary accordion header font-weight.
-                     * @property fontSize primary accordion header font-size.
-                     * @property lineHeight primary accordion header line-height.
-                     * @property letterSpacing primary accordion header letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Header(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
                     )
                 }
                 @androidx.compose.runtime.Immutable
@@ -607,47 +294,14 @@ data class Components(
                             @androidx.compose.runtime.Immutable
                             data class Radius(
                                 val middleRow: Float,
-                                val topRow: TopRow,
                                 val bottomRow: BottomRow,
+                                val topRow: TopRow,
                             ) {
                                 @androidx.compose.runtime.Immutable
-                                data class TopRow(
-                                    val top: Top,
-                                    val bottom: Bottom,
-                                ) {
-                                    /**
-                                     * @property left primary accordion top-row top-left radius when expanded.
-                                     * @property right primary accordion top-row top-right radius when expanded.
-                                     */
-                                    @androidx.compose.runtime.Immutable
-                                    data class Top(
-                                        val left: Float,
-                                        val right: Float,
-                                    )
-                                    /**
-                                     * @property left primary accordion top-row bottom-left radius when expanded.
-                                     * @property right primary accordion top-row bottom-right radius when expanded.
-                                     */
-                                    @androidx.compose.runtime.Immutable
-                                    data class Bottom(
-                                        val left: Float,
-                                        val right: Float,
-                                    )
-                                }
-                                @androidx.compose.runtime.Immutable
                                 data class BottomRow(
-                                    val top: Top,
                                     val bottom: Bottom,
+                                    val top: Top,
                                 ) {
-                                    /**
-                                     * @property left primary accordion bottom-row top-left radius when expanded.
-                                     * @property right primary accordion bottom-row top-right radius when expanded.
-                                     */
-                                    @androidx.compose.runtime.Immutable
-                                    data class Top(
-                                        val left: Float,
-                                        val right: Float,
-                                    )
                                     /**
                                      * @property left primary accordion bottom-row bottom-left radius when expanded.
                                      * @property right primary accordion bottom-row bottom-right radius when expanded.
@@ -657,17 +311,70 @@ data class Components(
                                         val left: Float,
                                         val right: Float,
                                     )
+                                    /**
+                                     * @property left primary accordion bottom-row top-left radius when expanded.
+                                     * @property right primary accordion bottom-row top-right radius when expanded.
+                                     */
+                                    @androidx.compose.runtime.Immutable
+                                    data class Top(
+                                        val left: Float,
+                                        val right: Float,
+                                    )
+                                }
+                                @androidx.compose.runtime.Immutable
+                                data class TopRow(
+                                    val bottom: Bottom,
+                                    val top: Top,
+                                ) {
+                                    /**
+                                     * @property left primary accordion top-row bottom-left radius when expanded.
+                                     * @property right primary accordion top-row bottom-right radius when expanded.
+                                     */
+                                    @androidx.compose.runtime.Immutable
+                                    data class Bottom(
+                                        val left: Float,
+                                        val right: Float,
+                                    )
+                                    /**
+                                     * @property left primary accordion top-row top-left radius when expanded.
+                                     * @property right primary accordion top-row top-right radius when expanded.
+                                     */
+                                    @androidx.compose.runtime.Immutable
+                                    data class Top(
+                                        val left: Float,
+                                        val right: Float,
+                                    )
                                 }
                             }
                         }
                     }
                 }
+                @androidx.compose.runtime.Immutable
+                data class Typography(
+                    val header: Header,
+                ) {
+                    /**
+                     * @property fontFamily primary accordion header font-family.
+                     * @property fontSize primary accordion header font-size.
+                     * @property fontWeight primary accordion header font-weight.
+                     * @property letterSpacing primary accordion header letter-spacing.
+                     * @property lineHeight primary accordion header line-height.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Header(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                }
             }
             @androidx.compose.runtime.Immutable
             data class Secondary(
                 val color: Color,
-                val typography: Typography,
                 val state: State,
+                val typography: Typography,
             ) {
                 @androidx.compose.runtime.Immutable
                 data class Color(
@@ -675,13 +382,13 @@ data class Components(
                     val text: Text,
                 ) {
                     /**
-                     * @property header Header fill for a secondary accordion.
                      * @property body Body fill for a secondary accordion.
+                     * @property header Header fill for a secondary accordion.
                      */
                     @androidx.compose.runtime.Immutable
                     data class Surface(
-                        val header: androidx.compose.ui.graphics.Color,
                         val body: androidx.compose.ui.graphics.Color,
+                        val header: androidx.compose.ui.graphics.Color,
                     )
                     /**
                      * @property header Header text colour for a secondary accordion.
@@ -692,30 +399,22 @@ data class Components(
                     )
                 }
                 @androidx.compose.runtime.Immutable
-                data class Typography(
-                    val header: Header,
-                ) {
-                    /**
-                     * @property fontFamily secondary accordion header font-family.
-                     * @property fontWeight secondary accordion header font-weight.
-                     * @property fontSize secondary accordion header font-size.
-                     * @property lineHeight secondary accordion header line-height.
-                     * @property letterSpacing secondary accordion header letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Header(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                }
-                @androidx.compose.runtime.Immutable
                 data class State(
-                    val expanded: Expanded,
                     val collapsed: Collapsed,
+                    val expanded: Expanded,
                 ) {
+                    @androidx.compose.runtime.Immutable
+                    data class Collapsed(
+                        val shape: Shape,
+                    ) {
+                        /**
+                         * @property radius secondary accordion radius when collapsed.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Shape(
+                            val radius: Float,
+                        )
+                    }
                     @androidx.compose.runtime.Immutable
                     data class Expanded(
                         val shape: Shape,
@@ -730,47 +429,14 @@ data class Components(
                             @androidx.compose.runtime.Immutable
                             data class Radius(
                                 val middleRow: Float,
-                                val topRow: TopRow,
                                 val bottomRow: BottomRow,
+                                val topRow: TopRow,
                             ) {
                                 @androidx.compose.runtime.Immutable
-                                data class TopRow(
-                                    val top: Top,
-                                    val bottom: Bottom,
-                                ) {
-                                    /**
-                                     * @property left secondary accordion top-row top-left radius when expanded.
-                                     * @property right secondary accordion top-row top-right radius when expanded.
-                                     */
-                                    @androidx.compose.runtime.Immutable
-                                    data class Top(
-                                        val left: Float,
-                                        val right: Float,
-                                    )
-                                    /**
-                                     * @property left secondary accordion top-row bottom-left radius when expanded.
-                                     * @property right secondary accordion top-row bottom-right radius when expanded.
-                                     */
-                                    @androidx.compose.runtime.Immutable
-                                    data class Bottom(
-                                        val left: Float,
-                                        val right: Float,
-                                    )
-                                }
-                                @androidx.compose.runtime.Immutable
                                 data class BottomRow(
-                                    val top: Top,
                                     val bottom: Bottom,
+                                    val top: Top,
                                 ) {
-                                    /**
-                                     * @property left secondary accordion bottom-row top-left radius when expanded.
-                                     * @property right secondary accordion bottom-row top-right radius when expanded.
-                                     */
-                                    @androidx.compose.runtime.Immutable
-                                    data class Top(
-                                        val left: Float,
-                                        val right: Float,
-                                    )
                                     /**
                                      * @property left secondary accordion bottom-row bottom-left radius when expanded.
                                      * @property right secondary accordion bottom-row bottom-right radius when expanded.
@@ -780,639 +446,381 @@ data class Components(
                                         val left: Float,
                                         val right: Float,
                                     )
+                                    /**
+                                     * @property left secondary accordion bottom-row top-left radius when expanded.
+                                     * @property right secondary accordion bottom-row top-right radius when expanded.
+                                     */
+                                    @androidx.compose.runtime.Immutable
+                                    data class Top(
+                                        val left: Float,
+                                        val right: Float,
+                                    )
+                                }
+                                @androidx.compose.runtime.Immutable
+                                data class TopRow(
+                                    val bottom: Bottom,
+                                    val top: Top,
+                                ) {
+                                    /**
+                                     * @property left secondary accordion top-row bottom-left radius when expanded.
+                                     * @property right secondary accordion top-row bottom-right radius when expanded.
+                                     */
+                                    @androidx.compose.runtime.Immutable
+                                    data class Bottom(
+                                        val left: Float,
+                                        val right: Float,
+                                    )
+                                    /**
+                                     * @property left secondary accordion top-row top-left radius when expanded.
+                                     * @property right secondary accordion top-row top-right radius when expanded.
+                                     */
+                                    @androidx.compose.runtime.Immutable
+                                    data class Top(
+                                        val left: Float,
+                                        val right: Float,
+                                    )
                                 }
                             }
                         }
                     }
+                }
+                @androidx.compose.runtime.Immutable
+                data class Typography(
+                    val header: Header,
+                ) {
+                    /**
+                     * @property fontFamily secondary accordion header font-family.
+                     * @property fontSize secondary accordion header font-size.
+                     * @property fontWeight secondary accordion header font-weight.
+                     * @property letterSpacing secondary accordion header letter-spacing.
+                     * @property lineHeight secondary accordion header line-height.
+                     */
                     @androidx.compose.runtime.Immutable
-                    data class Collapsed(
-                        val shape: Shape,
-                    ) {
-                        /**
-                         * @property radius secondary accordion radius when collapsed.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Shape(
-                            val radius: Float,
-                        )
-                    }
+                    data class Header(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
                 }
             }
         }
     }
     @androidx.compose.runtime.Immutable
-    data class Buttons(
-        val type: Type,
-        val size: Size,
+    data class Badges(
         val base: Base,
-        val shape: Shape,
+        val size: Size,
+        val type: Type,
     ) {
         @androidx.compose.runtime.Immutable
-        data class Type(
-            val primary: Primary,
-            val secondary: Secondary,
-            val destructive: Destructive,
-            val tertiary: Tertiary,
-            val link: Link,
+        data class Base(
+            val shape: Shape,
         ) {
+            /**
+             * @property radius Badge corner radius. Applies to all badges.
+             */
             @androidx.compose.runtime.Immutable
-            data class Primary(
-                val state: State,
-                val color: Color,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class State(
-                    val default: Default,
-                    val hover: Hover,
-                ) {
-                    @androidx.compose.runtime.Immutable
-                    data class Default(
-                        val color: Color,
-                    ) {
-                        /**
-                         * @property surface surface colour for a primary button when default.
-                         * @property text text colour for a primary button when default.
-                         * @property icon icon colour for a primary button when default.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Color(
-                            val surface: androidx.compose.ui.graphics.Color,
-                            val text: androidx.compose.ui.graphics.Color,
-                            val icon: androidx.compose.ui.graphics.Color,
-                        )
-                    }
-                    @androidx.compose.runtime.Immutable
-                    data class Hover(
-                        val color: Color,
-                    ) {
-                        /**
-                         * @property surface surface colour for a primary button when hover.
-                         * @property text text colour for a primary button when hover.
-                         * @property icon icon colour for a primary button when hover.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Color(
-                            val surface: androidx.compose.ui.graphics.Color,
-                            val text: androidx.compose.ui.graphics.Color,
-                            val icon: androidx.compose.ui.graphics.Color,
-                        )
-                    }
-                }
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val feedback: Feedback,
-                ) {
-                    /**
-                     * @property loader Loader colour for a primary button.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Feedback(
-                        val loader: androidx.compose.ui.graphics.Color,
-                    )
-                }
-            }
-            @androidx.compose.runtime.Immutable
-            data class Secondary(
-                val state: State,
-                val emphasis: Emphasis,
-                val color: Color,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class State(
-                    val default: Default,
-                    val hover: Hover,
-                ) {
-                    @androidx.compose.runtime.Immutable
-                    data class Default(
-                        val color: Color,
-                    ) {
-                        /**
-                         * @property surface surface colour for a secondary button when default.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Color(
-                            val surface: androidx.compose.ui.graphics.Color,
-                        )
-                    }
-                    @androidx.compose.runtime.Immutable
-                    data class Hover(
-                        val color: Color,
-                    ) {
-                        /**
-                         * @property surface surface colour for a secondary button when hover.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Color(
-                            val surface: androidx.compose.ui.graphics.Color,
-                        )
-                    }
-                }
-                @androidx.compose.runtime.Immutable
-                data class Emphasis(
-                    val base: Base,
-                    val emphasized: Emphasized,
-                ) {
-                    @androidx.compose.runtime.Immutable
-                    data class Base(
-                        val state: State,
-                    ) {
-                        @androidx.compose.runtime.Immutable
-                        data class State(
-                            val default: Default,
-                            val hover: Hover,
-                        ) {
-                            @androidx.compose.runtime.Immutable
-                            data class Default(
-                                val color: Color,
-                            ) {
-                                /**
-                                 * @property text text colour for a secondary base button when default.
-                                 * @property icon icon colour for a secondary base button when default.
-                                 */
-                                @androidx.compose.runtime.Immutable
-                                data class Color(
-                                    val text: androidx.compose.ui.graphics.Color,
-                                    val icon: androidx.compose.ui.graphics.Color,
-                                )
-                            }
-                            @androidx.compose.runtime.Immutable
-                            data class Hover(
-                                val color: Color,
-                            ) {
-                                /**
-                                 * @property text text colour for a secondary base button when hover.
-                                 * @property icon icon colour for a secondary base button when hover.
-                                 */
-                                @androidx.compose.runtime.Immutable
-                                data class Color(
-                                    val text: androidx.compose.ui.graphics.Color,
-                                    val icon: androidx.compose.ui.graphics.Color,
-                                )
-                            }
-                        }
-                    }
-                    @androidx.compose.runtime.Immutable
-                    data class Emphasized(
-                        val state: State,
-                    ) {
-                        @androidx.compose.runtime.Immutable
-                        data class State(
-                            val default: Default,
-                            val hover: Hover,
-                        ) {
-                            @androidx.compose.runtime.Immutable
-                            data class Default(
-                                val color: Color,
-                            ) {
-                                /**
-                                 * @property text text colour for a secondary emphasized button when default.
-                                 * @property icon icon colour for a secondary emphasized button when default.
-                                 */
-                                @androidx.compose.runtime.Immutable
-                                data class Color(
-                                    val text: androidx.compose.ui.graphics.Color,
-                                    val icon: androidx.compose.ui.graphics.Color,
-                                )
-                            }
-                            @androidx.compose.runtime.Immutable
-                            data class Hover(
-                                val color: Color,
-                            ) {
-                                /**
-                                 * @property text text colour for a secondary emphasized button when hover.
-                                 * @property icon icon colour for a secondary emphasized button when hover.
-                                 */
-                                @androidx.compose.runtime.Immutable
-                                data class Color(
-                                    val text: androidx.compose.ui.graphics.Color,
-                                    val icon: androidx.compose.ui.graphics.Color,
-                                )
-                            }
-                        }
-                    }
-                }
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val feedback: Feedback,
-                ) {
-                    /**
-                     * @property loader Loader colour for a secondary button.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Feedback(
-                        val loader: androidx.compose.ui.graphics.Color,
-                    )
-                }
-            }
-            @androidx.compose.runtime.Immutable
-            data class Destructive(
-                val state: State,
-                val emphasis: Emphasis,
-                val color: Color,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class State(
-                    val default: Default,
-                    val hover: Hover,
-                ) {
-                    @androidx.compose.runtime.Immutable
-                    data class Default(
-                        val color: Color,
-                    ) {
-                        /**
-                         * @property surface surface colour for a destructive button when default.
-                         * @property text text colour for a destructive button when default.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Color(
-                            val surface: androidx.compose.ui.graphics.Color,
-                            val text: androidx.compose.ui.graphics.Color,
-                        )
-                    }
-                    @androidx.compose.runtime.Immutable
-                    data class Hover(
-                        val color: Color,
-                    ) {
-                        /**
-                         * @property surface surface colour for a destructive button when hover.
-                         * @property text text colour for a destructive button when hover.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Color(
-                            val surface: androidx.compose.ui.graphics.Color,
-                            val text: androidx.compose.ui.graphics.Color,
-                        )
-                    }
-                }
-                @androidx.compose.runtime.Immutable
-                data class Emphasis(
-                    val emphasized: Emphasized,
-                ) {
-                    @androidx.compose.runtime.Immutable
-                    data class Emphasized(
-                        val state: State,
-                    ) {
-                        @androidx.compose.runtime.Immutable
-                        data class State(
-                            val default: Default,
-                            val hover: Hover,
-                        ) {
-                            @androidx.compose.runtime.Immutable
-                            data class Default(
-                                val color: Color,
-                            ) {
-                                /**
-                                 * @property surface surface colour for a destructive emphasized button when default.
-                                 * @property text text colour for a destructive emphasized button when default.
-                                 */
-                                @androidx.compose.runtime.Immutable
-                                data class Color(
-                                    val surface: androidx.compose.ui.graphics.Color,
-                                    val text: androidx.compose.ui.graphics.Color,
-                                )
-                            }
-                            @androidx.compose.runtime.Immutable
-                            data class Hover(
-                                val color: Color,
-                            ) {
-                                /**
-                                 * @property surface surface colour for a destructive emphasized button when hover.
-                                 * @property text text colour for a destructive emphasized button when hover.
-                                 */
-                                @androidx.compose.runtime.Immutable
-                                data class Color(
-                                    val surface: androidx.compose.ui.graphics.Color,
-                                    val text: androidx.compose.ui.graphics.Color,
-                                )
-                            }
-                        }
-                    }
-                }
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val feedback: Feedback,
-                ) {
-                    /**
-                     * @property loader Loader colour for a destructive button.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Feedback(
-                        val loader: androidx.compose.ui.graphics.Color,
-                    )
-                }
-            }
-            @androidx.compose.runtime.Immutable
-            data class Tertiary(
-                val state: State,
-                val color: Color,
-                val shape: Shape,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class State(
-                    val default: Default,
-                    val hover: Hover,
-                ) {
-                    @androidx.compose.runtime.Immutable
-                    data class Default(
-                        val color: Color,
-                    ) {
-                        /**
-                         * @property text text colour for a tertiary button when default.
-                         * @property icon icon colour for a tertiary button when default.
-                         * @property border border colour for a tertiary button when default.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Color(
-                            val text: androidx.compose.ui.graphics.Color,
-                            val icon: androidx.compose.ui.graphics.Color,
-                            val border: androidx.compose.ui.graphics.Color,
-                        )
-                    }
-                    @androidx.compose.runtime.Immutable
-                    data class Hover(
-                        val color: Color,
-                    ) {
-                        /**
-                         * @property text text colour for a tertiary button when hover.
-                         * @property icon icon colour for a tertiary button when hover.
-                         * @property border border colour for a tertiary button when hover.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Color(
-                            val text: androidx.compose.ui.graphics.Color,
-                            val icon: androidx.compose.ui.graphics.Color,
-                            val border: androidx.compose.ui.graphics.Color,
-                        )
-                    }
-                }
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val feedback: Feedback,
-                ) {
-                    /**
-                     * @property loader Loader colour for a tertiary button.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Feedback(
-                        val loader: androidx.compose.ui.graphics.Color,
-                    )
-                }
-                /**
-                 * @property borderWidth Border width of a tertiary button.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Shape(
-                    val borderWidth: Float,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Link(
-                val state: State,
-                val emphasis: Emphasis,
-                val color: Color,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class State(
-                    val default: Default,
-                    val hover: Hover,
-                ) {
-                    @androidx.compose.runtime.Immutable
-                    data class Default(
-                        val color: Color,
-                    ) {
-                        /**
-                         * @property text text colour for a link button when default.
-                         * @property icon icon colour for a link button when default.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Color(
-                            val text: androidx.compose.ui.graphics.Color,
-                            val icon: androidx.compose.ui.graphics.Color,
-                        )
-                    }
-                    @androidx.compose.runtime.Immutable
-                    data class Hover(
-                        val color: Color,
-                    ) {
-                        /**
-                         * @property text text colour for a link button when hover.
-                         * @property icon icon colour for a link button when hover.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Color(
-                            val text: androidx.compose.ui.graphics.Color,
-                            val icon: androidx.compose.ui.graphics.Color,
-                        )
-                    }
-                }
-                @androidx.compose.runtime.Immutable
-                data class Emphasis(
-                    val emphasized: Emphasized,
-                    val subtle: Subtle,
-                ) {
-                    @androidx.compose.runtime.Immutable
-                    data class Emphasized(
-                        val state: State,
-                    ) {
-                        @androidx.compose.runtime.Immutable
-                        data class State(
-                            val default: Default,
-                            val hover: Hover,
-                        ) {
-                            @androidx.compose.runtime.Immutable
-                            data class Default(
-                                val color: Color,
-                            ) {
-                                /**
-                                 * @property text text colour for a link emphasized button when default.
-                                 * @property icon icon colour for a link emphasized button when default.
-                                 */
-                                @androidx.compose.runtime.Immutable
-                                data class Color(
-                                    val text: androidx.compose.ui.graphics.Color,
-                                    val icon: androidx.compose.ui.graphics.Color,
-                                )
-                            }
-                            @androidx.compose.runtime.Immutable
-                            data class Hover(
-                                val color: Color,
-                            ) {
-                                /**
-                                 * @property text text colour for a link emphasized button when hover.
-                                 * @property icon icon colour for a link emphasized button when hover.
-                                 */
-                                @androidx.compose.runtime.Immutable
-                                data class Color(
-                                    val text: androidx.compose.ui.graphics.Color,
-                                    val icon: androidx.compose.ui.graphics.Color,
-                                )
-                            }
-                        }
-                    }
-                    @androidx.compose.runtime.Immutable
-                    data class Subtle(
-                        val state: State,
-                    ) {
-                        @androidx.compose.runtime.Immutable
-                        data class State(
-                            val default: Default,
-                            val hover: Hover,
-                        ) {
-                            @androidx.compose.runtime.Immutable
-                            data class Default(
-                                val color: Color,
-                            ) {
-                                /**
-                                 * @property text text colour for a link subtle button when default.
-                                 * @property icon icon colour for a link subtle button when default.
-                                 */
-                                @androidx.compose.runtime.Immutable
-                                data class Color(
-                                    val text: androidx.compose.ui.graphics.Color,
-                                    val icon: androidx.compose.ui.graphics.Color,
-                                )
-                            }
-                            @androidx.compose.runtime.Immutable
-                            data class Hover(
-                                val color: Color,
-                            ) {
-                                /**
-                                 * @property text text colour for a link subtle button when hover.
-                                 * @property icon icon colour for a link subtle button when hover.
-                                 */
-                                @androidx.compose.runtime.Immutable
-                                data class Color(
-                                    val text: androidx.compose.ui.graphics.Color,
-                                    val icon: androidx.compose.ui.graphics.Color,
-                                )
-                            }
-                        }
-                    }
-                }
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val feedback: Feedback,
-                ) {
-                    /**
-                     * @property loader Loader colour for a link button.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Feedback(
-                        val loader: androidx.compose.ui.graphics.Color,
-                    )
-                }
-            }
+            data class Shape(
+                val radius: Float,
+            )
         }
         @androidx.compose.runtime.Immutable
         data class Size(
-            val small: Small,
-            val medium: Medium,
             val large: Large,
-            val extraLarge: ExtraLarge,
-            val extraSmall: ExtraSmall,
+            val medium: Medium,
+            val small: Small,
         ) {
             /**
-             * @property icon Icon size at button size sm.
-             * @property loader Loader size at button size sm.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Small(
-                val icon: Float,
-                val loader: Float,
-                val typography: Typography,
-            ) {
-                /**
-                 * @property fontFamily Label font-family at button size sm.
-                 * @property fontWeight Label font-weight at button size sm.
-                 * @property fontSize Label font-size at button size sm.
-                 * @property lineHeight Label line-height at button size sm.
-                 * @property letterSpacing Label letter-spacing at button size sm.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Typography(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-            }
-            /**
-             * @property icon Icon size at button size md.
-             * @property loader Loader size at button size md.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Medium(
-                val icon: Float,
-                val loader: Float,
-                val typography: Typography,
-            ) {
-                /**
-                 * @property fontFamily Label font-family at button size md.
-                 * @property fontWeight Label font-weight at button size md.
-                 * @property fontSize Label font-size at button size md.
-                 * @property lineHeight Label line-height at button size md.
-                 * @property letterSpacing Label letter-spacing at button size md.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Typography(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-            }
-            /**
-             * @property icon Icon size at button size lg.
-             * @property loader Loader size at button size lg.
+             * @property minSize Minimum size of a large badge.
              */
             @androidx.compose.runtime.Immutable
             data class Large(
-                val icon: Float,
-                val loader: Float,
+                val minSize: Float,
+                val padding: Padding,
                 val typography: Typography,
             ) {
                 /**
-                 * @property fontFamily Label font-family at button size lg.
-                 * @property fontWeight Label font-weight at button size lg.
-                 * @property fontSize Label font-size at button size lg.
-                 * @property lineHeight Label line-height at button size lg.
-                 * @property letterSpacing Label letter-spacing at button size lg.
+                 * @property horizontal Horizontal padding of a large badge.
+                 * @property vertical Vertical padding of a large badge.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Padding(
+                    val horizontal: Float,
+                    val vertical: Float,
+                )
+                /**
+                 * @property fontFamily large badge label font-family.
+                 * @property fontSize large badge label font-size.
+                 * @property fontWeight large badge label font-weight.
+                 * @property letterSpacing large badge label letter-spacing.
+                 * @property lineHeight large badge label line-height.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Typography(
                     val fontFamily: String,
-                    val fontWeight: String,
                     val fontSize: Float,
-                    val lineHeight: Float,
+                    val fontWeight: String,
                     val letterSpacing: Float,
+                    val lineHeight: Float,
                 )
             }
             /**
-             * @property icon Icon size at button size xl.
-             * @property loader Loader size at button size xl.
+             * @property minSize Minimum size of a medium badge.
              */
             @androidx.compose.runtime.Immutable
-            data class ExtraLarge(
-                val icon: Float,
-                val loader: Float,
-            )
+            data class Medium(
+                val minSize: Float,
+                val padding: Padding,
+                val typography: Typography,
+            ) {
+                /**
+                 * @property bottom Bottom padding of a medium badge (differs from top).
+                 * @property horizontal Horizontal padding of a medium badge.
+                 * @property top Top padding of a medium badge (differs from bottom).
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Padding(
+                    val bottom: Float,
+                    val horizontal: Float,
+                    val top: Float,
+                )
+                /**
+                 * @property fontFamily medium badge label font-family.
+                 * @property fontSize medium badge label font-size.
+                 * @property fontWeight medium badge label font-weight.
+                 * @property letterSpacing medium badge label letter-spacing.
+                 * @property lineHeight medium badge label line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Typography(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+            }
             /**
-             * @property icon Icon size at button size xs.
-             * @property loader Loader size at button size xs.
+             * @property minSize Small badge size. Small badges render no text.
              */
             @androidx.compose.runtime.Immutable
-            data class ExtraSmall(
-                val icon: Float,
-                val loader: Float,
+            data class Small(
+                val minSize: Float,
             )
         }
         @androidx.compose.runtime.Immutable
-        data class Base(
-            val size: Size,
-            val opacity: Opacity,
+        data class Type(
+            val important: Important,
+            val new: New,
+            val system: System,
         ) {
+            @androidx.compose.runtime.Immutable
+            data class Important(
+                val color: Color,
+            ) {
+                /**
+                 * @property surface Container fill for a important badge.
+                 * @property text Label colour for a important badge.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: androidx.compose.ui.graphics.Color,
+                )
+            }
+            @androidx.compose.runtime.Immutable
+            data class New(
+                val color: Color,
+            ) {
+                /**
+                 * @property surface Container fill for a new badge.
+                 * @property text Label colour for a new badge.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: androidx.compose.ui.graphics.Color,
+                )
+            }
+            @androidx.compose.runtime.Immutable
+            data class System(
+                val color: Color,
+            ) {
+                /**
+                 * @property surface Container fill for a system badge.
+                 * @property text Label colour for a system badge.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: androidx.compose.ui.graphics.Color,
+                )
+            }
+        }
+    }
+    @androidx.compose.runtime.Immutable
+    data class Banners(
+        val base: Base,
+        val type: Type,
+    ) {
+        @androidx.compose.runtime.Immutable
+        data class Base(
+            val opacity: Opacity,
+            val shape: Shape,
+            val size: Size,
+            val typography: Typography,
+        ) {
+            /**
+             * @property container Banner container opacity. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             */
+            @androidx.compose.runtime.Immutable
+            data class Opacity(
+                val container: Float,
+            )
+            /**
+             * @property radius Banner corner radius.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val radius: Float,
+            )
+            /**
+             * @property icon Banner icon size.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Size(
+                val icon: Float,
+                val gap: Gap,
+                val padding: Padding,
+            ) {
+                /**
+                 * @property iconText Gap between icon and text.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Gap(
+                    val iconText: Float,
+                )
+                /**
+                 * @property horizontal Banner horizontal padding.
+                 * @property vertical Banner vertical padding.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Padding(
+                    val horizontal: Float,
+                    val vertical: Float,
+                )
+            }
+            /**
+             * @property fontFamily Banner text font-family.
+             * @property fontSize Banner text font-size.
+             * @property fontWeight Banner text font-weight.
+             * @property letterSpacing Banner text letter-spacing.
+             * @property lineHeight Banner text line-height.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Typography(
+                val fontFamily: String,
+                val fontSize: Float,
+                val fontWeight: String,
+                val letterSpacing: Float,
+                val lineHeight: Float,
+            )
+        }
+        @androidx.compose.runtime.Immutable
+        data class Type(
+            val danger: Danger,
+            val informative: Informative,
+            val success: Success,
+            val warning: Warning,
+        ) {
+            @androidx.compose.runtime.Immutable
+            data class Danger(
+                val color: Color,
+            ) {
+                /**
+                 * @property icon Icon colour for a danger banner. PLACEHOLDER — palette/UNDEFINED until a value is chosen.
+                 * @property surface Container fill for a danger banner. PLACEHOLDER — palette/UNDEFINED until a value is chosen.
+                 * @property text Text colour for a danger banner. PLACEHOLDER — palette/UNDEFINED until a value is chosen.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val icon: androidx.compose.ui.graphics.Color,
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: androidx.compose.ui.graphics.Color,
+                )
+            }
+            @androidx.compose.runtime.Immutable
+            data class Informative(
+                val color: Color,
+            ) {
+                /**
+                 * @property icon Icon colour for an informative banner.
+                 * @property surface Container fill for an informative banner.
+                 * @property text Text colour for an informative banner.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val icon: androidx.compose.ui.graphics.Color,
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: androidx.compose.ui.graphics.Color,
+                )
+            }
+            @androidx.compose.runtime.Immutable
+            data class Success(
+                val color: Color,
+            ) {
+                /**
+                 * @property icon Icon colour for an success banner.
+                 * @property surface Container fill for an success banner.
+                 * @property text Text colour for an success banner.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val icon: androidx.compose.ui.graphics.Color,
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: androidx.compose.ui.graphics.Color,
+                )
+            }
+            @androidx.compose.runtime.Immutable
+            data class Warning(
+                val color: Color,
+            ) {
+                /**
+                 * @property icon Icon colour for an warning banner.
+                 * @property surface Container fill for an warning banner.
+                 * @property text Text colour for an warning banner.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val icon: androidx.compose.ui.graphics.Color,
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: androidx.compose.ui.graphics.Color,
+                )
+            }
+        }
+    }
+    @androidx.compose.runtime.Immutable
+    data class Buttons(
+        val base: Base,
+        val shape: Shape,
+        val size: Size,
+        val type: Type,
+    ) {
+        @androidx.compose.runtime.Immutable
+        data class Base(
+            val opacity: Opacity,
+            val size: Size,
+        ) {
+            /**
+             * @property disabled Opacity when disabled. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed Opacity when pressed. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             */
+            @androidx.compose.runtime.Immutable
+            data class Opacity(
+                val disabled: Float,
+                val pressed: Float,
+            )
             @androidx.compose.runtime.Immutable
             data class Size(
                 val gap: Gap,
@@ -1440,88 +848,13 @@ data class Components(
                     )
                 }
             }
-            /**
-             * @property pressed Opacity when pressed. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             * @property disabled Opacity when disabled. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
-            @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val pressed: Float,
-                val disabled: Float,
-            )
         }
         @androidx.compose.runtime.Immutable
         data class Shape(
-            val rounded: Rounded,
             val circular: Circular,
+            val rounded: Rounded,
             val squircle: Squircle,
         ) {
-            @androidx.compose.runtime.Immutable
-            data class Rounded(
-                val size: Size,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class Size(
-                    val large: Large,
-                    val medium: Medium,
-                    val small: Small,
-                ) {
-                    /**
-                     * @property radius rounded button corner radius at size lg.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Large(
-                        val radius: Float,
-                        val padding: Padding,
-                    ) {
-                        /**
-                         * @property horizontal rounded button horizontal padding at size lg.
-                         * @property vertical rounded button vertical padding at size lg.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Padding(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                    }
-                    /**
-                     * @property radius rounded button corner radius at size md.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Medium(
-                        val radius: Float,
-                        val padding: Padding,
-                    ) {
-                        /**
-                         * @property horizontal rounded button horizontal padding at size md.
-                         * @property vertical rounded button vertical padding at size md.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Padding(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                    }
-                    /**
-                     * @property radius rounded button corner radius at size sm.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Small(
-                        val radius: Float,
-                        val padding: Padding,
-                    ) {
-                        /**
-                         * @property horizontal rounded button horizontal padding at size sm.
-                         * @property vertical rounded button vertical padding at size sm.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Padding(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                    }
-                }
-            }
             @androidx.compose.runtime.Immutable
             data class Circular(
                 val size: Size,
@@ -1579,6 +912,72 @@ data class Components(
                         /**
                          * @property horizontal circular button horizontal padding at size sm.
                          * @property vertical circular button vertical padding at size sm.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Padding(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                    }
+                }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Rounded(
+                val size: Size,
+            ) {
+                @androidx.compose.runtime.Immutable
+                data class Size(
+                    val large: Large,
+                    val medium: Medium,
+                    val small: Small,
+                ) {
+                    /**
+                     * @property radius rounded button corner radius at size lg.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Large(
+                        val radius: Float,
+                        val padding: Padding,
+                    ) {
+                        /**
+                         * @property horizontal rounded button horizontal padding at size lg.
+                         * @property vertical rounded button vertical padding at size lg.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Padding(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                    }
+                    /**
+                     * @property radius rounded button corner radius at size md.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Medium(
+                        val radius: Float,
+                        val padding: Padding,
+                    ) {
+                        /**
+                         * @property horizontal rounded button horizontal padding at size md.
+                         * @property vertical rounded button vertical padding at size md.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Padding(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                    }
+                    /**
+                     * @property radius rounded button corner radius at size sm.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Small(
+                        val radius: Float,
+                        val padding: Padding,
+                    ) {
+                        /**
+                         * @property horizontal rounded button horizontal padding at size sm.
+                         * @property vertical rounded button vertical padding at size sm.
                          */
                         @androidx.compose.runtime.Immutable
                         data class Padding(
@@ -1674,6 +1073,607 @@ data class Components(
                 }
             }
         }
+        @androidx.compose.runtime.Immutable
+        data class Size(
+            val extraLarge: ExtraLarge,
+            val extraSmall: ExtraSmall,
+            val large: Large,
+            val medium: Medium,
+            val small: Small,
+        ) {
+            /**
+             * @property icon Icon size at button size xl.
+             * @property loader Loader size at button size xl.
+             */
+            @androidx.compose.runtime.Immutable
+            data class ExtraLarge(
+                val icon: Float,
+                val loader: Float,
+            )
+            /**
+             * @property icon Icon size at button size xs.
+             * @property loader Loader size at button size xs.
+             */
+            @androidx.compose.runtime.Immutable
+            data class ExtraSmall(
+                val icon: Float,
+                val loader: Float,
+            )
+            /**
+             * @property icon Icon size at button size lg.
+             * @property loader Loader size at button size lg.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Large(
+                val icon: Float,
+                val loader: Float,
+                val typography: Typography,
+            ) {
+                /**
+                 * @property fontFamily Label font-family at button size lg.
+                 * @property fontSize Label font-size at button size lg.
+                 * @property fontWeight Label font-weight at button size lg.
+                 * @property letterSpacing Label letter-spacing at button size lg.
+                 * @property lineHeight Label line-height at button size lg.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Typography(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+            }
+            /**
+             * @property icon Icon size at button size md.
+             * @property loader Loader size at button size md.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Medium(
+                val icon: Float,
+                val loader: Float,
+                val typography: Typography,
+            ) {
+                /**
+                 * @property fontFamily Label font-family at button size md.
+                 * @property fontSize Label font-size at button size md.
+                 * @property fontWeight Label font-weight at button size md.
+                 * @property letterSpacing Label letter-spacing at button size md.
+                 * @property lineHeight Label line-height at button size md.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Typography(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+            }
+            /**
+             * @property icon Icon size at button size sm.
+             * @property loader Loader size at button size sm.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Small(
+                val icon: Float,
+                val loader: Float,
+                val typography: Typography,
+            ) {
+                /**
+                 * @property fontFamily Label font-family at button size sm.
+                 * @property fontSize Label font-size at button size sm.
+                 * @property fontWeight Label font-weight at button size sm.
+                 * @property letterSpacing Label letter-spacing at button size sm.
+                 * @property lineHeight Label line-height at button size sm.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Typography(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+            }
+        }
+        @androidx.compose.runtime.Immutable
+        data class Type(
+            val destructive: Destructive,
+            val link: Link,
+            val primary: Primary,
+            val secondary: Secondary,
+            val tertiary: Tertiary,
+        ) {
+            @androidx.compose.runtime.Immutable
+            data class Destructive(
+                val color: Color,
+                val emphasis: Emphasis,
+                val state: State,
+            ) {
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val feedback: Feedback,
+                ) {
+                    /**
+                     * @property loader Loader colour for a destructive button.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Feedback(
+                        val loader: androidx.compose.ui.graphics.Color,
+                    )
+                }
+                @androidx.compose.runtime.Immutable
+                data class Emphasis(
+                    val emphasized: Emphasized,
+                ) {
+                    @androidx.compose.runtime.Immutable
+                    data class Emphasized(
+                        val state: State,
+                    ) {
+                        @androidx.compose.runtime.Immutable
+                        data class State(
+                            val default: Default,
+                            val hover: Hover,
+                        ) {
+                            @androidx.compose.runtime.Immutable
+                            data class Default(
+                                val color: Color,
+                            ) {
+                                /**
+                                 * @property surface surface colour for a destructive emphasized button when default.
+                                 * @property text text colour for a destructive emphasized button when default.
+                                 */
+                                @androidx.compose.runtime.Immutable
+                                data class Color(
+                                    val surface: androidx.compose.ui.graphics.Color,
+                                    val text: androidx.compose.ui.graphics.Color,
+                                )
+                            }
+                            @androidx.compose.runtime.Immutable
+                            data class Hover(
+                                val color: Color,
+                            ) {
+                                /**
+                                 * @property surface surface colour for a destructive emphasized button when hover.
+                                 * @property text text colour for a destructive emphasized button when hover.
+                                 */
+                                @androidx.compose.runtime.Immutable
+                                data class Color(
+                                    val surface: androidx.compose.ui.graphics.Color,
+                                    val text: androidx.compose.ui.graphics.Color,
+                                )
+                            }
+                        }
+                    }
+                }
+                @androidx.compose.runtime.Immutable
+                data class State(
+                    val default: Default,
+                    val hover: Hover,
+                ) {
+                    @androidx.compose.runtime.Immutable
+                    data class Default(
+                        val color: Color,
+                    ) {
+                        /**
+                         * @property surface surface colour for a destructive button when default.
+                         * @property text text colour for a destructive button when default.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Color(
+                            val surface: androidx.compose.ui.graphics.Color,
+                            val text: androidx.compose.ui.graphics.Color,
+                        )
+                    }
+                    @androidx.compose.runtime.Immutable
+                    data class Hover(
+                        val color: Color,
+                    ) {
+                        /**
+                         * @property surface surface colour for a destructive button when hover.
+                         * @property text text colour for a destructive button when hover.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Color(
+                            val surface: androidx.compose.ui.graphics.Color,
+                            val text: androidx.compose.ui.graphics.Color,
+                        )
+                    }
+                }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Link(
+                val color: Color,
+                val emphasis: Emphasis,
+                val state: State,
+            ) {
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val feedback: Feedback,
+                ) {
+                    /**
+                     * @property loader Loader colour for a link button.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Feedback(
+                        val loader: androidx.compose.ui.graphics.Color,
+                    )
+                }
+                @androidx.compose.runtime.Immutable
+                data class Emphasis(
+                    val emphasized: Emphasized,
+                    val subtle: Subtle,
+                ) {
+                    @androidx.compose.runtime.Immutable
+                    data class Emphasized(
+                        val state: State,
+                    ) {
+                        @androidx.compose.runtime.Immutable
+                        data class State(
+                            val default: Default,
+                            val hover: Hover,
+                        ) {
+                            @androidx.compose.runtime.Immutable
+                            data class Default(
+                                val color: Color,
+                            ) {
+                                /**
+                                 * @property icon icon colour for a link emphasized button when default.
+                                 * @property text text colour for a link emphasized button when default.
+                                 */
+                                @androidx.compose.runtime.Immutable
+                                data class Color(
+                                    val icon: androidx.compose.ui.graphics.Color,
+                                    val text: androidx.compose.ui.graphics.Color,
+                                )
+                            }
+                            @androidx.compose.runtime.Immutable
+                            data class Hover(
+                                val color: Color,
+                            ) {
+                                /**
+                                 * @property icon icon colour for a link emphasized button when hover.
+                                 * @property text text colour for a link emphasized button when hover.
+                                 */
+                                @androidx.compose.runtime.Immutable
+                                data class Color(
+                                    val icon: androidx.compose.ui.graphics.Color,
+                                    val text: androidx.compose.ui.graphics.Color,
+                                )
+                            }
+                        }
+                    }
+                    @androidx.compose.runtime.Immutable
+                    data class Subtle(
+                        val state: State,
+                    ) {
+                        @androidx.compose.runtime.Immutable
+                        data class State(
+                            val default: Default,
+                            val hover: Hover,
+                        ) {
+                            @androidx.compose.runtime.Immutable
+                            data class Default(
+                                val color: Color,
+                            ) {
+                                /**
+                                 * @property icon icon colour for a link subtle button when default.
+                                 * @property text text colour for a link subtle button when default.
+                                 */
+                                @androidx.compose.runtime.Immutable
+                                data class Color(
+                                    val icon: androidx.compose.ui.graphics.Color,
+                                    val text: androidx.compose.ui.graphics.Color,
+                                )
+                            }
+                            @androidx.compose.runtime.Immutable
+                            data class Hover(
+                                val color: Color,
+                            ) {
+                                /**
+                                 * @property icon icon colour for a link subtle button when hover.
+                                 * @property text text colour for a link subtle button when hover.
+                                 */
+                                @androidx.compose.runtime.Immutable
+                                data class Color(
+                                    val icon: androidx.compose.ui.graphics.Color,
+                                    val text: androidx.compose.ui.graphics.Color,
+                                )
+                            }
+                        }
+                    }
+                }
+                @androidx.compose.runtime.Immutable
+                data class State(
+                    val default: Default,
+                    val hover: Hover,
+                ) {
+                    @androidx.compose.runtime.Immutable
+                    data class Default(
+                        val color: Color,
+                    ) {
+                        /**
+                         * @property icon icon colour for a link button when default.
+                         * @property text text colour for a link button when default.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Color(
+                            val icon: androidx.compose.ui.graphics.Color,
+                            val text: androidx.compose.ui.graphics.Color,
+                        )
+                    }
+                    @androidx.compose.runtime.Immutable
+                    data class Hover(
+                        val color: Color,
+                    ) {
+                        /**
+                         * @property icon icon colour for a link button when hover.
+                         * @property text text colour for a link button when hover.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Color(
+                            val icon: androidx.compose.ui.graphics.Color,
+                            val text: androidx.compose.ui.graphics.Color,
+                        )
+                    }
+                }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Primary(
+                val color: Color,
+                val state: State,
+            ) {
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val feedback: Feedback,
+                ) {
+                    /**
+                     * @property loader Loader colour for a primary button.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Feedback(
+                        val loader: androidx.compose.ui.graphics.Color,
+                    )
+                }
+                @androidx.compose.runtime.Immutable
+                data class State(
+                    val default: Default,
+                    val hover: Hover,
+                ) {
+                    @androidx.compose.runtime.Immutable
+                    data class Default(
+                        val color: Color,
+                    ) {
+                        /**
+                         * @property icon icon colour for a primary button when default.
+                         * @property surface surface colour for a primary button when default.
+                         * @property text text colour for a primary button when default.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Color(
+                            val icon: androidx.compose.ui.graphics.Color,
+                            val surface: androidx.compose.ui.graphics.Color,
+                            val text: androidx.compose.ui.graphics.Color,
+                        )
+                    }
+                    @androidx.compose.runtime.Immutable
+                    data class Hover(
+                        val color: Color,
+                    ) {
+                        /**
+                         * @property icon icon colour for a primary button when hover.
+                         * @property surface surface colour for a primary button when hover.
+                         * @property text text colour for a primary button when hover.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Color(
+                            val icon: androidx.compose.ui.graphics.Color,
+                            val surface: androidx.compose.ui.graphics.Color,
+                            val text: androidx.compose.ui.graphics.Color,
+                        )
+                    }
+                }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Secondary(
+                val color: Color,
+                val emphasis: Emphasis,
+                val state: State,
+            ) {
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val feedback: Feedback,
+                ) {
+                    /**
+                     * @property loader Loader colour for a secondary button.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Feedback(
+                        val loader: androidx.compose.ui.graphics.Color,
+                    )
+                }
+                @androidx.compose.runtime.Immutable
+                data class Emphasis(
+                    val base: Base,
+                    val emphasized: Emphasized,
+                ) {
+                    @androidx.compose.runtime.Immutable
+                    data class Base(
+                        val state: State,
+                    ) {
+                        @androidx.compose.runtime.Immutable
+                        data class State(
+                            val default: Default,
+                            val hover: Hover,
+                        ) {
+                            @androidx.compose.runtime.Immutable
+                            data class Default(
+                                val color: Color,
+                            ) {
+                                /**
+                                 * @property icon icon colour for a secondary base button when default.
+                                 * @property text text colour for a secondary base button when default.
+                                 */
+                                @androidx.compose.runtime.Immutable
+                                data class Color(
+                                    val icon: androidx.compose.ui.graphics.Color,
+                                    val text: androidx.compose.ui.graphics.Color,
+                                )
+                            }
+                            @androidx.compose.runtime.Immutable
+                            data class Hover(
+                                val color: Color,
+                            ) {
+                                /**
+                                 * @property icon icon colour for a secondary base button when hover.
+                                 * @property text text colour for a secondary base button when hover.
+                                 */
+                                @androidx.compose.runtime.Immutable
+                                data class Color(
+                                    val icon: androidx.compose.ui.graphics.Color,
+                                    val text: androidx.compose.ui.graphics.Color,
+                                )
+                            }
+                        }
+                    }
+                    @androidx.compose.runtime.Immutable
+                    data class Emphasized(
+                        val state: State,
+                    ) {
+                        @androidx.compose.runtime.Immutable
+                        data class State(
+                            val default: Default,
+                            val hover: Hover,
+                        ) {
+                            @androidx.compose.runtime.Immutable
+                            data class Default(
+                                val color: Color,
+                            ) {
+                                /**
+                                 * @property icon icon colour for a secondary emphasized button when default.
+                                 * @property text text colour for a secondary emphasized button when default.
+                                 */
+                                @androidx.compose.runtime.Immutable
+                                data class Color(
+                                    val icon: androidx.compose.ui.graphics.Color,
+                                    val text: androidx.compose.ui.graphics.Color,
+                                )
+                            }
+                            @androidx.compose.runtime.Immutable
+                            data class Hover(
+                                val color: Color,
+                            ) {
+                                /**
+                                 * @property icon icon colour for a secondary emphasized button when hover.
+                                 * @property text text colour for a secondary emphasized button when hover.
+                                 */
+                                @androidx.compose.runtime.Immutable
+                                data class Color(
+                                    val icon: androidx.compose.ui.graphics.Color,
+                                    val text: androidx.compose.ui.graphics.Color,
+                                )
+                            }
+                        }
+                    }
+                }
+                @androidx.compose.runtime.Immutable
+                data class State(
+                    val default: Default,
+                    val hover: Hover,
+                ) {
+                    @androidx.compose.runtime.Immutable
+                    data class Default(
+                        val color: Color,
+                    ) {
+                        /**
+                         * @property surface surface colour for a secondary button when default.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Color(
+                            val surface: androidx.compose.ui.graphics.Color,
+                        )
+                    }
+                    @androidx.compose.runtime.Immutable
+                    data class Hover(
+                        val color: Color,
+                    ) {
+                        /**
+                         * @property surface surface colour for a secondary button when hover.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Color(
+                            val surface: androidx.compose.ui.graphics.Color,
+                        )
+                    }
+                }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Tertiary(
+                val color: Color,
+                val shape: Shape,
+                val state: State,
+            ) {
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val feedback: Feedback,
+                ) {
+                    /**
+                     * @property loader Loader colour for a tertiary button.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Feedback(
+                        val loader: androidx.compose.ui.graphics.Color,
+                    )
+                }
+                /**
+                 * @property borderWidth Border width of a tertiary button.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Shape(
+                    val borderWidth: Float,
+                )
+                @androidx.compose.runtime.Immutable
+                data class State(
+                    val default: Default,
+                    val hover: Hover,
+                ) {
+                    @androidx.compose.runtime.Immutable
+                    data class Default(
+                        val color: Color,
+                    ) {
+                        /**
+                         * @property border border colour for a tertiary button when default.
+                         * @property icon icon colour for a tertiary button when default.
+                         * @property text text colour for a tertiary button when default.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Color(
+                            val border: androidx.compose.ui.graphics.Color,
+                            val icon: androidx.compose.ui.graphics.Color,
+                            val text: androidx.compose.ui.graphics.Color,
+                        )
+                    }
+                    @androidx.compose.runtime.Immutable
+                    data class Hover(
+                        val color: Color,
+                    ) {
+                        /**
+                         * @property border border colour for a tertiary button when hover.
+                         * @property icon icon colour for a tertiary button when hover.
+                         * @property text text colour for a tertiary button when hover.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Color(
+                            val border: androidx.compose.ui.graphics.Color,
+                            val icon: androidx.compose.ui.graphics.Color,
+                            val text: androidx.compose.ui.graphics.Color,
+                        )
+                    }
+                }
+            }
+        }
     }
     @androidx.compose.runtime.Immutable
     data class Cards(
@@ -1683,17 +1683,51 @@ data class Components(
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
+            val opacity: Opacity,
+            val shape: Shape,
             val size: Size,
             val typography: Typography,
-            val shape: Shape,
-            val opacity: Opacity,
         ) {
             @androidx.compose.runtime.Immutable
             data class Color(
+                val icon: Icon,
                 val surface: Surface,
                 val text: Text,
-                val icon: Icon,
             ) {
+                @androidx.compose.runtime.Immutable
+                data class Icon(
+                    val accent: Accent,
+                    val action: Action,
+                    val base: Base,
+                ) {
+                    /**
+                     * @property default Icon colour (accent, default).
+                     * @property hover Icon colour (accent, hover).
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Accent(
+                        val default: androidx.compose.ui.graphics.Color,
+                        val hover: androidx.compose.ui.graphics.Color,
+                    )
+                    /**
+                     * @property default Icon colour (action, default).
+                     * @property hover Icon colour (action, hover).
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Action(
+                        val default: androidx.compose.ui.graphics.Color,
+                        val hover: androidx.compose.ui.graphics.Color,
+                    )
+                    /**
+                     * @property default Icon colour (base, default).
+                     * @property hover Icon colour (base, hover).
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Base(
+                        val default: androidx.compose.ui.graphics.Color,
+                        val hover: androidx.compose.ui.graphics.Color,
+                    )
+                }
                 /**
                  * @property symbol Symbol background fill.
                  */
@@ -1702,34 +1736,25 @@ data class Components(
                     val symbol: androidx.compose.ui.graphics.Color,
                 )
                 /**
-                 * @property header header text colour.
-                 * @property footer footer text colour.
-                 * @property value value text colour.
-                 * @property unitOfMeasure uom text colour.
                  * @property description description text colour.
+                 * @property footer footer text colour.
+                 * @property header header text colour.
+                 * @property unitOfMeasure uom text colour.
+                 * @property value value text colour.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Text(
-                    val header: androidx.compose.ui.graphics.Color,
-                    val footer: androidx.compose.ui.graphics.Color,
-                    val value: androidx.compose.ui.graphics.Color,
-                    val unitOfMeasure: androidx.compose.ui.graphics.Color,
                     val description: androidx.compose.ui.graphics.Color,
-                    val title: Title,
+                    val footer: androidx.compose.ui.graphics.Color,
+                    val header: androidx.compose.ui.graphics.Color,
+                    val unitOfMeasure: androidx.compose.ui.graphics.Color,
+                    val value: androidx.compose.ui.graphics.Color,
                     val detail: Detail,
-                    val subtitle: Subtitle,
-                    val statusText: StatusText,
                     val link: Link,
+                    val statusText: StatusText,
+                    val subtitle: Subtitle,
+                    val title: Title,
                 ) {
-                    /**
-                     * @property base title text colour (base).
-                     * @property muted title text colour (muted).
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Title(
-                        val base: androidx.compose.ui.graphics.Color,
-                        val muted: androidx.compose.ui.graphics.Color,
-                    )
                     /**
                      * @property base detail text colour (base).
                      * @property muted detail text colour (muted).
@@ -1738,24 +1763,6 @@ data class Components(
                     data class Detail(
                         val base: androidx.compose.ui.graphics.Color,
                         val muted: androidx.compose.ui.graphics.Color,
-                    )
-                    /**
-                     * @property base subtitle text colour (base).
-                     * @property muted subtitle text colour (muted).
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Subtitle(
-                        val base: androidx.compose.ui.graphics.Color,
-                        val muted: androidx.compose.ui.graphics.Color,
-                    )
-                    /**
-                     * @property default Status text colour (default).
-                     * @property critical Status text colour (critical).
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class StatusText(
-                        val default: androidx.compose.ui.graphics.Color,
-                        val critical: androidx.compose.ui.graphics.Color,
                     )
                     @androidx.compose.runtime.Immutable
                     data class Link(
@@ -1781,692 +1788,42 @@ data class Components(
                             val hover: androidx.compose.ui.graphics.Color,
                         )
                     }
-                }
-                @androidx.compose.runtime.Immutable
-                data class Icon(
-                    val base: Base,
-                    val accent: Accent,
-                    val action: Action,
-                ) {
                     /**
-                     * @property default Icon colour (base, default).
-                     * @property hover Icon colour (base, hover).
+                     * @property critical Status text colour (critical).
+                     * @property default Status text colour (default).
                      */
                     @androidx.compose.runtime.Immutable
-                    data class Base(
+                    data class StatusText(
+                        val critical: androidx.compose.ui.graphics.Color,
                         val default: androidx.compose.ui.graphics.Color,
-                        val hover: androidx.compose.ui.graphics.Color,
                     )
                     /**
-                     * @property default Icon colour (accent, default).
-                     * @property hover Icon colour (accent, hover).
+                     * @property base subtitle text colour (base).
+                     * @property muted subtitle text colour (muted).
                      */
                     @androidx.compose.runtime.Immutable
-                    data class Accent(
-                        val default: androidx.compose.ui.graphics.Color,
-                        val hover: androidx.compose.ui.graphics.Color,
+                    data class Subtitle(
+                        val base: androidx.compose.ui.graphics.Color,
+                        val muted: androidx.compose.ui.graphics.Color,
                     )
                     /**
-                     * @property default Icon colour (action, default).
-                     * @property hover Icon colour (action, hover).
+                     * @property base title text colour (base).
+                     * @property muted title text colour (muted).
                      */
                     @androidx.compose.runtime.Immutable
-                    data class Action(
-                        val default: androidx.compose.ui.graphics.Color,
-                        val hover: androidx.compose.ui.graphics.Color,
+                    data class Title(
+                        val base: androidx.compose.ui.graphics.Color,
+                        val muted: androidx.compose.ui.graphics.Color,
                     )
                 }
             }
             /**
-             * @property symbol Symbol size.
+             * @property opaque Opaque state opacity. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
-            data class Size(
-                val symbol: Float,
-                val icon: Icon,
-                val gap: Gap,
-                val padding: Padding,
-            ) {
-                /**
-                 * @property _24 24pt icon size.
-                 * @property _32 32pt icon size.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Icon(
-                    val _24: Float,
-                    val _32: Float,
-                )
-                /**
-                 * @property titleSubtitleStatus Gap between title, subtitle and status.
-                 * @property cardActions Gap between card actions.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Gap(
-                    val titleSubtitleStatus: Float,
-                    val cardActions: Float,
-                    val header: Header,
-                ) {
-                    /**
-                     * @property textIcon Header gap between text and icon.
-                     * @property iconIcon Header gap between icons.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Header(
-                        val textIcon: Float,
-                        val iconIcon: Float,
-                    )
-                }
-                @androidx.compose.runtime.Immutable
-                data class Padding(
-                    val cardActions: CardActions,
-                    val leftContent: LeftContent,
-                    val rightContent: RightContent,
-                    val header: Header,
-                ) {
-                    /**
-                     * @property horizontal Card actions horizontal padding.
-                     * @property top Card actions top padding.
-                     * @property bottom Card actions bottom padding.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class CardActions(
-                        val horizontal: Float,
-                        val top: Float,
-                        val bottom: Float,
-                    )
-                    @androidx.compose.runtime.Immutable
-                    data class LeftContent(
-                        val description: Description,
-                        val descriptionLink: DescriptionLink,
-                        val descriptionIcon: DescriptionIcon,
-                        val descriptionIconLink: DescriptionIconLink,
-                        val textButton: TextButton,
-                    ) {
-                        /**
-                         * @property horizontal description horizontal padding.
-                         * @property vertical description vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Description(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                        /**
-                         * @property left description-link left padding.
-                         * @property top description-link top padding.
-                         * @property right description-link right padding.
-                         * @property bottom description-link bottom padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class DescriptionLink(
-                            val left: Float,
-                            val top: Float,
-                            val right: Float,
-                            val bottom: Float,
-                        )
-                        /**
-                         * @property horizontal description-icon horizontal padding.
-                         * @property vertical description-icon vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class DescriptionIcon(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                        /**
-                         * @property left description-icon-link left padding.
-                         * @property top description-icon-link top padding.
-                         * @property right description-icon-link right padding.
-                         * @property bottom description-icon-link bottom padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class DescriptionIconLink(
-                            val left: Float,
-                            val top: Float,
-                            val right: Float,
-                            val bottom: Float,
-                        )
-                        @androidx.compose.runtime.Immutable
-                        data class TextButton(
-                            val default: Default,
-                            val link: Link,
-                            val destructive: Destructive,
-                        ) {
-                            /**
-                             * @property horizontal default text button horizontal padding.
-                             * @property vertical default text button vertical padding.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class Default(
-                                val horizontal: Float,
-                                val vertical: Float,
-                            )
-                            /**
-                             * @property horizontal link text button horizontal padding.
-                             * @property vertical link text button vertical padding.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class Link(
-                                val horizontal: Float,
-                                val vertical: Float,
-                            )
-                            /**
-                             * @property horizontal destructive text button horizontal padding.
-                             * @property vertical destructive text button vertical padding.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class Destructive(
-                                val horizontal: Float,
-                                val vertical: Float,
-                            )
-                        }
-                    }
-                    @androidx.compose.runtime.Immutable
-                    data class RightContent(
-                        val detailChevron: DetailChevron,
-                        val tag: Tag,
-                        val icon: Icon,
-                        val iconChevron: IconChevron,
-                        val valueUnitOfMeasure: ValueUnitOfMeasure,
-                        val detail: Detail,
-                        val detailBadge: DetailBadge,
-                        val detailSwitch: DetailSwitch,
-                        val detailIcon24: DetailIcon24,
-                        val detailIcon32: DetailIcon32,
-                        val sort: Sort,
-                        val switch: Switch,
-                        val chevron: Chevron,
-                        val checkmark: Checkmark,
-                        val badgeChevron: BadgeChevron,
-                    ) {
-                        /**
-                         * @property horizontal detail-chevron horizontal padding.
-                         * @property vertical detail-chevron vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class DetailChevron(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                        /**
-                         * @property left tag left padding.
-                         * @property top tag top padding.
-                         * @property right tag right padding.
-                         * @property bottom tag bottom padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Tag(
-                            val left: Float,
-                            val top: Float,
-                            val right: Float,
-                            val bottom: Float,
-                        )
-                        /**
-                         * @property top icon top padding.
-                         * @property bottom icon bottom padding.
-                         * @property right icon right padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Icon(
-                            val top: Float,
-                            val bottom: Float,
-                            val right: Float,
-                        )
-                        /**
-                         * @property horizontal icon-chevron horizontal padding.
-                         * @property vertical icon-chevron vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class IconChevron(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                        /**
-                         * @property horizontal value-uom horizontal padding.
-                         * @property vertical value-uom vertical padding.
-                         * @property right value-uom right padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class ValueUnitOfMeasure(
-                            val horizontal: Float,
-                            val vertical: Float,
-                            val right: Float,
-                        )
-                        /**
-                         * @property horizontal detail horizontal padding.
-                         * @property vertical detail vertical padding.
-                         * @property right detail right padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Detail(
-                            val horizontal: Float,
-                            val vertical: Float,
-                            val right: Float,
-                        )
-                        /**
-                         * @property horizontal detail-badge horizontal padding.
-                         * @property vertical detail-badge vertical padding.
-                         * @property right detail-badge right padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class DetailBadge(
-                            val horizontal: Float,
-                            val vertical: Float,
-                            val right: Float,
-                        )
-                        /**
-                         * @property horizontal detail-switch horizontal padding.
-                         * @property vertical detail-switch vertical padding.
-                         * @property right detail-switch right padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class DetailSwitch(
-                            val horizontal: Float,
-                            val vertical: Float,
-                            val right: Float,
-                        )
-                        /**
-                         * @property horizontal detail-icon-24 horizontal padding.
-                         * @property vertical detail-icon-24 vertical padding.
-                         * @property right detail-icon-24 right padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class DetailIcon24(
-                            val horizontal: Float,
-                            val vertical: Float,
-                            val right: Float,
-                        )
-                        /**
-                         * @property horizontal detail-icon-32 horizontal padding.
-                         * @property vertical detail-icon-32 vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class DetailIcon32(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                        /**
-                         * @property horizontal sort horizontal padding.
-                         * @property vertical sort vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Sort(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                        /**
-                         * @property left switch left padding.
-                         * @property top switch top padding.
-                         * @property right switch right padding.
-                         * @property bottom switch bottom padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Switch(
-                            val left: Float,
-                            val top: Float,
-                            val right: Float,
-                            val bottom: Float,
-                        )
-                        /**
-                         * @property horizontal chevron horizontal padding.
-                         * @property vertical chevron vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Chevron(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                        /**
-                         * @property horizontal checkmark horizontal padding.
-                         * @property vertical checkmark vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Checkmark(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                        /**
-                         * @property horizontal badge-chevron horizontal padding.
-                         * @property vertical badge-chevron vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class BadgeChevron(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                    }
-                    /**
-                     * @property left Header left padding.
-                     * @property top Header top padding.
-                     * @property right Header right padding.
-                     * @property bottom Header bottom padding.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Header(
-                        val left: Float,
-                        val top: Float,
-                        val right: Float,
-                        val bottom: Float,
-                        val content: Content,
-                    ) {
-                        /**
-                         * @property horizontal Header content horizontal padding.
-                         * @property vertical Header content vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Content(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                    }
-                }
-            }
-            @androidx.compose.runtime.Immutable
-            data class Typography(
-                val title: Title,
-                val detail: Detail,
-                val footer: Footer,
-                val subtitle: Subtitle,
-                val statusText: StatusText,
-                val value: Value,
-                val unitOfMeasure: UnitOfMeasure,
-                val link: Link,
-                val header: Header,
-                val description: Description,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class Title(
-                    val regular: Regular,
-                    val medium: Medium,
-                    val bold: Bold,
-                ) {
-                    @androidx.compose.runtime.Immutable
-                    data class Regular(
-                        val base: Base,
-                        val compact: Compact,
-                    ) {
-                        /**
-                         * @property fontFamily Title (regular, base) font-family.
-                         * @property fontWeight Title (regular, base) font-weight.
-                         * @property fontSize Title (regular, base) font-size.
-                         * @property lineHeight Title (regular, base) line-height.
-                         * @property letterSpacing Title (regular, base) letter-spacing.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Base(
-                            val fontFamily: String,
-                            val fontWeight: String,
-                            val fontSize: Float,
-                            val lineHeight: Float,
-                            val letterSpacing: Float,
-                        )
-                        /**
-                         * @property fontFamily Title (regular, compact) font-family.
-                         * @property fontWeight Title (regular, compact) font-weight.
-                         * @property fontSize Title (regular, compact) font-size.
-                         * @property lineHeight Title (regular, compact) line-height.
-                         * @property letterSpacing Title (regular, compact) letter-spacing.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Compact(
-                            val fontFamily: String,
-                            val fontWeight: String,
-                            val fontSize: Float,
-                            val lineHeight: Float,
-                            val letterSpacing: Float,
-                        )
-                    }
-                    @androidx.compose.runtime.Immutable
-                    data class Medium(
-                        val base: Base,
-                        val compact: Compact,
-                    ) {
-                        /**
-                         * @property fontFamily Title (medium, base) font-family.
-                         * @property fontWeight Title (medium, base) font-weight.
-                         * @property fontSize Title (medium, base) font-size.
-                         * @property lineHeight Title (medium, base) line-height.
-                         * @property letterSpacing Title (medium, base) letter-spacing.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Base(
-                            val fontFamily: String,
-                            val fontWeight: String,
-                            val fontSize: Float,
-                            val lineHeight: Float,
-                            val letterSpacing: Float,
-                        )
-                        /**
-                         * @property fontFamily Title (medium, compact) font-family.
-                         * @property fontWeight Title (medium, compact) font-weight.
-                         * @property fontSize Title (medium, compact) font-size.
-                         * @property lineHeight Title (medium, compact) line-height.
-                         * @property letterSpacing Title (medium, compact) letter-spacing.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Compact(
-                            val fontFamily: String,
-                            val fontWeight: String,
-                            val fontSize: Float,
-                            val lineHeight: Float,
-                            val letterSpacing: Float,
-                        )
-                    }
-                    @androidx.compose.runtime.Immutable
-                    data class Bold(
-                        val base: Base,
-                        val compact: Compact,
-                    ) {
-                        /**
-                         * @property fontFamily Title (bold, base) font-family.
-                         * @property fontWeight Title (bold, base) font-weight.
-                         * @property fontSize Title (bold, base) font-size.
-                         * @property lineHeight Title (bold, base) line-height.
-                         * @property letterSpacing Title (bold, base) letter-spacing.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Base(
-                            val fontFamily: String,
-                            val fontWeight: String,
-                            val fontSize: Float,
-                            val lineHeight: Float,
-                            val letterSpacing: Float,
-                        )
-                        /**
-                         * @property fontFamily Title (bold, compact) font-family.
-                         * @property fontWeight Title (bold, compact) font-weight.
-                         * @property fontSize Title (bold, compact) font-size.
-                         * @property lineHeight Title (bold, compact) line-height.
-                         * @property letterSpacing Title (bold, compact) letter-spacing.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Compact(
-                            val fontFamily: String,
-                            val fontWeight: String,
-                            val fontSize: Float,
-                            val lineHeight: Float,
-                            val letterSpacing: Float,
-                        )
-                    }
-                }
-                @androidx.compose.runtime.Immutable
-                data class Detail(
-                    val regular: Regular,
-                    val semibold: Semibold,
-                ) {
-                    /**
-                     * @property fontFamily Detail (regular) font-family.
-                     * @property fontWeight Detail (regular) font-weight.
-                     * @property fontSize Detail (regular) font-size.
-                     * @property lineHeight Detail (regular) line-height.
-                     * @property letterSpacing Detail (regular) letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Regular(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                    /**
-                     * @property fontFamily Detail (semibold) font-family.
-                     * @property fontWeight Detail (semibold) font-weight.
-                     * @property fontSize Detail (semibold) font-size.
-                     * @property lineHeight Detail (semibold) line-height.
-                     * @property letterSpacing Detail (semibold) letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Semibold(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                }
-                /**
-                 * @property fontFamily footer font-family.
-                 * @property fontWeight footer font-weight.
-                 * @property fontSize footer font-size.
-                 * @property lineHeight footer line-height.
-                 * @property letterSpacing footer letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Footer(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                @androidx.compose.runtime.Immutable
-                data class Subtitle(
-                    val base: Base,
-                    val small: Small,
-                ) {
-                    /**
-                     * @property fontFamily Subtitle (base) font-family.
-                     * @property fontWeight Subtitle (base) font-weight.
-                     * @property fontSize Subtitle (base) font-size.
-                     * @property lineHeight Subtitle (base) line-height.
-                     * @property letterSpacing Subtitle (base) letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Base(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                    /**
-                     * @property fontFamily Subtitle (sm) font-family.
-                     * @property fontWeight Subtitle (sm) font-weight.
-                     * @property fontSize Subtitle (sm) font-size.
-                     * @property lineHeight Subtitle (sm) line-height.
-                     * @property letterSpacing Subtitle (sm) letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Small(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                }
-                /**
-                 * @property fontFamily status-text font-family.
-                 * @property fontWeight status-text font-weight.
-                 * @property fontSize status-text font-size.
-                 * @property lineHeight status-text line-height.
-                 * @property letterSpacing status-text letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class StatusText(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily value font-family.
-                 * @property fontWeight value font-weight.
-                 * @property fontSize value font-size.
-                 * @property lineHeight value line-height.
-                 * @property letterSpacing value letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Value(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily uom font-family.
-                 * @property fontWeight uom font-weight.
-                 * @property fontSize uom font-size.
-                 * @property lineHeight uom line-height.
-                 * @property letterSpacing uom letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class UnitOfMeasure(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily link font-family.
-                 * @property fontWeight link font-weight.
-                 * @property fontSize link font-size.
-                 * @property lineHeight link line-height.
-                 * @property letterSpacing link letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Link(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily header font-family.
-                 * @property fontWeight header font-weight.
-                 * @property fontSize header font-size.
-                 * @property lineHeight header line-height.
-                 * @property letterSpacing header letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Header(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily description font-family.
-                 * @property fontWeight description font-weight.
-                 * @property fontSize description font-size.
-                 * @property lineHeight description line-height.
-                 * @property letterSpacing description letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Description(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-            }
+            data class Opacity(
+                val opaque: Float,
+            )
             @androidx.compose.runtime.Immutable
             data class Shape(
                 val radius: Radius,
@@ -2480,12 +1837,655 @@ data class Components(
                 )
             }
             /**
-             * @property opaque Opaque state opacity. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property symbol Symbol size.
              */
             @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val opaque: Float,
-            )
+            data class Size(
+                val symbol: Float,
+                val gap: Gap,
+                val icon: Icon,
+                val padding: Padding,
+            ) {
+                /**
+                 * @property cardActions Gap between card actions.
+                 * @property titleSubtitleStatus Gap between title, subtitle and status.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Gap(
+                    val cardActions: Float,
+                    val titleSubtitleStatus: Float,
+                    val header: Header,
+                ) {
+                    /**
+                     * @property iconIcon Header gap between icons.
+                     * @property textIcon Header gap between text and icon.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Header(
+                        val iconIcon: Float,
+                        val textIcon: Float,
+                    )
+                }
+                /**
+                 * @property _24 24pt icon size.
+                 * @property _32 32pt icon size.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Icon(
+                    val _24: Float,
+                    val _32: Float,
+                )
+                @androidx.compose.runtime.Immutable
+                data class Padding(
+                    val cardActions: CardActions,
+                    val header: Header,
+                    val leftContent: LeftContent,
+                    val rightContent: RightContent,
+                ) {
+                    /**
+                     * @property bottom Card actions bottom padding.
+                     * @property horizontal Card actions horizontal padding.
+                     * @property top Card actions top padding.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class CardActions(
+                        val bottom: Float,
+                        val horizontal: Float,
+                        val top: Float,
+                    )
+                    /**
+                     * @property bottom Header bottom padding.
+                     * @property left Header left padding.
+                     * @property right Header right padding.
+                     * @property top Header top padding.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Header(
+                        val bottom: Float,
+                        val left: Float,
+                        val right: Float,
+                        val top: Float,
+                        val content: Content,
+                    ) {
+                        /**
+                         * @property horizontal Header content horizontal padding.
+                         * @property vertical Header content vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Content(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                    }
+                    @androidx.compose.runtime.Immutable
+                    data class LeftContent(
+                        val description: Description,
+                        val descriptionIcon: DescriptionIcon,
+                        val descriptionIconLink: DescriptionIconLink,
+                        val descriptionLink: DescriptionLink,
+                        val textButton: TextButton,
+                    ) {
+                        /**
+                         * @property horizontal description horizontal padding.
+                         * @property vertical description vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Description(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal description-icon horizontal padding.
+                         * @property vertical description-icon vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class DescriptionIcon(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property bottom description-icon-link bottom padding.
+                         * @property left description-icon-link left padding.
+                         * @property right description-icon-link right padding.
+                         * @property top description-icon-link top padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class DescriptionIconLink(
+                            val bottom: Float,
+                            val left: Float,
+                            val right: Float,
+                            val top: Float,
+                        )
+                        /**
+                         * @property bottom description-link bottom padding.
+                         * @property left description-link left padding.
+                         * @property right description-link right padding.
+                         * @property top description-link top padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class DescriptionLink(
+                            val bottom: Float,
+                            val left: Float,
+                            val right: Float,
+                            val top: Float,
+                        )
+                        @androidx.compose.runtime.Immutable
+                        data class TextButton(
+                            val default: Default,
+                            val destructive: Destructive,
+                            val link: Link,
+                        ) {
+                            /**
+                             * @property horizontal default text button horizontal padding.
+                             * @property vertical default text button vertical padding.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class Default(
+                                val horizontal: Float,
+                                val vertical: Float,
+                            )
+                            /**
+                             * @property horizontal destructive text button horizontal padding.
+                             * @property vertical destructive text button vertical padding.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class Destructive(
+                                val horizontal: Float,
+                                val vertical: Float,
+                            )
+                            /**
+                             * @property horizontal link text button horizontal padding.
+                             * @property vertical link text button vertical padding.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class Link(
+                                val horizontal: Float,
+                                val vertical: Float,
+                            )
+                        }
+                    }
+                    @androidx.compose.runtime.Immutable
+                    data class RightContent(
+                        val badgeChevron: BadgeChevron,
+                        val checkmark: Checkmark,
+                        val chevron: Chevron,
+                        val detail: Detail,
+                        val detailBadge: DetailBadge,
+                        val detailChevron: DetailChevron,
+                        val detailIcon24: DetailIcon24,
+                        val detailIcon32: DetailIcon32,
+                        val detailSwitch: DetailSwitch,
+                        val icon: Icon,
+                        val iconChevron: IconChevron,
+                        val sort: Sort,
+                        val switch: Switch,
+                        val tag: Tag,
+                        val valueUnitOfMeasure: ValueUnitOfMeasure,
+                    ) {
+                        /**
+                         * @property horizontal badge-chevron horizontal padding.
+                         * @property vertical badge-chevron vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class BadgeChevron(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal checkmark horizontal padding.
+                         * @property vertical checkmark vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Checkmark(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal chevron horizontal padding.
+                         * @property vertical chevron vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Chevron(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal detail horizontal padding.
+                         * @property right detail right padding.
+                         * @property vertical detail vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Detail(
+                            val horizontal: Float,
+                            val right: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal detail-badge horizontal padding.
+                         * @property right detail-badge right padding.
+                         * @property vertical detail-badge vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class DetailBadge(
+                            val horizontal: Float,
+                            val right: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal detail-chevron horizontal padding.
+                         * @property vertical detail-chevron vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class DetailChevron(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal detail-icon-24 horizontal padding.
+                         * @property right detail-icon-24 right padding.
+                         * @property vertical detail-icon-24 vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class DetailIcon24(
+                            val horizontal: Float,
+                            val right: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal detail-icon-32 horizontal padding.
+                         * @property vertical detail-icon-32 vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class DetailIcon32(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal detail-switch horizontal padding.
+                         * @property right detail-switch right padding.
+                         * @property vertical detail-switch vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class DetailSwitch(
+                            val horizontal: Float,
+                            val right: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property bottom icon bottom padding.
+                         * @property right icon right padding.
+                         * @property top icon top padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Icon(
+                            val bottom: Float,
+                            val right: Float,
+                            val top: Float,
+                        )
+                        /**
+                         * @property horizontal icon-chevron horizontal padding.
+                         * @property vertical icon-chevron vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class IconChevron(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal sort horizontal padding.
+                         * @property vertical sort vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Sort(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property bottom switch bottom padding.
+                         * @property left switch left padding.
+                         * @property right switch right padding.
+                         * @property top switch top padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Switch(
+                            val bottom: Float,
+                            val left: Float,
+                            val right: Float,
+                            val top: Float,
+                        )
+                        /**
+                         * @property bottom tag bottom padding.
+                         * @property left tag left padding.
+                         * @property right tag right padding.
+                         * @property top tag top padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Tag(
+                            val bottom: Float,
+                            val left: Float,
+                            val right: Float,
+                            val top: Float,
+                        )
+                        /**
+                         * @property horizontal value-uom horizontal padding.
+                         * @property right value-uom right padding.
+                         * @property vertical value-uom vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class ValueUnitOfMeasure(
+                            val horizontal: Float,
+                            val right: Float,
+                            val vertical: Float,
+                        )
+                    }
+                }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Typography(
+                val description: Description,
+                val detail: Detail,
+                val footer: Footer,
+                val header: Header,
+                val link: Link,
+                val statusText: StatusText,
+                val subtitle: Subtitle,
+                val title: Title,
+                val unitOfMeasure: UnitOfMeasure,
+                val value: Value,
+            ) {
+                /**
+                 * @property fontFamily description font-family.
+                 * @property fontSize description font-size.
+                 * @property fontWeight description font-weight.
+                 * @property letterSpacing description letter-spacing.
+                 * @property lineHeight description line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Description(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                @androidx.compose.runtime.Immutable
+                data class Detail(
+                    val regular: Regular,
+                    val semibold: Semibold,
+                ) {
+                    /**
+                     * @property fontFamily Detail (regular) font-family.
+                     * @property fontSize Detail (regular) font-size.
+                     * @property fontWeight Detail (regular) font-weight.
+                     * @property letterSpacing Detail (regular) letter-spacing.
+                     * @property lineHeight Detail (regular) line-height.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Regular(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                    /**
+                     * @property fontFamily Detail (semibold) font-family.
+                     * @property fontSize Detail (semibold) font-size.
+                     * @property fontWeight Detail (semibold) font-weight.
+                     * @property letterSpacing Detail (semibold) letter-spacing.
+                     * @property lineHeight Detail (semibold) line-height.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Semibold(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                }
+                /**
+                 * @property fontFamily footer font-family.
+                 * @property fontSize footer font-size.
+                 * @property fontWeight footer font-weight.
+                 * @property letterSpacing footer letter-spacing.
+                 * @property lineHeight footer line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Footer(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily header font-family.
+                 * @property fontSize header font-size.
+                 * @property fontWeight header font-weight.
+                 * @property letterSpacing header letter-spacing.
+                 * @property lineHeight header line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Header(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily link font-family.
+                 * @property fontSize link font-size.
+                 * @property fontWeight link font-weight.
+                 * @property letterSpacing link letter-spacing.
+                 * @property lineHeight link line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Link(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily status-text font-family.
+                 * @property fontSize status-text font-size.
+                 * @property fontWeight status-text font-weight.
+                 * @property letterSpacing status-text letter-spacing.
+                 * @property lineHeight status-text line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class StatusText(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                @androidx.compose.runtime.Immutable
+                data class Subtitle(
+                    val base: Base,
+                    val small: Small,
+                ) {
+                    /**
+                     * @property fontFamily Subtitle (base) font-family.
+                     * @property fontSize Subtitle (base) font-size.
+                     * @property fontWeight Subtitle (base) font-weight.
+                     * @property letterSpacing Subtitle (base) letter-spacing.
+                     * @property lineHeight Subtitle (base) line-height.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Base(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                    /**
+                     * @property fontFamily Subtitle (sm) font-family.
+                     * @property fontSize Subtitle (sm) font-size.
+                     * @property fontWeight Subtitle (sm) font-weight.
+                     * @property letterSpacing Subtitle (sm) letter-spacing.
+                     * @property lineHeight Subtitle (sm) line-height.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Small(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                }
+                @androidx.compose.runtime.Immutable
+                data class Title(
+                    val bold: Bold,
+                    val medium: Medium,
+                    val regular: Regular,
+                ) {
+                    @androidx.compose.runtime.Immutable
+                    data class Bold(
+                        val base: Base,
+                        val compact: Compact,
+                    ) {
+                        /**
+                         * @property fontFamily Title (bold, base) font-family.
+                         * @property fontSize Title (bold, base) font-size.
+                         * @property fontWeight Title (bold, base) font-weight.
+                         * @property letterSpacing Title (bold, base) letter-spacing.
+                         * @property lineHeight Title (bold, base) line-height.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Base(
+                            val fontFamily: String,
+                            val fontSize: Float,
+                            val fontWeight: String,
+                            val letterSpacing: Float,
+                            val lineHeight: Float,
+                        )
+                        /**
+                         * @property fontFamily Title (bold, compact) font-family.
+                         * @property fontSize Title (bold, compact) font-size.
+                         * @property fontWeight Title (bold, compact) font-weight.
+                         * @property letterSpacing Title (bold, compact) letter-spacing.
+                         * @property lineHeight Title (bold, compact) line-height.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Compact(
+                            val fontFamily: String,
+                            val fontSize: Float,
+                            val fontWeight: String,
+                            val letterSpacing: Float,
+                            val lineHeight: Float,
+                        )
+                    }
+                    @androidx.compose.runtime.Immutable
+                    data class Medium(
+                        val base: Base,
+                        val compact: Compact,
+                    ) {
+                        /**
+                         * @property fontFamily Title (medium, base) font-family.
+                         * @property fontSize Title (medium, base) font-size.
+                         * @property fontWeight Title (medium, base) font-weight.
+                         * @property letterSpacing Title (medium, base) letter-spacing.
+                         * @property lineHeight Title (medium, base) line-height.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Base(
+                            val fontFamily: String,
+                            val fontSize: Float,
+                            val fontWeight: String,
+                            val letterSpacing: Float,
+                            val lineHeight: Float,
+                        )
+                        /**
+                         * @property fontFamily Title (medium, compact) font-family.
+                         * @property fontSize Title (medium, compact) font-size.
+                         * @property fontWeight Title (medium, compact) font-weight.
+                         * @property letterSpacing Title (medium, compact) letter-spacing.
+                         * @property lineHeight Title (medium, compact) line-height.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Compact(
+                            val fontFamily: String,
+                            val fontSize: Float,
+                            val fontWeight: String,
+                            val letterSpacing: Float,
+                            val lineHeight: Float,
+                        )
+                    }
+                    @androidx.compose.runtime.Immutable
+                    data class Regular(
+                        val base: Base,
+                        val compact: Compact,
+                    ) {
+                        /**
+                         * @property fontFamily Title (regular, base) font-family.
+                         * @property fontSize Title (regular, base) font-size.
+                         * @property fontWeight Title (regular, base) font-weight.
+                         * @property letterSpacing Title (regular, base) letter-spacing.
+                         * @property lineHeight Title (regular, base) line-height.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Base(
+                            val fontFamily: String,
+                            val fontSize: Float,
+                            val fontWeight: String,
+                            val letterSpacing: Float,
+                            val lineHeight: Float,
+                        )
+                        /**
+                         * @property fontFamily Title (regular, compact) font-family.
+                         * @property fontSize Title (regular, compact) font-size.
+                         * @property fontWeight Title (regular, compact) font-weight.
+                         * @property letterSpacing Title (regular, compact) letter-spacing.
+                         * @property lineHeight Title (regular, compact) line-height.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Compact(
+                            val fontFamily: String,
+                            val fontSize: Float,
+                            val fontWeight: String,
+                            val letterSpacing: Float,
+                            val lineHeight: Float,
+                        )
+                    }
+                }
+                /**
+                 * @property fontFamily uom font-family.
+                 * @property fontSize uom font-size.
+                 * @property fontWeight uom font-weight.
+                 * @property letterSpacing uom letter-spacing.
+                 * @property lineHeight uom line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class UnitOfMeasure(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily value font-family.
+                 * @property fontSize value font-size.
+                 * @property fontWeight value font-weight.
+                 * @property letterSpacing value letter-spacing.
+                 * @property lineHeight value line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Value(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+            }
         }
         @androidx.compose.runtime.Immutable
         data class Indent(
@@ -2509,157 +2509,157 @@ data class Components(
                             val title: Title,
                             val titleControl: TitleControl,
                             val titleIcon: TitleIcon,
-                            val titleSymbol: TitleSymbol,
                             val titleScore: TitleScore,
                             val titleSubtitle: TitleSubtitle,
                             val titleSubtitleControl: TitleSubtitleControl,
                             val titleSubtitleIcon24: TitleSubtitleIcon24,
                             val titleSubtitleIcon32: TitleSubtitleIcon32,
-                            val titleSubtitleSymbol: TitleSubtitleSymbol,
                             val titleSubtitleScore: TitleSubtitleScore,
+                            val titleSubtitleSymbol: TitleSubtitleSymbol,
+                            val titleSymbol: TitleSymbol,
                         ) {
                             /**
-                             * @property left title left padding when default.
-                             * @property top title top padding when default.
-                             * @property right title right padding when default.
                              * @property bottom title bottom padding when default.
+                             * @property left title left padding when default.
+                             * @property right title right padding when default.
+                             * @property top title top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class Title(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-control left padding when default.
-                             * @property top title-control top padding when default.
-                             * @property right title-control right padding when default.
                              * @property bottom title-control bottom padding when default.
+                             * @property left title-control left padding when default.
+                             * @property right title-control right padding when default.
+                             * @property top title-control top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleControl(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-icon left padding when default.
-                             * @property top title-icon top padding when default.
-                             * @property right title-icon right padding when default.
                              * @property bottom title-icon bottom padding when default.
+                             * @property left title-icon left padding when default.
+                             * @property right title-icon right padding when default.
+                             * @property top title-icon top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleIcon(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-symbol left padding when default.
-                             * @property top title-symbol top padding when default.
-                             * @property right title-symbol right padding when default.
-                             * @property bottom title-symbol bottom padding when default.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class TitleSymbol(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
-                                val bottom: Float,
-                            )
-                            /**
-                             * @property left title-score left padding when default.
-                             * @property top title-score top padding when default.
-                             * @property right title-score right padding when default.
                              * @property bottom title-score bottom padding when default.
+                             * @property left title-score left padding when default.
+                             * @property right title-score right padding when default.
+                             * @property top title-score top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleScore(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle left padding when default.
-                             * @property top title-subtitle top padding when default.
-                             * @property right title-subtitle right padding when default.
                              * @property bottom title-subtitle bottom padding when default.
+                             * @property left title-subtitle left padding when default.
+                             * @property right title-subtitle right padding when default.
+                             * @property top title-subtitle top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitle(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-control left padding when default.
-                             * @property top title-subtitle-control top padding when default.
-                             * @property right title-subtitle-control right padding when default.
                              * @property bottom title-subtitle-control bottom padding when default.
+                             * @property left title-subtitle-control left padding when default.
+                             * @property right title-subtitle-control right padding when default.
+                             * @property top title-subtitle-control top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleControl(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-icon-24 left padding when default.
-                             * @property top title-subtitle-icon-24 top padding when default.
-                             * @property right title-subtitle-icon-24 right padding when default.
                              * @property bottom title-subtitle-icon-24 bottom padding when default.
+                             * @property left title-subtitle-icon-24 left padding when default.
+                             * @property right title-subtitle-icon-24 right padding when default.
+                             * @property top title-subtitle-icon-24 top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleIcon24(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-icon-32 left padding when default.
-                             * @property top title-subtitle-icon-32 top padding when default.
-                             * @property right title-subtitle-icon-32 right padding when default.
                              * @property bottom title-subtitle-icon-32 bottom padding when default.
+                             * @property left title-subtitle-icon-32 left padding when default.
+                             * @property right title-subtitle-icon-32 right padding when default.
+                             * @property top title-subtitle-icon-32 top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleIcon32(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-symbol left padding when default.
-                             * @property top title-subtitle-symbol top padding when default.
-                             * @property right title-subtitle-symbol right padding when default.
-                             * @property bottom title-subtitle-symbol bottom padding when default.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class TitleSubtitleSymbol(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
-                                val bottom: Float,
-                            )
-                            /**
-                             * @property left title-subtitle-score left padding when default.
-                             * @property top title-subtitle-score top padding when default.
-                             * @property right title-subtitle-score right padding when default.
                              * @property bottom title-subtitle-score bottom padding when default.
+                             * @property left title-subtitle-score left padding when default.
+                             * @property right title-subtitle-score right padding when default.
+                             * @property top title-subtitle-score top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleScore(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
+                            )
+                            /**
+                             * @property bottom title-subtitle-symbol bottom padding when default.
+                             * @property left title-subtitle-symbol left padding when default.
+                             * @property right title-subtitle-symbol right padding when default.
+                             * @property top title-subtitle-symbol top padding when default.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class TitleSubtitleSymbol(
+                                val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
+                            )
+                            /**
+                             * @property bottom title-symbol bottom padding when default.
+                             * @property left title-symbol left padding when default.
+                             * @property right title-symbol right padding when default.
+                             * @property top title-symbol top padding when default.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class TitleSymbol(
+                                val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                         }
                     }
@@ -2682,157 +2682,157 @@ data class Components(
                             val title: Title,
                             val titleControl: TitleControl,
                             val titleIcon: TitleIcon,
-                            val titleSymbol: TitleSymbol,
                             val titleScore: TitleScore,
                             val titleSubtitle: TitleSubtitle,
                             val titleSubtitleControl: TitleSubtitleControl,
                             val titleSubtitleIcon24: TitleSubtitleIcon24,
                             val titleSubtitleIcon32: TitleSubtitleIcon32,
-                            val titleSubtitleSymbol: TitleSubtitleSymbol,
                             val titleSubtitleScore: TitleSubtitleScore,
+                            val titleSubtitleSymbol: TitleSubtitleSymbol,
+                            val titleSymbol: TitleSymbol,
                         ) {
                             /**
-                             * @property left title left padding when indented.
-                             * @property top title top padding when indented.
-                             * @property right title right padding when indented.
                              * @property bottom title bottom padding when indented.
+                             * @property left title left padding when indented.
+                             * @property right title right padding when indented.
+                             * @property top title top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class Title(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-control left padding when indented.
-                             * @property top title-control top padding when indented.
-                             * @property right title-control right padding when indented.
                              * @property bottom title-control bottom padding when indented.
+                             * @property left title-control left padding when indented.
+                             * @property right title-control right padding when indented.
+                             * @property top title-control top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleControl(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-icon left padding when indented.
-                             * @property top title-icon top padding when indented.
-                             * @property right title-icon right padding when indented.
                              * @property bottom title-icon bottom padding when indented.
+                             * @property left title-icon left padding when indented.
+                             * @property right title-icon right padding when indented.
+                             * @property top title-icon top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleIcon(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-symbol left padding when indented.
-                             * @property top title-symbol top padding when indented.
-                             * @property right title-symbol right padding when indented.
-                             * @property bottom title-symbol bottom padding when indented.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class TitleSymbol(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
-                                val bottom: Float,
-                            )
-                            /**
-                             * @property left title-score left padding when indented.
-                             * @property top title-score top padding when indented.
-                             * @property right title-score right padding when indented.
                              * @property bottom title-score bottom padding when indented.
+                             * @property left title-score left padding when indented.
+                             * @property right title-score right padding when indented.
+                             * @property top title-score top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleScore(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle left padding when indented.
-                             * @property top title-subtitle top padding when indented.
-                             * @property right title-subtitle right padding when indented.
                              * @property bottom title-subtitle bottom padding when indented.
+                             * @property left title-subtitle left padding when indented.
+                             * @property right title-subtitle right padding when indented.
+                             * @property top title-subtitle top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitle(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-control left padding when indented.
-                             * @property top title-subtitle-control top padding when indented.
-                             * @property right title-subtitle-control right padding when indented.
                              * @property bottom title-subtitle-control bottom padding when indented.
+                             * @property left title-subtitle-control left padding when indented.
+                             * @property right title-subtitle-control right padding when indented.
+                             * @property top title-subtitle-control top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleControl(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-icon-24 left padding when indented.
-                             * @property top title-subtitle-icon-24 top padding when indented.
-                             * @property right title-subtitle-icon-24 right padding when indented.
                              * @property bottom title-subtitle-icon-24 bottom padding when indented.
+                             * @property left title-subtitle-icon-24 left padding when indented.
+                             * @property right title-subtitle-icon-24 right padding when indented.
+                             * @property top title-subtitle-icon-24 top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleIcon24(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-icon-32 left padding when indented.
-                             * @property top title-subtitle-icon-32 top padding when indented.
-                             * @property right title-subtitle-icon-32 right padding when indented.
                              * @property bottom title-subtitle-icon-32 bottom padding when indented.
+                             * @property left title-subtitle-icon-32 left padding when indented.
+                             * @property right title-subtitle-icon-32 right padding when indented.
+                             * @property top title-subtitle-icon-32 top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleIcon32(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-symbol left padding when indented.
-                             * @property top title-subtitle-symbol top padding when indented.
-                             * @property right title-subtitle-symbol right padding when indented.
-                             * @property bottom title-subtitle-symbol bottom padding when indented.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class TitleSubtitleSymbol(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
-                                val bottom: Float,
-                            )
-                            /**
-                             * @property left title-subtitle-score left padding when indented.
-                             * @property top title-subtitle-score top padding when indented.
-                             * @property right title-subtitle-score right padding when indented.
                              * @property bottom title-subtitle-score bottom padding when indented.
+                             * @property left title-subtitle-score left padding when indented.
+                             * @property right title-subtitle-score right padding when indented.
+                             * @property top title-subtitle-score top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleScore(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
+                            )
+                            /**
+                             * @property bottom title-subtitle-symbol bottom padding when indented.
+                             * @property left title-subtitle-symbol left padding when indented.
+                             * @property right title-subtitle-symbol right padding when indented.
+                             * @property top title-subtitle-symbol top padding when indented.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class TitleSubtitleSymbol(
+                                val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
+                            )
+                            /**
+                             * @property bottom title-symbol bottom padding when indented.
+                             * @property left title-symbol left padding when indented.
+                             * @property right title-symbol right padding when indented.
+                             * @property top title-symbol top padding when indented.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class TitleSymbol(
+                                val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                         }
                     }
@@ -2842,94 +2842,77 @@ data class Components(
     }
     @androidx.compose.runtime.Immutable
     data class Chips(
-        val type: Type,
         val base: Base,
+        val type: Type,
     ) {
         @androidx.compose.runtime.Immutable
-        data class Type(
-            val subgroup: Subgroup,
-            val primary: Primary,
-            val secondary: Secondary,
+        data class Base(
+            val opacity: Opacity,
+            val size: Size,
         ) {
+            /**
+             * @property disabled chips: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed chips: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             */
             @androidx.compose.runtime.Immutable
-            data class Subgroup(
-                val color: Color,
-                val size: Size,
-                val shape: Shape,
+            data class Opacity(
+                val disabled: Float,
+                val pressed: Float,
+            )
+            @androidx.compose.runtime.Immutable
+            data class Size(
+                val gap: Gap,
             ) {
                 /**
-                 * @property surface Subgroup surface fill.
+                 * @property buttonChip chips: size › gap › btn chip. Applies to all variants.
+                 * @property group chips: size › gap › group. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val text: Text,
-                ) {
-                    /**
-                     * @property label Subgroup label colour.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Text(
-                        val label: androidx.compose.ui.graphics.Color,
-                    )
-                }
+                data class Gap(
+                    val buttonChip: Float,
+                    val group: Float,
+                )
+            }
+        }
+        @androidx.compose.runtime.Immutable
+        data class Type(
+            val primary: Primary,
+            val secondary: Secondary,
+            val subgroup: Subgroup,
+        ) {
+            @androidx.compose.runtime.Immutable
+            data class Primary(
+                val shape: Shape,
+                val size: Size,
+                val state: State,
+                val typography: Typography,
+            ) {
                 /**
-                 * @property gap Gap between subgroup items.
+                 * @property radius Container corner radius for a primary chip.
                  */
-                @androidx.compose.runtime.Immutable
-                data class Size(
-                    val gap: Float,
-                    val padding: Padding,
-                ) {
-                    /**
-                     * @property vertical Subgroup vertical padding.
-                     * @property left Subgroup left padding.
-                     * @property right Subgroup right padding.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Padding(
-                        val vertical: Float,
-                        val left: Float,
-                        val right: Float,
-                    )
-                }
                 @androidx.compose.runtime.Immutable
                 data class Shape(
-                    val radius: Radius,
+                    val radius: Float,
+                )
+                @androidx.compose.runtime.Immutable
+                data class Size(
+                    val padding: Padding,
                 ) {
                     @androidx.compose.runtime.Immutable
-                    data class Radius(
-                        val bottom: Bottom,
-                        val top: Top,
+                    data class Padding(
+                        val container: Container,
                     ) {
                         /**
-                         * @property left Subgroup bottom left corner radius.
-                         * @property right Subgroup bottom right corner radius.
+                         * @property horizontal Container horizontal padding for a primary chip.
+                         * @property vertical Container vertical padding for a primary chip.
                          */
                         @androidx.compose.runtime.Immutable
-                        data class Bottom(
-                            val left: Float,
-                            val right: Float,
-                        )
-                        /**
-                         * @property left Subgroup top left corner radius.
-                         * @property right Subgroup top right corner radius.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Top(
-                            val left: Float,
-                            val right: Float,
+                        data class Container(
+                            val horizontal: Float,
+                            val vertical: Float,
                         )
                     }
                 }
-            }
-            @androidx.compose.runtime.Immutable
-            data class Primary(
-                val state: State,
-                val typography: Typography,
-                val size: Size,
-                val shape: Shape,
-            ) {
                 @androidx.compose.runtime.Immutable
                 data class State(
                     val selected: Selected,
@@ -2984,20 +2967,35 @@ data class Components(
                 ) {
                     /**
                      * @property fontFamily primary chip label font-family.
-                     * @property fontWeight primary chip label font-weight.
                      * @property fontSize primary chip label font-size.
-                     * @property lineHeight primary chip label line-height.
+                     * @property fontWeight primary chip label font-weight.
                      * @property letterSpacing primary chip label letter-spacing.
+                     * @property lineHeight primary chip label line-height.
                      */
                     @androidx.compose.runtime.Immutable
                     data class Label(
                         val fontFamily: String,
-                        val fontWeight: String,
                         val fontSize: Float,
-                        val lineHeight: Float,
+                        val fontWeight: String,
                         val letterSpacing: Float,
+                        val lineHeight: Float,
                     )
                 }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Secondary(
+                val shape: Shape,
+                val size: Size,
+                val state: State,
+                val typography: Typography,
+            ) {
+                /**
+                 * @property radius Container corner radius for a secondary chip.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Shape(
+                    val radius: Float,
+                )
                 @androidx.compose.runtime.Immutable
                 data class Size(
                     val padding: Padding,
@@ -3005,33 +3003,28 @@ data class Components(
                     @androidx.compose.runtime.Immutable
                     data class Padding(
                         val container: Container,
+                        val label: Label,
                     ) {
                         /**
-                         * @property horizontal Container horizontal padding for a primary chip.
-                         * @property vertical Container vertical padding for a primary chip.
+                         * @property horizontal Container horizontal padding for a secondary chip.
+                         * @property vertical Container vertical padding for a secondary chip.
                          */
                         @androidx.compose.runtime.Immutable
                         data class Container(
                             val horizontal: Float,
                             val vertical: Float,
                         )
+                        /**
+                         * @property horizontal Secondary chip label horizontal padding.
+                         * @property vertical Secondary chip label vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Label(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
                     }
                 }
-                /**
-                 * @property radius Container corner radius for a primary chip.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Shape(
-                    val radius: Float,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Secondary(
-                val state: State,
-                val typography: Typography,
-                val size: Size,
-                val shape: Shape,
-            ) {
                 @androidx.compose.runtime.Immutable
                 data class State(
                     val selected: Selected,
@@ -3042,13 +3035,13 @@ data class Components(
                         val color: Color,
                     ) {
                         /**
-                         * @property surface Surface fill for a selected secondary chip.
                          * @property icon Icon colour for a selected secondary chip.
+                         * @property surface Surface fill for a selected secondary chip.
                          */
                         @androidx.compose.runtime.Immutable
                         data class Color(
-                            val surface: androidx.compose.ui.graphics.Color,
                             val icon: androidx.compose.ui.graphics.Color,
+                            val surface: androidx.compose.ui.graphics.Color,
                             val text: Text,
                         ) {
                             /**
@@ -3065,13 +3058,13 @@ data class Components(
                         val color: Color,
                     ) {
                         /**
-                         * @property surface Surface fill for a unselected secondary chip.
                          * @property icon Icon colour for a unselected secondary chip.
+                         * @property surface Surface fill for a unselected secondary chip.
                          */
                         @androidx.compose.runtime.Immutable
                         data class Color(
-                            val surface: androidx.compose.ui.graphics.Color,
                             val icon: androidx.compose.ui.graphics.Color,
+                            val surface: androidx.compose.ui.graphics.Color,
                             val text: Text,
                         ) {
                             /**
@@ -3090,86 +3083,93 @@ data class Components(
                 ) {
                     /**
                      * @property fontFamily secondary chip label font-family.
-                     * @property fontWeight secondary chip label font-weight.
                      * @property fontSize secondary chip label font-size.
-                     * @property lineHeight secondary chip label line-height.
+                     * @property fontWeight secondary chip label font-weight.
                      * @property letterSpacing secondary chip label letter-spacing.
+                     * @property lineHeight secondary chip label line-height.
                      */
                     @androidx.compose.runtime.Immutable
                     data class Label(
                         val fontFamily: String,
-                        val fontWeight: String,
                         val fontSize: Float,
-                        val lineHeight: Float,
+                        val fontWeight: String,
                         val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Subgroup(
+                val color: Color,
+                val shape: Shape,
+                val size: Size,
+            ) {
+                /**
+                 * @property surface Subgroup surface fill.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: Text,
+                ) {
+                    /**
+                     * @property label Subgroup label colour.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Text(
+                        val label: androidx.compose.ui.graphics.Color,
                     )
                 }
                 @androidx.compose.runtime.Immutable
-                data class Size(
-                    val padding: Padding,
+                data class Shape(
+                    val radius: Radius,
                 ) {
                     @androidx.compose.runtime.Immutable
-                    data class Padding(
-                        val label: Label,
-                        val container: Container,
+                    data class Radius(
+                        val bottom: Bottom,
+                        val top: Top,
                     ) {
                         /**
-                         * @property horizontal Secondary chip label horizontal padding.
-                         * @property vertical Secondary chip label vertical padding.
+                         * @property left Subgroup bottom left corner radius.
+                         * @property right Subgroup bottom right corner radius.
                          */
                         @androidx.compose.runtime.Immutable
-                        data class Label(
-                            val horizontal: Float,
-                            val vertical: Float,
+                        data class Bottom(
+                            val left: Float,
+                            val right: Float,
                         )
                         /**
-                         * @property horizontal Container horizontal padding for a secondary chip.
-                         * @property vertical Container vertical padding for a secondary chip.
+                         * @property left Subgroup top left corner radius.
+                         * @property right Subgroup top right corner radius.
                          */
                         @androidx.compose.runtime.Immutable
-                        data class Container(
-                            val horizontal: Float,
-                            val vertical: Float,
+                        data class Top(
+                            val left: Float,
+                            val right: Float,
                         )
                     }
                 }
                 /**
-                 * @property radius Container corner radius for a secondary chip.
+                 * @property gap Gap between subgroup items.
                  */
                 @androidx.compose.runtime.Immutable
-                data class Shape(
-                    val radius: Float,
-                )
+                data class Size(
+                    val gap: Float,
+                    val padding: Padding,
+                ) {
+                    /**
+                     * @property left Subgroup left padding.
+                     * @property right Subgroup right padding.
+                     * @property vertical Subgroup vertical padding.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Padding(
+                        val left: Float,
+                        val right: Float,
+                        val vertical: Float,
+                    )
+                }
             }
-        }
-        @androidx.compose.runtime.Immutable
-        data class Base(
-            val size: Size,
-            val opacity: Opacity,
-        ) {
-            @androidx.compose.runtime.Immutable
-            data class Size(
-                val gap: Gap,
-            ) {
-                /**
-                 * @property group chips: size › gap › group. Applies to all variants.
-                 * @property buttonChip chips: size › gap › btn chip. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Gap(
-                    val group: Float,
-                    val buttonChip: Float,
-                )
-            }
-            /**
-             * @property disabled chips: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             * @property pressed chips: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
-            @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val disabled: Float,
-                val pressed: Float,
-            )
         }
     }
     @androidx.compose.runtime.Immutable
@@ -3179,44 +3179,79 @@ data class Components(
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val size: Size,
-            val shape: Shape,
             val opacity: Opacity,
+            val shape: Shape,
+            val size: Size,
         ) {
             @androidx.compose.runtime.Immutable
             data class Color(
-                val surface: Surface,
                 val border: Border,
+                val surface: Surface,
             ) {
                 /**
+                 * @property focus Container border colour (focus). Applies to all containers.
+                 * @property primary Container border colour (primary). Applies to all containers.
+                 * @property secondary Container border colour (secondary). Applies to all containers.
+                 * @property selected Container border colour (selected). Applies to all containers.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Border(
+                    val focus: androidx.compose.ui.graphics.Color,
+                    val primary: androidx.compose.ui.graphics.Color,
+                    val secondary: androidx.compose.ui.graphics.Color,
+                    val selected: androidx.compose.ui.graphics.Color,
+                )
+                /**
                  * @property base Container surface fill (base). Applies to all containers.
-                 * @property strong Container surface fill (strong). Applies to all containers.
                  * @property emphasis Container surface fill (emphasis). Applies to all containers.
-                 * @property muted Container surface fill (muted). Applies to all containers.
-                 * @property subtle Container surface fill (subtle). Applies to all containers.
                  * @property inverse Container surface fill (inverse). Applies to all containers.
+                 * @property muted Container surface fill (muted). Applies to all containers.
+                 * @property strong Container surface fill (strong). Applies to all containers.
+                 * @property subtle Container surface fill (subtle). Applies to all containers.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Surface(
                     val base: androidx.compose.ui.graphics.Color,
-                    val strong: androidx.compose.ui.graphics.Color,
                     val emphasis: androidx.compose.ui.graphics.Color,
-                    val muted: androidx.compose.ui.graphics.Color,
-                    val subtle: androidx.compose.ui.graphics.Color,
                     val inverse: androidx.compose.ui.graphics.Color,
+                    val muted: androidx.compose.ui.graphics.Color,
+                    val strong: androidx.compose.ui.graphics.Color,
+                    val subtle: androidx.compose.ui.graphics.Color,
                 )
+            }
+            /**
+             * @property _0 Container opacity 0%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property _100 Container opacity 100%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property _30 Container opacity 30%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property _50 Container opacity 50%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property _60 Container opacity 60%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             */
+            @androidx.compose.runtime.Immutable
+            data class Opacity(
+                val _0: Float,
+                val _100: Float,
+                val _30: Float,
+                val _50: Float,
+                val _60: Float,
+            )
+            /**
+             * @property radius Container corner radius.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val radius: Float,
+                val borderWidth: BorderWidth,
+            ) {
                 /**
-                 * @property primary Container border colour (primary). Applies to all containers.
-                 * @property secondary Container border colour (secondary). Applies to all containers.
-                 * @property selected Container border colour (selected). Applies to all containers.
-                 * @property focus Container border colour (focus). Applies to all containers.
+                 * @property default Container border width (default).
+                 * @property medium Container border width (md).
+                 * @property small Container border width (sm).
                  */
                 @androidx.compose.runtime.Immutable
-                data class Border(
-                    val primary: androidx.compose.ui.graphics.Color,
-                    val secondary: androidx.compose.ui.graphics.Color,
-                    val selected: androidx.compose.ui.graphics.Color,
-                    val focus: androidx.compose.ui.graphics.Color,
+                data class BorderWidth(
+                    val default: Float,
+                    val medium: Float,
+                    val small: Float,
                 )
             }
             @androidx.compose.runtime.Immutable
@@ -3233,48 +3268,33 @@ data class Components(
                     val vertical: Float,
                 )
             }
-            /**
-             * @property radius Container corner radius.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Float,
-                val borderWidth: BorderWidth,
-            ) {
-                /**
-                 * @property default Container border width (default).
-                 * @property small Container border width (sm).
-                 * @property medium Container border width (md).
-                 */
-                @androidx.compose.runtime.Immutable
-                data class BorderWidth(
-                    val default: Float,
-                    val small: Float,
-                    val medium: Float,
-                )
-            }
-            /**
-             * @property _100 Container opacity 100%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             * @property _60 Container opacity 60%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             * @property _50 Container opacity 50%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             * @property _30 Container opacity 30%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             * @property _0 Container opacity 0%. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
-            @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val _100: Float,
-                val _60: Float,
-                val _50: Float,
-                val _30: Float,
-                val _0: Float,
-            )
         }
     }
     @androidx.compose.runtime.Immutable
     data class Controls(
-        val type: Type,
         val base: Base,
+        val type: Type,
     ) {
+        @androidx.compose.runtime.Immutable
+        data class Base(
+            val opacity: Opacity,
+            val size: Size,
+        ) {
+            /**
+             * @property disabled Opacity when the control is disabled. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             */
+            @androidx.compose.runtime.Immutable
+            data class Opacity(
+                val disabled: Float,
+            )
+            /**
+             * @property icon Control icon box size. Applies to checkbox and radio.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Size(
+                val icon: Float,
+            )
+        }
         @androidx.compose.runtime.Immutable
         data class Type(
             val checkbox: Checkbox,
@@ -3351,26 +3371,6 @@ data class Components(
                 }
             }
         }
-        @androidx.compose.runtime.Immutable
-        data class Base(
-            val size: Size,
-            val opacity: Opacity,
-        ) {
-            /**
-             * @property icon Control icon box size. Applies to checkbox and radio.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Size(
-                val icon: Float,
-            )
-            /**
-             * @property disabled Opacity when the control is disabled. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
-            @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val disabled: Float,
-            )
-        }
     }
     @androidx.compose.runtime.Immutable
     data class Dividers(
@@ -3397,134 +3397,42 @@ data class Components(
                 val inset: Inset,
             ) {
                 /**
+                 * @property extraExtraExtraExtraExtraLarge Divider inset (5xl).
+                 * @property extraExtraExtraExtraLarge Divider inset (4xl).
+                 * @property extraExtraExtraLarge Divider inset (3xl).
+                 * @property extraExtraLarge Divider inset (2xl).
+                 * @property extraLarge Divider inset (xl).
+                 * @property large Divider inset (lg).
+                 * @property medium Divider inset (md).
                  * @property none Divider inset (none).
                  * @property small Divider inset (sm).
-                 * @property medium Divider inset (md).
-                 * @property large Divider inset (lg).
-                 * @property extraLarge Divider inset (xl).
-                 * @property extraExtraLarge Divider inset (2xl).
-                 * @property extraExtraExtraLarge Divider inset (3xl).
-                 * @property extraExtraExtraExtraLarge Divider inset (4xl).
-                 * @property extraExtraExtraExtraExtraLarge Divider inset (5xl).
                  */
                 @androidx.compose.runtime.Immutable
                 data class Inset(
+                    val extraExtraExtraExtraExtraLarge: Float,
+                    val extraExtraExtraExtraLarge: Float,
+                    val extraExtraExtraLarge: Float,
+                    val extraExtraLarge: Float,
+                    val extraLarge: Float,
+                    val large: Float,
+                    val medium: Float,
                     val none: Float,
                     val small: Float,
-                    val medium: Float,
-                    val large: Float,
-                    val extraLarge: Float,
-                    val extraExtraLarge: Float,
-                    val extraExtraExtraLarge: Float,
-                    val extraExtraExtraExtraLarge: Float,
-                    val extraExtraExtraExtraExtraLarge: Float,
                 )
             }
         }
     }
     @androidx.compose.runtime.Immutable
     data class InfoBoxes(
-        val emphasis: Emphasis,
         val base: Base,
+        val emphasis: Emphasis,
     ) {
         @androidx.compose.runtime.Immutable
-        data class Emphasis(
-            val high: High,
-            val low: Low,
-        ) {
-            @androidx.compose.runtime.Immutable
-            data class High(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Surface fill for a high-emphasis info box.
-                 * @property icon Icon colour for a high-emphasis info box.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val icon: androidx.compose.ui.graphics.Color,
-                    val text: Text,
-                ) {
-                    /**
-                     * @property title Title colour for a high-emphasis info box.
-                     * @property message Message colour for a high-emphasis info box.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Text(
-                        val title: androidx.compose.ui.graphics.Color,
-                        val message: androidx.compose.ui.graphics.Color,
-                    )
-                }
-            }
-            @androidx.compose.runtime.Immutable
-            data class Low(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Surface fill for a low-emphasis info box.
-                 * @property icon Icon colour for a low-emphasis info box.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val icon: androidx.compose.ui.graphics.Color,
-                    val text: Text,
-                ) {
-                    /**
-                     * @property title Title colour for a low-emphasis info box.
-                     * @property message Message colour for a low-emphasis info box.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Text(
-                        val title: androidx.compose.ui.graphics.Color,
-                        val message: androidx.compose.ui.graphics.Color,
-                    )
-                }
-            }
-        }
-        @androidx.compose.runtime.Immutable
         data class Base(
-            val typography: Typography,
             val shape: Shape,
             val size: Size,
+            val typography: Typography,
         ) {
-            @androidx.compose.runtime.Immutable
-            data class Typography(
-                val title: Title,
-                val body: Body,
-            ) {
-                /**
-                 * @property fontFamily Info box title font-family.
-                 * @property fontWeight Info box title font-weight.
-                 * @property fontSize Info box title font-size.
-                 * @property lineHeight Info box title line-height.
-                 * @property letterSpacing Info box title letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Title(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily Info box body font-family.
-                 * @property fontWeight Info box body font-weight.
-                 * @property fontSize Info box body font-size.
-                 * @property lineHeight Info box body line-height.
-                 * @property letterSpacing Info box body letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Body(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-            }
             /**
              * @property radius Info box corner radius.
              */
@@ -3565,58 +3473,184 @@ data class Components(
                     )
                 }
             }
+            @androidx.compose.runtime.Immutable
+            data class Typography(
+                val body: Body,
+                val title: Title,
+            ) {
+                /**
+                 * @property fontFamily Info box body font-family.
+                 * @property fontSize Info box body font-size.
+                 * @property fontWeight Info box body font-weight.
+                 * @property letterSpacing Info box body letter-spacing.
+                 * @property lineHeight Info box body line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Body(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily Info box title font-family.
+                 * @property fontSize Info box title font-size.
+                 * @property fontWeight Info box title font-weight.
+                 * @property letterSpacing Info box title letter-spacing.
+                 * @property lineHeight Info box title line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Title(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+            }
+        }
+        @androidx.compose.runtime.Immutable
+        data class Emphasis(
+            val high: High,
+            val low: Low,
+        ) {
+            @androidx.compose.runtime.Immutable
+            data class High(
+                val color: Color,
+            ) {
+                /**
+                 * @property icon Icon colour for a high-emphasis info box.
+                 * @property surface Surface fill for a high-emphasis info box.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val icon: androidx.compose.ui.graphics.Color,
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: Text,
+                ) {
+                    /**
+                     * @property message Message colour for a high-emphasis info box.
+                     * @property title Title colour for a high-emphasis info box.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Text(
+                        val message: androidx.compose.ui.graphics.Color,
+                        val title: androidx.compose.ui.graphics.Color,
+                    )
+                }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Low(
+                val color: Color,
+            ) {
+                /**
+                 * @property icon Icon colour for a low-emphasis info box.
+                 * @property surface Surface fill for a low-emphasis info box.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val icon: androidx.compose.ui.graphics.Color,
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: Text,
+                ) {
+                    /**
+                     * @property message Message colour for a low-emphasis info box.
+                     * @property title Title colour for a low-emphasis info box.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Text(
+                        val message: androidx.compose.ui.graphics.Color,
+                        val title: androidx.compose.ui.graphics.Color,
+                    )
+                }
+            }
         }
     }
     @androidx.compose.runtime.Immutable
     data class Lists(
         val base: Base,
-        val size: Size,
         val indent: Indent,
+        val size: Size,
     ) {
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val typography: Typography,
-            val size: Size,
             val opacity: Opacity,
+            val size: Size,
+            val typography: Typography,
         ) {
             @androidx.compose.runtime.Immutable
             data class Color(
-                val text: Text,
                 val icon: Icon,
+                val text: Text,
             ) {
                 /**
-                 * @property value value text colour.
-                 * @property unitOfMeasure uom text colour.
+                 * @property accent Accent icon colour.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Icon(
+                    val accent: androidx.compose.ui.graphics.Color,
+                    val action: Action,
+                ) {
+                    @androidx.compose.runtime.Immutable
+                    data class Action(
+                        val base: Base,
+                        val emphasized: Emphasized,
+                        val link: Link,
+                    ) {
+                        /**
+                         * @property default Action icon colour (base, default).
+                         * @property hover Action icon colour (base, hover).
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Base(
+                            val default: androidx.compose.ui.graphics.Color,
+                            val hover: androidx.compose.ui.graphics.Color,
+                        )
+                        /**
+                         * @property default Action icon colour (emphasized, default).
+                         * @property hover Action icon colour (emphasized, hover).
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Emphasized(
+                            val default: androidx.compose.ui.graphics.Color,
+                            val hover: androidx.compose.ui.graphics.Color,
+                        )
+                        /**
+                         * @property default Action icon colour (link, default).
+                         * @property hover Action icon colour (link, hover).
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Link(
+                            val default: androidx.compose.ui.graphics.Color,
+                            val hover: androidx.compose.ui.graphics.Color,
+                        )
+                    }
+                }
+                /**
+                 * @property description description text colour.
                  * @property header header text colour.
                  * @property sensorId sensor-id text colour.
                  * @property subtitle subtitle text colour.
                  * @property textCentered text-centered text colour.
-                 * @property description description text colour.
+                 * @property unitOfMeasure uom text colour.
+                 * @property value value text colour.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Text(
-                    val value: androidx.compose.ui.graphics.Color,
-                    val unitOfMeasure: androidx.compose.ui.graphics.Color,
+                    val description: androidx.compose.ui.graphics.Color,
                     val header: androidx.compose.ui.graphics.Color,
                     val sensorId: androidx.compose.ui.graphics.Color,
                     val subtitle: androidx.compose.ui.graphics.Color,
                     val textCentered: androidx.compose.ui.graphics.Color,
-                    val description: androidx.compose.ui.graphics.Color,
-                    val title: Title,
+                    val unitOfMeasure: androidx.compose.ui.graphics.Color,
+                    val value: androidx.compose.ui.graphics.Color,
                     val detail: Detail,
                     val link: Link,
                     val textButton: TextButton,
+                    val title: Title,
                 ) {
-                    /**
-                     * @property base Title text colour (base).
-                     * @property muted Title text colour (muted).
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Title(
-                        val base: androidx.compose.ui.graphics.Color,
-                        val muted: androidx.compose.ui.graphics.Color,
-                    )
                     /**
                      * @property base Detail text colour (base).
                      * @property strong Detail text colour (strong).
@@ -3669,341 +3703,30 @@ data class Components(
                             val hover: androidx.compose.ui.graphics.Color,
                         )
                     }
-                }
-                /**
-                 * @property accent Accent icon colour.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Icon(
-                    val accent: androidx.compose.ui.graphics.Color,
-                    val action: Action,
-                ) {
+                    /**
+                     * @property base Title text colour (base).
+                     * @property muted Title text colour (muted).
+                     */
                     @androidx.compose.runtime.Immutable
-                    data class Action(
-                        val base: Base,
-                        val emphasized: Emphasized,
-                        val link: Link,
-                    ) {
-                        /**
-                         * @property default Action icon colour (base, default).
-                         * @property hover Action icon colour (base, hover).
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Base(
-                            val default: androidx.compose.ui.graphics.Color,
-                            val hover: androidx.compose.ui.graphics.Color,
-                        )
-                        /**
-                         * @property default Action icon colour (emphasized, default).
-                         * @property hover Action icon colour (emphasized, hover).
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Emphasized(
-                            val default: androidx.compose.ui.graphics.Color,
-                            val hover: androidx.compose.ui.graphics.Color,
-                        )
-                        /**
-                         * @property default Action icon colour (link, default).
-                         * @property hover Action icon colour (link, hover).
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Link(
-                            val default: androidx.compose.ui.graphics.Color,
-                            val hover: androidx.compose.ui.graphics.Color,
-                        )
-                    }
+                    data class Title(
+                        val base: androidx.compose.ui.graphics.Color,
+                        val muted: androidx.compose.ui.graphics.Color,
+                    )
                 }
             }
+            /**
+             * @property inverted Inverted row opacity. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             */
             @androidx.compose.runtime.Immutable
-            data class Typography(
-                val detail: Detail,
-                val value: Value,
-                val unitOfMeasure: UnitOfMeasure,
-                val title: Title,
-                val subtitle: Subtitle,
-                val textButton: TextButton,
-                val description: Description,
-                val link: Link,
-                val sensorId: SensorId,
-                val textCentered: TextCentered,
-                val header: Header,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class Detail(
-                    val default: Default,
-                    val medium: Medium,
-                ) {
-                    /**
-                     * @property fontFamily Detail (default) font-family.
-                     * @property fontWeight Detail (default) font-weight.
-                     * @property fontSize Detail (default) font-size.
-                     * @property lineHeight Detail (default) line-height.
-                     * @property letterSpacing Detail (default) letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Default(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                    /**
-                     * @property fontFamily Detail (medium) font-family.
-                     * @property fontWeight Detail (medium) font-weight.
-                     * @property fontSize Detail (medium) font-size.
-                     * @property lineHeight Detail (medium) line-height.
-                     * @property letterSpacing Detail (medium) letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Medium(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                }
-                /**
-                 * @property fontFamily value font-family.
-                 * @property fontWeight value font-weight.
-                 * @property fontSize value font-size.
-                 * @property lineHeight value line-height.
-                 * @property letterSpacing value letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Value(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily uom font-family.
-                 * @property fontWeight uom font-weight.
-                 * @property fontSize uom font-size.
-                 * @property lineHeight uom line-height.
-                 * @property letterSpacing uom letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class UnitOfMeasure(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                @androidx.compose.runtime.Immutable
-                data class Title(
-                    val regular: Regular,
-                    val medium: Medium,
-                    val semibold: Semibold,
-                ) {
-                    /**
-                     * @property fontFamily Title (regular) font-family.
-                     * @property fontWeight Title (regular) font-weight.
-                     * @property fontSize Title (regular) font-size.
-                     * @property lineHeight Title (regular) line-height.
-                     * @property letterSpacing Title (regular) letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Regular(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                    /**
-                     * @property fontFamily Title (medium) font-family.
-                     * @property fontWeight Title (medium) font-weight.
-                     * @property fontSize Title (medium) font-size.
-                     * @property lineHeight Title (medium) line-height.
-                     * @property letterSpacing Title (medium) letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Medium(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                    /**
-                     * @property fontFamily Title (semibold) font-family.
-                     * @property fontWeight Title (semibold) font-weight.
-                     * @property fontSize Title (semibold) font-size.
-                     * @property lineHeight Title (semibold) line-height.
-                     * @property letterSpacing Title (semibold) letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Semibold(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                }
-                @androidx.compose.runtime.Immutable
-                data class Subtitle(
-                    val small: Small,
-                    val medium: Medium,
-                    val large: Large,
-                ) {
-                    /**
-                     * @property fontFamily Subtitle (sm) font-family.
-                     * @property fontWeight Subtitle (sm) font-weight.
-                     * @property fontSize Subtitle (sm) font-size.
-                     * @property lineHeight Subtitle (sm) line-height.
-                     * @property letterSpacing Subtitle (sm) letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Small(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                    /**
-                     * @property fontFamily Subtitle (md) font-family.
-                     * @property fontWeight Subtitle (md) font-weight.
-                     * @property fontSize Subtitle (md) font-size.
-                     * @property lineHeight Subtitle (md) line-height.
-                     * @property letterSpacing Subtitle (md) letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Medium(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                    /**
-                     * @property fontFamily Subtitle (lg) font-family.
-                     * @property fontWeight Subtitle (lg) font-weight.
-                     * @property fontSize Subtitle (lg) font-size.
-                     * @property lineHeight Subtitle (lg) line-height.
-                     * @property letterSpacing Subtitle (lg) letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Large(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                }
-                /**
-                 * @property fontFamily text-button font-family.
-                 * @property fontWeight text-button font-weight.
-                 * @property fontSize text-button font-size.
-                 * @property lineHeight text-button line-height.
-                 * @property letterSpacing text-button letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class TextButton(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily description font-family.
-                 * @property fontWeight description font-weight.
-                 * @property fontSize description font-size.
-                 * @property lineHeight description line-height.
-                 * @property letterSpacing description letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Description(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily link font-family.
-                 * @property fontWeight link font-weight.
-                 * @property fontSize link font-size.
-                 * @property lineHeight link line-height.
-                 * @property letterSpacing link letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Link(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily sensor-id font-family.
-                 * @property fontWeight sensor-id font-weight.
-                 * @property fontSize sensor-id font-size.
-                 * @property lineHeight sensor-id line-height.
-                 * @property letterSpacing sensor-id letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class SensorId(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily text-centered font-family.
-                 * @property fontWeight text-centered font-weight.
-                 * @property fontSize text-centered font-size.
-                 * @property lineHeight text-centered line-height.
-                 * @property letterSpacing text-centered letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class TextCentered(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily header font-family.
-                 * @property fontWeight header font-weight.
-                 * @property fontSize header font-size.
-                 * @property lineHeight header line-height.
-                 * @property letterSpacing header letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Header(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-            }
+            data class Opacity(
+                val inverted: Float,
+            )
             @androidx.compose.runtime.Immutable
             data class Size(
-                val icon: Icon,
                 val gap: Gap,
+                val icon: Icon,
                 val padding: Padding,
             ) {
-                /**
-                 * @property _24 24pt icon size.
-                 * @property _32 32pt icon size.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Icon(
-                    val _24: Float,
-                    val _32: Float,
-                )
                 /**
                  * @property row Gap between rows.
                  */
@@ -4015,32 +3738,32 @@ data class Components(
                     val rightContent: RightContent,
                 ) {
                     /**
-                     * @property textIcon Header gap: text-icon.
                      * @property iconIcon Header gap: icon-icon.
+                     * @property textIcon Header gap: text-icon.
                      */
                     @androidx.compose.runtime.Immutable
                     data class Header(
-                        val textIcon: Float,
                         val iconIcon: Float,
+                        val textIcon: Float,
                     )
                     /**
-                     * @property descriptionLink Left content gap: description-link.
-                     * @property titleSubtitle Left content gap: title-subtitle.
                      * @property controlText Left content gap: control-text.
+                     * @property descriptionLink Left content gap: description-link.
                      * @property iconText Left content gap: icon-text.
-                     * @property symbolText Left content gap: symbol-text.
                      * @property scoreText Left content gap: score-text.
                      * @property sensorId Left content gap: sensor-id.
+                     * @property symbolText Left content gap: symbol-text.
+                     * @property titleSubtitle Left content gap: title-subtitle.
                      */
                     @androidx.compose.runtime.Immutable
                     data class LeftContent(
-                        val descriptionLink: Float,
-                        val titleSubtitle: Float,
                         val controlText: Float,
+                        val descriptionLink: Float,
                         val iconText: Float,
-                        val symbolText: Float,
                         val scoreText: Float,
                         val sensorId: Float,
+                        val symbolText: Float,
+                        val titleSubtitle: Float,
                         val textButton: TextButton,
                     ) {
                         /**
@@ -4054,45 +3777,54 @@ data class Components(
                         )
                     }
                     /**
-                     * @property valueUnitOfMeasure Right content gap: value-uom.
                      * @property detailBadge Right content gap: detail-badge.
-                     * @property detailSwitch Right content gap: detail-switch.
                      * @property detailIcon24 Right content gap: detail-icon-24.
                      * @property detailIcon32 Right content gap: detail-icon-32.
+                     * @property detailSwitch Right content gap: detail-switch.
                      * @property sort Right content gap: sort.
+                     * @property valueUnitOfMeasure Right content gap: value-uom.
                      * @property valueUnitOfMeasureValueUnitOfMeasure Right content gap: value-uom-value-uom.
                      */
                     @androidx.compose.runtime.Immutable
                     data class RightContent(
-                        val valueUnitOfMeasure: Float,
                         val detailBadge: Float,
-                        val detailSwitch: Float,
                         val detailIcon24: Float,
                         val detailIcon32: Float,
+                        val detailSwitch: Float,
                         val sort: Float,
+                        val valueUnitOfMeasure: Float,
                         val valueUnitOfMeasureValueUnitOfMeasure: Float,
                     )
                 }
+                /**
+                 * @property _24 24pt icon size.
+                 * @property _32 32pt icon size.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Icon(
+                    val _24: Float,
+                    val _32: Float,
+                )
                 @androidx.compose.runtime.Immutable
                 data class Padding(
                     val header: Header,
                     val leftContent: LeftContent,
-                    val textCentered: TextCentered,
                     val rightContent: RightContent,
                     val sensorId: SensorId,
+                    val textCentered: TextCentered,
                 ) {
                     /**
-                     * @property left Header left padding.
-                     * @property top Header top padding.
-                     * @property right Header right padding.
                      * @property bottom Header bottom padding.
+                     * @property left Header left padding.
+                     * @property right Header right padding.
+                     * @property top Header top padding.
                      */
                     @androidx.compose.runtime.Immutable
                     data class Header(
-                        val left: Float,
-                        val top: Float,
-                        val right: Float,
                         val bottom: Float,
+                        val left: Float,
+                        val right: Float,
+                        val top: Float,
                         val content: Content,
                     ) {
                         /**
@@ -4108,9 +3840,9 @@ data class Components(
                     @androidx.compose.runtime.Immutable
                     data class LeftContent(
                         val description: Description,
-                        val descriptionLink: DescriptionLink,
                         val descriptionIcon: DescriptionIcon,
                         val descriptionIconLink: DescriptionIconLink,
+                        val descriptionLink: DescriptionLink,
                         val textButton: TextButton,
                     ) {
                         /**
@@ -4123,19 +3855,6 @@ data class Components(
                             val vertical: Float,
                         )
                         /**
-                         * @property left description-link left padding.
-                         * @property top description-link top padding.
-                         * @property right description-link right padding.
-                         * @property bottom description-link bottom padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class DescriptionLink(
-                            val left: Float,
-                            val top: Float,
-                            val right: Float,
-                            val bottom: Float,
-                        )
-                        /**
                          * @property horizontal description-icon horizontal padding.
                          * @property vertical description-icon vertical padding.
                          */
@@ -4145,23 +3864,36 @@ data class Components(
                             val vertical: Float,
                         )
                         /**
-                         * @property left description-icon-link left padding.
-                         * @property top description-icon-link top padding.
-                         * @property right description-icon-link right padding.
                          * @property bottom description-icon-link bottom padding.
+                         * @property left description-icon-link left padding.
+                         * @property right description-icon-link right padding.
+                         * @property top description-icon-link top padding.
                          */
                         @androidx.compose.runtime.Immutable
                         data class DescriptionIconLink(
-                            val left: Float,
-                            val top: Float,
-                            val right: Float,
                             val bottom: Float,
+                            val left: Float,
+                            val right: Float,
+                            val top: Float,
+                        )
+                        /**
+                         * @property bottom description-link bottom padding.
+                         * @property left description-link left padding.
+                         * @property right description-link right padding.
+                         * @property top description-link top padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class DescriptionLink(
+                            val bottom: Float,
+                            val left: Float,
+                            val right: Float,
+                            val top: Float,
                         )
                         @androidx.compose.runtime.Immutable
                         data class TextButton(
                             val default: Default,
-                            val link: Link,
                             val destructive: Destructive,
+                            val link: Link,
                         ) {
                             /**
                              * @property horizontal default text button horizontal padding.
@@ -4169,15 +3901,6 @@ data class Components(
                              */
                             @androidx.compose.runtime.Immutable
                             data class Default(
-                                val horizontal: Float,
-                                val vertical: Float,
-                            )
-                            /**
-                             * @property horizontal link text button horizontal padding.
-                             * @property vertical link text button vertical padding.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class Link(
                                 val horizontal: Float,
                                 val vertical: Float,
                             )
@@ -4190,165 +3913,41 @@ data class Components(
                                 val horizontal: Float,
                                 val vertical: Float,
                             )
+                            /**
+                             * @property horizontal link text button horizontal padding.
+                             * @property vertical link text button vertical padding.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class Link(
+                                val horizontal: Float,
+                                val vertical: Float,
+                            )
                         }
                     }
-                    /**
-                     * @property horizontal text-centered horizontal padding.
-                     * @property vertical text-centered vertical padding.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class TextCentered(
-                        val horizontal: Float,
-                        val vertical: Float,
-                    )
                     @androidx.compose.runtime.Immutable
                     data class RightContent(
-                        val icon: Icon,
-                        val iconChevron: IconChevron,
-                        val valueUnitOfMeasure: ValueUnitOfMeasure,
-                        val tag: Tag,
+                        val badgeChevron: BadgeChevron,
+                        val checkmark: Checkmark,
+                        val chevron: Chevron,
                         val detail: Detail,
                         val detailBadge: DetailBadge,
-                        val detailSwitch: DetailSwitch,
                         val detailChevron: DetailChevron,
                         val detailIcon24: DetailIcon24,
                         val detailIcon32: DetailIcon32,
+                        val detailSwitch: DetailSwitch,
+                        val icon: Icon,
+                        val iconChevron: IconChevron,
                         val sort: Sort,
                         val switch: Switch,
-                        val chevron: Chevron,
-                        val checkmark: Checkmark,
-                        val badgeChevron: BadgeChevron,
+                        val tag: Tag,
+                        val valueUnitOfMeasure: ValueUnitOfMeasure,
                     ) {
                         /**
-                         * @property top icon top padding.
-                         * @property bottom icon bottom padding.
-                         * @property right icon right padding.
+                         * @property horizontal badge-chevron horizontal padding.
+                         * @property vertical badge-chevron vertical padding.
                          */
                         @androidx.compose.runtime.Immutable
-                        data class Icon(
-                            val top: Float,
-                            val bottom: Float,
-                            val right: Float,
-                        )
-                        /**
-                         * @property horizontal icon-chevron horizontal padding.
-                         * @property vertical icon-chevron vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class IconChevron(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                        /**
-                         * @property horizontal value-uom horizontal padding.
-                         * @property vertical value-uom vertical padding.
-                         * @property right value-uom right padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class ValueUnitOfMeasure(
-                            val horizontal: Float,
-                            val vertical: Float,
-                            val right: Float,
-                        )
-                        /**
-                         * @property horizontal tag horizontal padding.
-                         * @property vertical tag vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Tag(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                        /**
-                         * @property horizontal detail horizontal padding.
-                         * @property vertical detail vertical padding.
-                         * @property right detail right padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Detail(
-                            val horizontal: Float,
-                            val vertical: Float,
-                            val right: Float,
-                        )
-                        /**
-                         * @property horizontal detail-badge horizontal padding.
-                         * @property vertical detail-badge vertical padding.
-                         * @property right detail-badge right padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class DetailBadge(
-                            val horizontal: Float,
-                            val vertical: Float,
-                            val right: Float,
-                        )
-                        /**
-                         * @property horizontal detail-switch horizontal padding.
-                         * @property vertical detail-switch vertical padding.
-                         * @property right detail-switch right padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class DetailSwitch(
-                            val horizontal: Float,
-                            val vertical: Float,
-                            val right: Float,
-                        )
-                        /**
-                         * @property horizontal detail-chevron horizontal padding.
-                         * @property vertical detail-chevron vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class DetailChevron(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                        /**
-                         * @property horizontal detail-icon-24 horizontal padding.
-                         * @property vertical detail-icon-24 vertical padding.
-                         * @property right detail-icon-24 right padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class DetailIcon24(
-                            val horizontal: Float,
-                            val vertical: Float,
-                            val right: Float,
-                        )
-                        /**
-                         * @property horizontal detail-icon-32 horizontal padding.
-                         * @property vertical detail-icon-32 vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class DetailIcon32(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                        /**
-                         * @property horizontal sort horizontal padding.
-                         * @property vertical sort vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Sort(
-                            val horizontal: Float,
-                            val vertical: Float,
-                        )
-                        /**
-                         * @property left switch left padding.
-                         * @property top switch top padding.
-                         * @property right switch right padding.
-                         * @property bottom switch bottom padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Switch(
-                            val left: Float,
-                            val top: Float,
-                            val right: Float,
-                            val bottom: Float,
-                        )
-                        /**
-                         * @property horizontal chevron horizontal padding.
-                         * @property vertical chevron vertical padding.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Chevron(
+                        data class BadgeChevron(
                             val horizontal: Float,
                             val vertical: Float,
                         )
@@ -4362,12 +3961,136 @@ data class Components(
                             val vertical: Float,
                         )
                         /**
-                         * @property horizontal badge-chevron horizontal padding.
-                         * @property vertical badge-chevron vertical padding.
+                         * @property horizontal chevron horizontal padding.
+                         * @property vertical chevron vertical padding.
                          */
                         @androidx.compose.runtime.Immutable
-                        data class BadgeChevron(
+                        data class Chevron(
                             val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal detail horizontal padding.
+                         * @property right detail right padding.
+                         * @property vertical detail vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Detail(
+                            val horizontal: Float,
+                            val right: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal detail-badge horizontal padding.
+                         * @property right detail-badge right padding.
+                         * @property vertical detail-badge vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class DetailBadge(
+                            val horizontal: Float,
+                            val right: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal detail-chevron horizontal padding.
+                         * @property vertical detail-chevron vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class DetailChevron(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal detail-icon-24 horizontal padding.
+                         * @property right detail-icon-24 right padding.
+                         * @property vertical detail-icon-24 vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class DetailIcon24(
+                            val horizontal: Float,
+                            val right: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal detail-icon-32 horizontal padding.
+                         * @property vertical detail-icon-32 vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class DetailIcon32(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal detail-switch horizontal padding.
+                         * @property right detail-switch right padding.
+                         * @property vertical detail-switch vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class DetailSwitch(
+                            val horizontal: Float,
+                            val right: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property bottom icon bottom padding.
+                         * @property right icon right padding.
+                         * @property top icon top padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Icon(
+                            val bottom: Float,
+                            val right: Float,
+                            val top: Float,
+                        )
+                        /**
+                         * @property horizontal icon-chevron horizontal padding.
+                         * @property vertical icon-chevron vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class IconChevron(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal sort horizontal padding.
+                         * @property vertical sort vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Sort(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property bottom switch bottom padding.
+                         * @property left switch left padding.
+                         * @property right switch right padding.
+                         * @property top switch top padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Switch(
+                            val bottom: Float,
+                            val left: Float,
+                            val right: Float,
+                            val top: Float,
+                        )
+                        /**
+                         * @property horizontal tag horizontal padding.
+                         * @property vertical tag vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Tag(
+                            val horizontal: Float,
+                            val vertical: Float,
+                        )
+                        /**
+                         * @property horizontal value-uom horizontal padding.
+                         * @property right value-uom right padding.
+                         * @property vertical value-uom vertical padding.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class ValueUnitOfMeasure(
+                            val horizontal: Float,
+                            val right: Float,
                             val vertical: Float,
                         )
                     }
@@ -4380,202 +4103,291 @@ data class Components(
                         val horizontal: Float,
                         val vertical: Float,
                     )
-                }
-            }
-            /**
-             * @property inverted Inverted row opacity. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
-            @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val inverted: Float,
-            )
-        }
-        @androidx.compose.runtime.Immutable
-        data class Size(
-            val small: Small,
-            val large: Large,
-        ) {
-            @androidx.compose.runtime.Immutable
-            data class Small(
-                val grouping: Grouping,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class Grouping(
-                    val single: Single,
-                    val multi: Multi,
-                ) {
+                    /**
+                     * @property horizontal text-centered horizontal padding.
+                     * @property vertical text-centered vertical padding.
+                     */
                     @androidx.compose.runtime.Immutable
-                    data class Single(
-                        val shape: Shape,
-                    ) {
-                        /**
-                         * @property radius Container radius, single row, size sm.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Shape(
-                            val radius: Float,
-                        )
-                    }
-                    @androidx.compose.runtime.Immutable
-                    data class Multi(
-                        val shape: Shape,
-                    ) {
-                        @androidx.compose.runtime.Immutable
-                        data class Shape(
-                            val radius: Radius,
-                        ) {
-                            /**
-                             * @property middleRow Middle row radius, multi row, size sm.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class Radius(
-                                val middleRow: Float,
-                                val topRow: TopRow,
-                                val bottomRow: BottomRow,
-                            ) {
-                                @androidx.compose.runtime.Immutable
-                                data class TopRow(
-                                    val top: Top,
-                                    val bottom: Bottom,
-                                ) {
-                                    /**
-                                     * @property left top-row top-left radius, multi row, size sm.
-                                     * @property right top-row top-right radius, multi row, size sm.
-                                     */
-                                    @androidx.compose.runtime.Immutable
-                                    data class Top(
-                                        val left: Float,
-                                        val right: Float,
-                                    )
-                                    /**
-                                     * @property left top-row bottom-left radius, multi row, size sm.
-                                     * @property right top-row bottom-right radius, multi row, size sm.
-                                     */
-                                    @androidx.compose.runtime.Immutable
-                                    data class Bottom(
-                                        val left: Float,
-                                        val right: Float,
-                                    )
-                                }
-                                @androidx.compose.runtime.Immutable
-                                data class BottomRow(
-                                    val top: Top,
-                                    val bottom: Bottom,
-                                ) {
-                                    /**
-                                     * @property left bottom-row top-left radius, multi row, size sm.
-                                     * @property right bottom-row top-right radius, multi row, size sm.
-                                     */
-                                    @androidx.compose.runtime.Immutable
-                                    data class Top(
-                                        val left: Float,
-                                        val right: Float,
-                                    )
-                                    /**
-                                     * @property left bottom-row bottom-left radius, multi row, size sm.
-                                     * @property right bottom-row bottom-right radius, multi row, size sm.
-                                     */
-                                    @androidx.compose.runtime.Immutable
-                                    data class Bottom(
-                                        val left: Float,
-                                        val right: Float,
-                                    )
-                                }
-                            }
-                        }
-                    }
+                    data class TextCentered(
+                        val horizontal: Float,
+                        val vertical: Float,
+                    )
                 }
             }
             @androidx.compose.runtime.Immutable
-            data class Large(
-                val grouping: Grouping,
+            data class Typography(
+                val description: Description,
+                val detail: Detail,
+                val header: Header,
+                val link: Link,
+                val sensorId: SensorId,
+                val subtitle: Subtitle,
+                val textButton: TextButton,
+                val textCentered: TextCentered,
+                val title: Title,
+                val unitOfMeasure: UnitOfMeasure,
+                val value: Value,
             ) {
+                /**
+                 * @property fontFamily description font-family.
+                 * @property fontSize description font-size.
+                 * @property fontWeight description font-weight.
+                 * @property letterSpacing description letter-spacing.
+                 * @property lineHeight description line-height.
+                 */
                 @androidx.compose.runtime.Immutable
-                data class Grouping(
-                    val single: Single,
-                    val multi: Multi,
+                data class Description(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                @androidx.compose.runtime.Immutable
+                data class Detail(
+                    val default: Default,
+                    val medium: Medium,
                 ) {
+                    /**
+                     * @property fontFamily Detail (default) font-family.
+                     * @property fontSize Detail (default) font-size.
+                     * @property fontWeight Detail (default) font-weight.
+                     * @property letterSpacing Detail (default) letter-spacing.
+                     * @property lineHeight Detail (default) line-height.
+                     */
                     @androidx.compose.runtime.Immutable
-                    data class Single(
-                        val shape: Shape,
-                    ) {
-                        /**
-                         * @property radius Container radius, single row, size lg.
-                         */
-                        @androidx.compose.runtime.Immutable
-                        data class Shape(
-                            val radius: Float,
-                        )
-                    }
+                    data class Default(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                    /**
+                     * @property fontFamily Detail (medium) font-family.
+                     * @property fontSize Detail (medium) font-size.
+                     * @property fontWeight Detail (medium) font-weight.
+                     * @property letterSpacing Detail (medium) letter-spacing.
+                     * @property lineHeight Detail (medium) line-height.
+                     */
                     @androidx.compose.runtime.Immutable
-                    data class Multi(
-                        val shape: Shape,
-                    ) {
-                        @androidx.compose.runtime.Immutable
-                        data class Shape(
-                            val radius: Radius,
-                        ) {
-                            /**
-                             * @property middleRow Middle row radius, multi row, size lg.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class Radius(
-                                val middleRow: Float,
-                                val topRow: TopRow,
-                                val bottomRow: BottomRow,
-                            ) {
-                                @androidx.compose.runtime.Immutable
-                                data class TopRow(
-                                    val top: Top,
-                                    val bottom: Bottom,
-                                ) {
-                                    /**
-                                     * @property left top-row top-left radius, multi row, size lg.
-                                     * @property right top-row top-right radius, multi row, size lg.
-                                     */
-                                    @androidx.compose.runtime.Immutable
-                                    data class Top(
-                                        val left: Float,
-                                        val right: Float,
-                                    )
-                                    /**
-                                     * @property left top-row bottom-left radius, multi row, size lg.
-                                     * @property right top-row bottom-right radius, multi row, size lg.
-                                     */
-                                    @androidx.compose.runtime.Immutable
-                                    data class Bottom(
-                                        val left: Float,
-                                        val right: Float,
-                                    )
-                                }
-                                @androidx.compose.runtime.Immutable
-                                data class BottomRow(
-                                    val top: Top,
-                                    val bottom: Bottom,
-                                ) {
-                                    /**
-                                     * @property left bottom-row top-left radius, multi row, size lg.
-                                     * @property right bottom-row top-right radius, multi row, size lg.
-                                     */
-                                    @androidx.compose.runtime.Immutable
-                                    data class Top(
-                                        val left: Float,
-                                        val right: Float,
-                                    )
-                                    /**
-                                     * @property left bottom-row bottom-left radius, multi row, size lg.
-                                     * @property right bottom-row bottom-right radius, multi row, size lg.
-                                     */
-                                    @androidx.compose.runtime.Immutable
-                                    data class Bottom(
-                                        val left: Float,
-                                        val right: Float,
-                                    )
-                                }
-                            }
-                        }
-                    }
+                    data class Medium(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
                 }
+                /**
+                 * @property fontFamily header font-family.
+                 * @property fontSize header font-size.
+                 * @property fontWeight header font-weight.
+                 * @property letterSpacing header letter-spacing.
+                 * @property lineHeight header line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Header(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily link font-family.
+                 * @property fontSize link font-size.
+                 * @property fontWeight link font-weight.
+                 * @property letterSpacing link letter-spacing.
+                 * @property lineHeight link line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Link(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily sensor-id font-family.
+                 * @property fontSize sensor-id font-size.
+                 * @property fontWeight sensor-id font-weight.
+                 * @property letterSpacing sensor-id letter-spacing.
+                 * @property lineHeight sensor-id line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class SensorId(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                @androidx.compose.runtime.Immutable
+                data class Subtitle(
+                    val large: Large,
+                    val medium: Medium,
+                    val small: Small,
+                ) {
+                    /**
+                     * @property fontFamily Subtitle (lg) font-family.
+                     * @property fontSize Subtitle (lg) font-size.
+                     * @property fontWeight Subtitle (lg) font-weight.
+                     * @property letterSpacing Subtitle (lg) letter-spacing.
+                     * @property lineHeight Subtitle (lg) line-height.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Large(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                    /**
+                     * @property fontFamily Subtitle (md) font-family.
+                     * @property fontSize Subtitle (md) font-size.
+                     * @property fontWeight Subtitle (md) font-weight.
+                     * @property letterSpacing Subtitle (md) letter-spacing.
+                     * @property lineHeight Subtitle (md) line-height.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Medium(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                    /**
+                     * @property fontFamily Subtitle (sm) font-family.
+                     * @property fontSize Subtitle (sm) font-size.
+                     * @property fontWeight Subtitle (sm) font-weight.
+                     * @property letterSpacing Subtitle (sm) letter-spacing.
+                     * @property lineHeight Subtitle (sm) line-height.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Small(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                }
+                /**
+                 * @property fontFamily text-button font-family.
+                 * @property fontSize text-button font-size.
+                 * @property fontWeight text-button font-weight.
+                 * @property letterSpacing text-button letter-spacing.
+                 * @property lineHeight text-button line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class TextButton(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily text-centered font-family.
+                 * @property fontSize text-centered font-size.
+                 * @property fontWeight text-centered font-weight.
+                 * @property letterSpacing text-centered letter-spacing.
+                 * @property lineHeight text-centered line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class TextCentered(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                @androidx.compose.runtime.Immutable
+                data class Title(
+                    val medium: Medium,
+                    val regular: Regular,
+                    val semibold: Semibold,
+                ) {
+                    /**
+                     * @property fontFamily Title (medium) font-family.
+                     * @property fontSize Title (medium) font-size.
+                     * @property fontWeight Title (medium) font-weight.
+                     * @property letterSpacing Title (medium) letter-spacing.
+                     * @property lineHeight Title (medium) line-height.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Medium(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                    /**
+                     * @property fontFamily Title (regular) font-family.
+                     * @property fontSize Title (regular) font-size.
+                     * @property fontWeight Title (regular) font-weight.
+                     * @property letterSpacing Title (regular) letter-spacing.
+                     * @property lineHeight Title (regular) line-height.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Regular(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                    /**
+                     * @property fontFamily Title (semibold) font-family.
+                     * @property fontSize Title (semibold) font-size.
+                     * @property fontWeight Title (semibold) font-weight.
+                     * @property letterSpacing Title (semibold) letter-spacing.
+                     * @property lineHeight Title (semibold) line-height.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Semibold(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                }
+                /**
+                 * @property fontFamily uom font-family.
+                 * @property fontSize uom font-size.
+                 * @property fontWeight uom font-weight.
+                 * @property letterSpacing uom letter-spacing.
+                 * @property lineHeight uom line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class UnitOfMeasure(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily value font-family.
+                 * @property fontSize value font-size.
+                 * @property fontWeight value font-weight.
+                 * @property letterSpacing value letter-spacing.
+                 * @property lineHeight value line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Value(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
             }
         }
         @androidx.compose.runtime.Immutable
@@ -4600,157 +4412,157 @@ data class Components(
                             val title: Title,
                             val titleControl: TitleControl,
                             val titleIcon: TitleIcon,
-                            val titleSymbol: TitleSymbol,
                             val titleScore: TitleScore,
                             val titleSubtitle: TitleSubtitle,
                             val titleSubtitleControl: TitleSubtitleControl,
                             val titleSubtitleIcon24: TitleSubtitleIcon24,
                             val titleSubtitleIcon32: TitleSubtitleIcon32,
-                            val titleSubtitleSymbol: TitleSubtitleSymbol,
                             val titleSubtitleScore: TitleSubtitleScore,
+                            val titleSubtitleSymbol: TitleSubtitleSymbol,
+                            val titleSymbol: TitleSymbol,
                         ) {
                             /**
-                             * @property left title left padding when default.
-                             * @property top title top padding when default.
-                             * @property right title right padding when default.
                              * @property bottom title bottom padding when default.
+                             * @property left title left padding when default.
+                             * @property right title right padding when default.
+                             * @property top title top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class Title(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-control left padding when default.
-                             * @property top title-control top padding when default.
-                             * @property right title-control right padding when default.
                              * @property bottom title-control bottom padding when default.
+                             * @property left title-control left padding when default.
+                             * @property right title-control right padding when default.
+                             * @property top title-control top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleControl(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-icon left padding when default.
-                             * @property top title-icon top padding when default.
-                             * @property right title-icon right padding when default.
                              * @property bottom title-icon bottom padding when default.
+                             * @property left title-icon left padding when default.
+                             * @property right title-icon right padding when default.
+                             * @property top title-icon top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleIcon(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-symbol left padding when default.
-                             * @property top title-symbol top padding when default.
-                             * @property right title-symbol right padding when default.
-                             * @property bottom title-symbol bottom padding when default.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class TitleSymbol(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
-                                val bottom: Float,
-                            )
-                            /**
-                             * @property left title-score left padding when default.
-                             * @property top title-score top padding when default.
-                             * @property right title-score right padding when default.
                              * @property bottom title-score bottom padding when default.
+                             * @property left title-score left padding when default.
+                             * @property right title-score right padding when default.
+                             * @property top title-score top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleScore(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle left padding when default.
-                             * @property top title-subtitle top padding when default.
-                             * @property right title-subtitle right padding when default.
                              * @property bottom title-subtitle bottom padding when default.
+                             * @property left title-subtitle left padding when default.
+                             * @property right title-subtitle right padding when default.
+                             * @property top title-subtitle top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitle(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-control left padding when default.
-                             * @property top title-subtitle-control top padding when default.
-                             * @property right title-subtitle-control right padding when default.
                              * @property bottom title-subtitle-control bottom padding when default.
+                             * @property left title-subtitle-control left padding when default.
+                             * @property right title-subtitle-control right padding when default.
+                             * @property top title-subtitle-control top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleControl(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-icon-24 left padding when default.
-                             * @property top title-subtitle-icon-24 top padding when default.
-                             * @property right title-subtitle-icon-24 right padding when default.
                              * @property bottom title-subtitle-icon-24 bottom padding when default.
+                             * @property left title-subtitle-icon-24 left padding when default.
+                             * @property right title-subtitle-icon-24 right padding when default.
+                             * @property top title-subtitle-icon-24 top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleIcon24(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-icon-32 left padding when default.
-                             * @property top title-subtitle-icon-32 top padding when default.
-                             * @property right title-subtitle-icon-32 right padding when default.
                              * @property bottom title-subtitle-icon-32 bottom padding when default.
+                             * @property left title-subtitle-icon-32 left padding when default.
+                             * @property right title-subtitle-icon-32 right padding when default.
+                             * @property top title-subtitle-icon-32 top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleIcon32(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-symbol left padding when default.
-                             * @property top title-subtitle-symbol top padding when default.
-                             * @property right title-subtitle-symbol right padding when default.
-                             * @property bottom title-subtitle-symbol bottom padding when default.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class TitleSubtitleSymbol(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
-                                val bottom: Float,
-                            )
-                            /**
-                             * @property left title-subtitle-score left padding when default.
-                             * @property top title-subtitle-score top padding when default.
-                             * @property right title-subtitle-score right padding when default.
                              * @property bottom title-subtitle-score bottom padding when default.
+                             * @property left title-subtitle-score left padding when default.
+                             * @property right title-subtitle-score right padding when default.
+                             * @property top title-subtitle-score top padding when default.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleScore(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
+                            )
+                            /**
+                             * @property bottom title-subtitle-symbol bottom padding when default.
+                             * @property left title-subtitle-symbol left padding when default.
+                             * @property right title-subtitle-symbol right padding when default.
+                             * @property top title-subtitle-symbol top padding when default.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class TitleSubtitleSymbol(
+                                val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
+                            )
+                            /**
+                             * @property bottom title-symbol bottom padding when default.
+                             * @property left title-symbol left padding when default.
+                             * @property right title-symbol right padding when default.
+                             * @property top title-symbol top padding when default.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class TitleSymbol(
+                                val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                         }
                     }
@@ -4773,159 +4585,347 @@ data class Components(
                             val title: Title,
                             val titleControl: TitleControl,
                             val titleIcon: TitleIcon,
-                            val titleSymbol: TitleSymbol,
                             val titleScore: TitleScore,
                             val titleSubtitle: TitleSubtitle,
                             val titleSubtitleControl: TitleSubtitleControl,
                             val titleSubtitleIcon24: TitleSubtitleIcon24,
                             val titleSubtitleIcon32: TitleSubtitleIcon32,
-                            val titleSubtitleSymbol: TitleSubtitleSymbol,
                             val titleSubtitleScore: TitleSubtitleScore,
+                            val titleSubtitleSymbol: TitleSubtitleSymbol,
+                            val titleSymbol: TitleSymbol,
                         ) {
                             /**
-                             * @property left title left padding when indented.
-                             * @property top title top padding when indented.
-                             * @property right title right padding when indented.
                              * @property bottom title bottom padding when indented.
+                             * @property left title left padding when indented.
+                             * @property right title right padding when indented.
+                             * @property top title top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class Title(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-control left padding when indented.
-                             * @property top title-control top padding when indented.
-                             * @property right title-control right padding when indented.
                              * @property bottom title-control bottom padding when indented.
+                             * @property left title-control left padding when indented.
+                             * @property right title-control right padding when indented.
+                             * @property top title-control top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleControl(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-icon left padding when indented.
-                             * @property top title-icon top padding when indented.
-                             * @property right title-icon right padding when indented.
                              * @property bottom title-icon bottom padding when indented.
+                             * @property left title-icon left padding when indented.
+                             * @property right title-icon right padding when indented.
+                             * @property top title-icon top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleIcon(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-symbol left padding when indented.
-                             * @property top title-symbol top padding when indented.
-                             * @property right title-symbol right padding when indented.
-                             * @property bottom title-symbol bottom padding when indented.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class TitleSymbol(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
-                                val bottom: Float,
-                            )
-                            /**
-                             * @property left title-score left padding when indented.
-                             * @property top title-score top padding when indented.
-                             * @property right title-score right padding when indented.
                              * @property bottom title-score bottom padding when indented.
+                             * @property left title-score left padding when indented.
+                             * @property right title-score right padding when indented.
+                             * @property top title-score top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleScore(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle left padding when indented.
-                             * @property top title-subtitle top padding when indented.
-                             * @property right title-subtitle right padding when indented.
                              * @property bottom title-subtitle bottom padding when indented.
+                             * @property left title-subtitle left padding when indented.
+                             * @property right title-subtitle right padding when indented.
+                             * @property top title-subtitle top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitle(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-control left padding when indented.
-                             * @property top title-subtitle-control top padding when indented.
-                             * @property right title-subtitle-control right padding when indented.
                              * @property bottom title-subtitle-control bottom padding when indented.
+                             * @property left title-subtitle-control left padding when indented.
+                             * @property right title-subtitle-control right padding when indented.
+                             * @property top title-subtitle-control top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleControl(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-icon-24 left padding when indented.
-                             * @property top title-subtitle-icon-24 top padding when indented.
-                             * @property right title-subtitle-icon-24 right padding when indented.
                              * @property bottom title-subtitle-icon-24 bottom padding when indented.
+                             * @property left title-subtitle-icon-24 left padding when indented.
+                             * @property right title-subtitle-icon-24 right padding when indented.
+                             * @property top title-subtitle-icon-24 top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleIcon24(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-icon-32 left padding when indented.
-                             * @property top title-subtitle-icon-32 top padding when indented.
-                             * @property right title-subtitle-icon-32 right padding when indented.
                              * @property bottom title-subtitle-icon-32 bottom padding when indented.
+                             * @property left title-subtitle-icon-32 left padding when indented.
+                             * @property right title-subtitle-icon-32 right padding when indented.
+                             * @property top title-subtitle-icon-32 top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleIcon32(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                             /**
-                             * @property left title-subtitle-symbol left padding when indented.
-                             * @property top title-subtitle-symbol top padding when indented.
-                             * @property right title-subtitle-symbol right padding when indented.
-                             * @property bottom title-subtitle-symbol bottom padding when indented.
-                             */
-                            @androidx.compose.runtime.Immutable
-                            data class TitleSubtitleSymbol(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
-                                val bottom: Float,
-                            )
-                            /**
-                             * @property left title-subtitle-score left padding when indented.
-                             * @property top title-subtitle-score top padding when indented.
-                             * @property right title-subtitle-score right padding when indented.
                              * @property bottom title-subtitle-score bottom padding when indented.
+                             * @property left title-subtitle-score left padding when indented.
+                             * @property right title-subtitle-score right padding when indented.
+                             * @property top title-subtitle-score top padding when indented.
                              */
                             @androidx.compose.runtime.Immutable
                             data class TitleSubtitleScore(
-                                val left: Float,
-                                val top: Float,
-                                val right: Float,
                                 val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
+                            )
+                            /**
+                             * @property bottom title-subtitle-symbol bottom padding when indented.
+                             * @property left title-subtitle-symbol left padding when indented.
+                             * @property right title-subtitle-symbol right padding when indented.
+                             * @property top title-subtitle-symbol top padding when indented.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class TitleSubtitleSymbol(
+                                val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
+                            )
+                            /**
+                             * @property bottom title-symbol bottom padding when indented.
+                             * @property left title-symbol left padding when indented.
+                             * @property right title-symbol right padding when indented.
+                             * @property top title-symbol top padding when indented.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class TitleSymbol(
+                                val bottom: Float,
+                                val left: Float,
+                                val right: Float,
+                                val top: Float,
                             )
                         }
+                    }
+                }
+            }
+        }
+        @androidx.compose.runtime.Immutable
+        data class Size(
+            val large: Large,
+            val small: Small,
+        ) {
+            @androidx.compose.runtime.Immutable
+            data class Large(
+                val grouping: Grouping,
+            ) {
+                @androidx.compose.runtime.Immutable
+                data class Grouping(
+                    val multi: Multi,
+                    val single: Single,
+                ) {
+                    @androidx.compose.runtime.Immutable
+                    data class Multi(
+                        val shape: Shape,
+                    ) {
+                        @androidx.compose.runtime.Immutable
+                        data class Shape(
+                            val radius: Radius,
+                        ) {
+                            /**
+                             * @property middleRow Middle row radius, multi row, size lg.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class Radius(
+                                val middleRow: Float,
+                                val bottomRow: BottomRow,
+                                val topRow: TopRow,
+                            ) {
+                                @androidx.compose.runtime.Immutable
+                                data class BottomRow(
+                                    val bottom: Bottom,
+                                    val top: Top,
+                                ) {
+                                    /**
+                                     * @property left bottom-row bottom-left radius, multi row, size lg.
+                                     * @property right bottom-row bottom-right radius, multi row, size lg.
+                                     */
+                                    @androidx.compose.runtime.Immutable
+                                    data class Bottom(
+                                        val left: Float,
+                                        val right: Float,
+                                    )
+                                    /**
+                                     * @property left bottom-row top-left radius, multi row, size lg.
+                                     * @property right bottom-row top-right radius, multi row, size lg.
+                                     */
+                                    @androidx.compose.runtime.Immutable
+                                    data class Top(
+                                        val left: Float,
+                                        val right: Float,
+                                    )
+                                }
+                                @androidx.compose.runtime.Immutable
+                                data class TopRow(
+                                    val bottom: Bottom,
+                                    val top: Top,
+                                ) {
+                                    /**
+                                     * @property left top-row bottom-left radius, multi row, size lg.
+                                     * @property right top-row bottom-right radius, multi row, size lg.
+                                     */
+                                    @androidx.compose.runtime.Immutable
+                                    data class Bottom(
+                                        val left: Float,
+                                        val right: Float,
+                                    )
+                                    /**
+                                     * @property left top-row top-left radius, multi row, size lg.
+                                     * @property right top-row top-right radius, multi row, size lg.
+                                     */
+                                    @androidx.compose.runtime.Immutable
+                                    data class Top(
+                                        val left: Float,
+                                        val right: Float,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    @androidx.compose.runtime.Immutable
+                    data class Single(
+                        val shape: Shape,
+                    ) {
+                        /**
+                         * @property radius Container radius, single row, size lg.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Shape(
+                            val radius: Float,
+                        )
+                    }
+                }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Small(
+                val grouping: Grouping,
+            ) {
+                @androidx.compose.runtime.Immutable
+                data class Grouping(
+                    val multi: Multi,
+                    val single: Single,
+                ) {
+                    @androidx.compose.runtime.Immutable
+                    data class Multi(
+                        val shape: Shape,
+                    ) {
+                        @androidx.compose.runtime.Immutable
+                        data class Shape(
+                            val radius: Radius,
+                        ) {
+                            /**
+                             * @property middleRow Middle row radius, multi row, size sm.
+                             */
+                            @androidx.compose.runtime.Immutable
+                            data class Radius(
+                                val middleRow: Float,
+                                val bottomRow: BottomRow,
+                                val topRow: TopRow,
+                            ) {
+                                @androidx.compose.runtime.Immutable
+                                data class BottomRow(
+                                    val bottom: Bottom,
+                                    val top: Top,
+                                ) {
+                                    /**
+                                     * @property left bottom-row bottom-left radius, multi row, size sm.
+                                     * @property right bottom-row bottom-right radius, multi row, size sm.
+                                     */
+                                    @androidx.compose.runtime.Immutable
+                                    data class Bottom(
+                                        val left: Float,
+                                        val right: Float,
+                                    )
+                                    /**
+                                     * @property left bottom-row top-left radius, multi row, size sm.
+                                     * @property right bottom-row top-right radius, multi row, size sm.
+                                     */
+                                    @androidx.compose.runtime.Immutable
+                                    data class Top(
+                                        val left: Float,
+                                        val right: Float,
+                                    )
+                                }
+                                @androidx.compose.runtime.Immutable
+                                data class TopRow(
+                                    val bottom: Bottom,
+                                    val top: Top,
+                                ) {
+                                    /**
+                                     * @property left top-row bottom-left radius, multi row, size sm.
+                                     * @property right top-row bottom-right radius, multi row, size sm.
+                                     */
+                                    @androidx.compose.runtime.Immutable
+                                    data class Bottom(
+                                        val left: Float,
+                                        val right: Float,
+                                    )
+                                    /**
+                                     * @property left top-row top-left radius, multi row, size sm.
+                                     * @property right top-row top-right radius, multi row, size sm.
+                                     */
+                                    @androidx.compose.runtime.Immutable
+                                    data class Top(
+                                        val left: Float,
+                                        val right: Float,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    @androidx.compose.runtime.Immutable
+                    data class Single(
+                        val shape: Shape,
+                    ) {
+                        /**
+                         * @property radius Container radius, single row, size sm.
+                         */
+                        @androidx.compose.runtime.Immutable
+                        data class Shape(
+                            val radius: Float,
+                        )
                     }
                 }
             }
@@ -4938,10 +4938,10 @@ data class Components(
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val typography: Typography,
-            val size: Size,
-            val shape: Shape,
             val opacity: Opacity,
+            val shape: Shape,
+            val size: Size,
+            val typography: Typography,
         ) {
             @androidx.compose.runtime.Immutable
             data class Color(
@@ -4949,131 +4949,24 @@ data class Components(
                 val text: Text,
             ) {
                 /**
-                 * @property container messages: color › surface › container. Applies to all variants.
                  * @property button messages: color › surface › button. Applies to all variants.
+                 * @property container messages: color › surface › container. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Surface(
-                    val container: androidx.compose.ui.graphics.Color,
                     val button: androidx.compose.ui.graphics.Color,
+                    val container: androidx.compose.ui.graphics.Color,
                 )
                 /**
-                 * @property title messages: color › text › title. Applies to all variants.
-                 * @property message messages: color › text › message. Applies to all variants.
                  * @property buttonLabel messages: color › text › button label. Applies to all variants.
+                 * @property message messages: color › text › message. Applies to all variants.
+                 * @property title messages: color › text › title. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Text(
-                    val title: androidx.compose.ui.graphics.Color,
-                    val message: androidx.compose.ui.graphics.Color,
                     val buttonLabel: androidx.compose.ui.graphics.Color,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Typography(
-                val title: Title,
-                val body: Body,
-                val action: Action,
-            ) {
-                /**
-                 * @property fontFamily messages: typography › title › font family. Applies to all variants.
-                 * @property fontWeight messages: typography › title › font weight. Applies to all variants.
-                 * @property fontSize messages: typography › title › font size. Applies to all variants.
-                 * @property lineHeight messages: typography › title › line height. Applies to all variants.
-                 * @property letterSpacing messages: typography › title › letter spacing. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Title(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily messages: typography › body › font family. Applies to all variants.
-                 * @property fontWeight messages: typography › body › font weight. Applies to all variants.
-                 * @property fontSize messages: typography › body › font size. Applies to all variants.
-                 * @property lineHeight messages: typography › body › line height. Applies to all variants.
-                 * @property letterSpacing messages: typography › body › letter spacing. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Body(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily messages: typography › action › font family. Applies to all variants.
-                 * @property fontWeight messages: typography › action › font weight. Applies to all variants.
-                 * @property fontSize messages: typography › action › font size. Applies to all variants.
-                 * @property lineHeight messages: typography › action › line height. Applies to all variants.
-                 * @property letterSpacing messages: typography › action › letter spacing. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Action(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Size(
-                val padding: Padding,
-                val gap: Gap,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class Padding(
-                    val container: Container,
-                    val button: Button,
-                ) {
-                    /**
-                     * @property horizontal messages: size › padding › container › horizontal. Applies to all variants.
-                     * @property vertical messages: size › padding › container › vertical. Applies to all variants.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Container(
-                        val horizontal: Float,
-                        val vertical: Float,
-                    )
-                    /**
-                     * @property horizontal messages: size › padding › button › horizontal. Applies to all variants.
-                     * @property vertical messages: size › padding › button › vertical. Applies to all variants.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Button(
-                        val horizontal: Float,
-                        val vertical: Float,
-                    )
-                }
-                /**
-                 * @property container messages: size › gap › container. Applies to all variants.
-                 * @property button messages: size › gap › button. Applies to all variants.
-                 * @property text messages: size › gap › text. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Gap(
-                    val container: Float,
-                    val button: Float,
-                    val text: Float,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Radius,
-            ) {
-                /**
-                 * @property container messages: shape › radius › container. Applies to all variants.
-                 * @property button messages: shape › radius › button. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Radius(
-                    val container: Float,
-                    val button: Float,
+                    val message: androidx.compose.ui.graphics.Color,
+                    val title: androidx.compose.ui.graphics.Color,
                 )
             }
             /**
@@ -5085,6 +4978,113 @@ data class Components(
                 val disabled: Float,
                 val pressed: Float,
             )
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val radius: Radius,
+            ) {
+                /**
+                 * @property button messages: shape › radius › button. Applies to all variants.
+                 * @property container messages: shape › radius › container. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Radius(
+                    val button: Float,
+                    val container: Float,
+                )
+            }
+            @androidx.compose.runtime.Immutable
+            data class Size(
+                val gap: Gap,
+                val padding: Padding,
+            ) {
+                /**
+                 * @property button messages: size › gap › button. Applies to all variants.
+                 * @property container messages: size › gap › container. Applies to all variants.
+                 * @property text messages: size › gap › text. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Gap(
+                    val button: Float,
+                    val container: Float,
+                    val text: Float,
+                )
+                @androidx.compose.runtime.Immutable
+                data class Padding(
+                    val button: Button,
+                    val container: Container,
+                ) {
+                    /**
+                     * @property horizontal messages: size › padding › button › horizontal. Applies to all variants.
+                     * @property vertical messages: size › padding › button › vertical. Applies to all variants.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Button(
+                        val horizontal: Float,
+                        val vertical: Float,
+                    )
+                    /**
+                     * @property horizontal messages: size › padding › container › horizontal. Applies to all variants.
+                     * @property vertical messages: size › padding › container › vertical. Applies to all variants.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Container(
+                        val horizontal: Float,
+                        val vertical: Float,
+                    )
+                }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Typography(
+                val action: Action,
+                val body: Body,
+                val title: Title,
+            ) {
+                /**
+                 * @property fontFamily messages: typography › action › font family. Applies to all variants.
+                 * @property fontSize messages: typography › action › font size. Applies to all variants.
+                 * @property fontWeight messages: typography › action › font weight. Applies to all variants.
+                 * @property letterSpacing messages: typography › action › letter spacing. Applies to all variants.
+                 * @property lineHeight messages: typography › action › line height. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Action(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily messages: typography › body › font family. Applies to all variants.
+                 * @property fontSize messages: typography › body › font size. Applies to all variants.
+                 * @property fontWeight messages: typography › body › font weight. Applies to all variants.
+                 * @property letterSpacing messages: typography › body › letter spacing. Applies to all variants.
+                 * @property lineHeight messages: typography › body › line height. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Body(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily messages: typography › title › font family. Applies to all variants.
+                 * @property fontSize messages: typography › title › font size. Applies to all variants.
+                 * @property fontWeight messages: typography › title › font weight. Applies to all variants.
+                 * @property letterSpacing messages: typography › title › letter spacing. Applies to all variants.
+                 * @property lineHeight messages: typography › title › line height. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Title(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+            }
         }
     }
     @androidx.compose.runtime.Immutable
@@ -5095,18 +5095,25 @@ data class Components(
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val size: Size,
             val shape: Shape,
+            val size: Size,
             val typography: Typography,
         ) {
             /**
-             * @property text Label colour.
              * @property icon Icon colour.
+             * @property text Label colour.
              */
             @androidx.compose.runtime.Immutable
             data class Color(
-                val text: androidx.compose.ui.graphics.Color,
                 val icon: androidx.compose.ui.graphics.Color,
+                val text: androidx.compose.ui.graphics.Color,
+            )
+            /**
+             * @property radius Indicator corner radius.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val radius: Float,
             )
             /**
              * @property icon Icon size.
@@ -5118,13 +5125,13 @@ data class Components(
                 val padding: Padding,
             ) {
                 /**
-                 * @property indicatorIndicator Gap between indicators.
                  * @property iconTextIcon Gap between icon, text and icon.
+                 * @property indicatorIndicator Gap between indicators.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Gap(
-                    val indicatorIndicator: Float,
                     val iconTextIcon: Float,
+                    val indicatorIndicator: Float,
                 )
                 /**
                  * @property horizontal Horizontal padding.
@@ -5136,31 +5143,24 @@ data class Components(
                     val vertical: Float,
                 )
             }
-            /**
-             * @property radius Indicator corner radius.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Float,
-            )
             @androidx.compose.runtime.Immutable
             data class Typography(
                 val label: Label,
             ) {
                 /**
                  * @property fontFamily Label font-family.
-                 * @property fontWeight Label font-weight.
                  * @property fontSize Label font-size.
-                 * @property lineHeight Label line-height.
+                 * @property fontWeight Label font-weight.
                  * @property letterSpacing Label letter-spacing.
+                 * @property lineHeight Label line-height.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Label(
                     val fontFamily: String,
-                    val fontWeight: String,
                     val fontSize: Float,
-                    val lineHeight: Float,
+                    val fontWeight: String,
                     val letterSpacing: Float,
+                    val lineHeight: Float,
                 )
             }
         }
@@ -5209,9 +5209,33 @@ data class Components(
     }
     @androidx.compose.runtime.Immutable
     data class ProgressBars(
-        val type: Type,
         val base: Base,
+        val type: Type,
     ) {
+        @androidx.compose.runtime.Immutable
+        data class Base(
+            val shape: Shape,
+            val size: Size,
+        ) {
+            /**
+             * @property radius Bar corner radius.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val radius: Float,
+            )
+            /**
+             * @property gap Gap between bar segments.
+             * @property height Bar height.
+             * @property width Bar width.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Size(
+                val gap: Float,
+                val height: Float,
+                val width: Float,
+            )
+        }
         @androidx.compose.runtime.Immutable
         data class Type(
             val active: Active,
@@ -5259,30 +5283,6 @@ data class Components(
                 )
             }
         }
-        @androidx.compose.runtime.Immutable
-        data class Base(
-            val size: Size,
-            val shape: Shape,
-        ) {
-            /**
-             * @property gap Gap between bar segments.
-             * @property width Bar width.
-             * @property height Bar height.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Size(
-                val gap: Float,
-                val width: Float,
-                val height: Float,
-            )
-            /**
-             * @property radius Bar corner radius.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Float,
-            )
-        }
     }
     @androidx.compose.runtime.Immutable
     data class SearchBars(
@@ -5292,10 +5292,10 @@ data class Components(
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val typography: Typography,
-            val size: Size,
-            val shape: Shape,
             val opacity: Opacity,
+            val shape: Shape,
+            val size: Size,
+            val typography: Typography,
         ) {
             /**
              * @property surface search bars: color › surface. Applies to all variants.
@@ -5303,18 +5303,9 @@ data class Components(
             @androidx.compose.runtime.Immutable
             data class Color(
                 val surface: androidx.compose.ui.graphics.Color,
-                val text: Text,
                 val icon: Icon,
+                val text: Text,
             ) {
-                /**
-                 * @property placeholder search bars: color › text › placeholder. Applies to all variants.
-                 * @property input search bars: color › text › input. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Text(
-                    val placeholder: androidx.compose.ui.graphics.Color,
-                    val input: androidx.compose.ui.graphics.Color,
-                )
                 /**
                  * @property leading search bars: color › icon › leading. Applies to all variants.
                  * @property trailing search bars: color › icon › trailing. Applies to all variants.
@@ -5324,27 +5315,37 @@ data class Components(
                     val leading: androidx.compose.ui.graphics.Color,
                     val trailing: androidx.compose.ui.graphics.Color,
                 )
+                /**
+                 * @property input search bars: color › text › input. Applies to all variants.
+                 * @property placeholder search bars: color › text › placeholder. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Text(
+                    val input: androidx.compose.ui.graphics.Color,
+                    val placeholder: androidx.compose.ui.graphics.Color,
+                )
             }
             /**
-             * @property fontFamily search bars: typography › font family. Applies to all variants.
-             * @property fontWeight search bars: typography › font weight. Applies to all variants.
-             * @property fontSize search bars: typography › font size. Applies to all variants.
-             * @property lineHeight search bars: typography › line height. Applies to all variants.
-             * @property letterSpacing search bars: typography › letter spacing. Applies to all variants.
+             * @property disabled search bars: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed search bars: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
-            data class Typography(
-                val fontFamily: String,
-                val fontWeight: String,
-                val fontSize: Float,
-                val lineHeight: Float,
-                val letterSpacing: Float,
+            data class Opacity(
+                val disabled: Float,
+                val pressed: Float,
+            )
+            /**
+             * @property radius search bars: container corner radius.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val radius: Float,
             )
             @androidx.compose.runtime.Immutable
             data class Size(
                 val gap: Gap,
-                val padding: Padding,
                 val icon: Icon,
+                val padding: Padding,
             ) {
                 /**
                  * @property iconText search bars: size › gap › icon text. Applies to all variants.
@@ -5356,15 +5357,6 @@ data class Components(
                     val textIcon: Float,
                 )
                 /**
-                 * @property horizontal search bars: size › padding › horizontal. Applies to all variants.
-                 * @property vertical search bars: size › padding › vertical. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Padding(
-                    val horizontal: Float,
-                    val vertical: Float,
-                )
-                /**
                  * @property leading search bars: size › icon › leading. Applies to all variants.
                  * @property trailing search bars: size › icon › trailing. Applies to all variants.
                  */
@@ -5373,22 +5365,30 @@ data class Components(
                     val leading: Float,
                     val trailing: Float,
                 )
+                /**
+                 * @property horizontal search bars: size › padding › horizontal. Applies to all variants.
+                 * @property vertical search bars: size › padding › vertical. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Padding(
+                    val horizontal: Float,
+                    val vertical: Float,
+                )
             }
             /**
-             * @property radius search bars: container corner radius.
+             * @property fontFamily search bars: typography › font family. Applies to all variants.
+             * @property fontSize search bars: typography › font size. Applies to all variants.
+             * @property fontWeight search bars: typography › font weight. Applies to all variants.
+             * @property letterSpacing search bars: typography › letter spacing. Applies to all variants.
+             * @property lineHeight search bars: typography › line height. Applies to all variants.
              */
             @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Float,
-            )
-            /**
-             * @property disabled search bars: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             * @property pressed search bars: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
-            @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val disabled: Float,
-                val pressed: Float,
+            data class Typography(
+                val fontFamily: String,
+                val fontSize: Float,
+                val fontWeight: String,
+                val letterSpacing: Float,
+                val lineHeight: Float,
             )
         }
         @androidx.compose.runtime.Immutable
@@ -5445,8 +5445,8 @@ data class Components(
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val typography: Typography,
             val size: Size,
+            val typography: Typography,
         ) {
             /**
              * @property text Footer label colour.
@@ -5454,21 +5454,6 @@ data class Components(
             @androidx.compose.runtime.Immutable
             data class Color(
                 val text: androidx.compose.ui.graphics.Color,
-            )
-            /**
-             * @property fontFamily Footer label font-family.
-             * @property fontWeight Footer label font-weight.
-             * @property fontSize Footer label font-size.
-             * @property lineHeight Footer label line-height.
-             * @property letterSpacing Footer label letter-spacing.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Typography(
-                val fontFamily: String,
-                val fontWeight: String,
-                val fontSize: Float,
-                val lineHeight: Float,
-                val letterSpacing: Float,
             )
             @androidx.compose.runtime.Immutable
             data class Size(
@@ -5484,6 +5469,21 @@ data class Components(
                     val vertical: Float,
                 )
             }
+            /**
+             * @property fontFamily Footer label font-family.
+             * @property fontSize Footer label font-size.
+             * @property fontWeight Footer label font-weight.
+             * @property letterSpacing Footer label letter-spacing.
+             * @property lineHeight Footer label line-height.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Typography(
+                val fontFamily: String,
+                val fontSize: Float,
+                val fontWeight: String,
+                val letterSpacing: Float,
+                val lineHeight: Float,
+            )
         }
     }
     @androidx.compose.runtime.Immutable
@@ -5498,22 +5498,9 @@ data class Components(
         ) {
             @androidx.compose.runtime.Immutable
             data class Color(
-                val text: Text,
                 val icon: Icon,
+                val text: Text,
             ) {
-                /**
-                 * @property primary section headers: color › text › primary. Applies to all variants.
-                 * @property secondary section headers: color › text › secondary. Applies to all variants.
-                 * @property tertiary section headers: color › text › tertiary. Applies to all variants.
-                 * @property quaternary section headers: color › text › quaternary. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Text(
-                    val primary: androidx.compose.ui.graphics.Color,
-                    val secondary: androidx.compose.ui.graphics.Color,
-                    val tertiary: androidx.compose.ui.graphics.Color,
-                    val quaternary: androidx.compose.ui.graphics.Color,
-                )
                 /**
                  * @property leading section headers: color › icon › leading. Applies to all variants.
                  * @property trailing section headers: color › icon › trailing. Applies to all variants.
@@ -5523,6 +5510,19 @@ data class Components(
                     val leading: androidx.compose.ui.graphics.Color,
                     val trailing: androidx.compose.ui.graphics.Color,
                 )
+                /**
+                 * @property primary section headers: color › text › primary. Applies to all variants.
+                 * @property quaternary section headers: color › text › quaternary. Applies to all variants.
+                 * @property secondary section headers: color › text › secondary. Applies to all variants.
+                 * @property tertiary section headers: color › text › tertiary. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Text(
+                    val primary: androidx.compose.ui.graphics.Color,
+                    val quaternary: androidx.compose.ui.graphics.Color,
+                    val secondary: androidx.compose.ui.graphics.Color,
+                    val tertiary: androidx.compose.ui.graphics.Color,
+                )
             }
             @androidx.compose.runtime.Immutable
             data class Size(
@@ -5530,17 +5530,17 @@ data class Components(
                 val icon: Icon,
             ) {
                 /**
-                 * @property iconText section headers: size › gap › icon text. Applies to all variants.
                  * @property iconIcon section headers: size › gap › icon icon. Applies to all variants.
-                 * @property textIcon section headers: size › gap › text icon. Applies to all variants.
+                 * @property iconText section headers: size › gap › icon text. Applies to all variants.
                  * @property textBadge section headers: size › gap › text badge. Applies to all variants.
+                 * @property textIcon section headers: size › gap › text icon. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Gap(
-                    val iconText: Float,
                     val iconIcon: Float,
-                    val textIcon: Float,
+                    val iconText: Float,
                     val textBadge: Float,
+                    val textIcon: Float,
                 )
                 /**
                  * @property leading section headers: size › icon › leading. Applies to all variants.
@@ -5556,48 +5556,87 @@ data class Components(
         @androidx.compose.runtime.Immutable
         data class Type(
             val primary: Primary,
+            val quaternary: Quaternary,
             val secondary: Secondary,
             val tertiary: Tertiary,
-            val quaternary: Quaternary,
         ) {
             @androidx.compose.runtime.Immutable
             data class Primary(
-                val typography: Typography,
                 val size: Size,
+                val typography: Typography,
             ) {
-                /**
-                 * @property fontFamily primary section header font-family.
-                 * @property fontWeight primary section header font-weight.
-                 * @property fontSize primary section header font-size.
-                 * @property lineHeight primary section header line-height.
-                 * @property letterSpacing primary section header letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Typography(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
                 @androidx.compose.runtime.Immutable
                 data class Size(
                     val padding: Padding,
                 ) {
                     /**
+                     * @property bottom Bottom padding for a primary section header.
                      * @property left Left padding for a primary section header.
                      * @property right Right padding for a primary section header.
                      * @property top Top padding for a primary section header.
-                     * @property bottom Bottom padding for a primary section header.
                      */
                     @androidx.compose.runtime.Immutable
                     data class Padding(
+                        val bottom: Float,
                         val left: Float,
                         val right: Float,
                         val top: Float,
-                        val bottom: Float,
                     )
                 }
+                /**
+                 * @property fontFamily primary section header font-family.
+                 * @property fontSize primary section header font-size.
+                 * @property fontWeight primary section header font-weight.
+                 * @property letterSpacing primary section header letter-spacing.
+                 * @property lineHeight primary section header line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Typography(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+            }
+            @androidx.compose.runtime.Immutable
+            data class Quaternary(
+                val size: Size,
+                val typography: Typography,
+            ) {
+                @androidx.compose.runtime.Immutable
+                data class Size(
+                    val padding: Padding,
+                ) {
+                    /**
+                     * @property bottom Bottom padding for a quaternary section header.
+                     * @property left Left padding for a quaternary section header.
+                     * @property right Right padding for a quaternary section header.
+                     * @property top Top padding for a quaternary section header.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Padding(
+                        val bottom: Float,
+                        val left: Float,
+                        val right: Float,
+                        val top: Float,
+                    )
+                }
+                /**
+                 * @property fontFamily quaternary section header font-family.
+                 * @property fontSize quaternary section header font-size.
+                 * @property fontWeight quaternary section header font-weight.
+                 * @property letterSpacing quaternary section header letter-spacing.
+                 * @property lineHeight quaternary section header line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Typography(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
             }
             @androidx.compose.runtime.Immutable
             data class Secondary(
@@ -5609,33 +5648,33 @@ data class Components(
                     val padding: Padding,
                 ) {
                     /**
+                     * @property bottom Bottom padding for a secondary section header.
                      * @property left Left padding for a secondary section header.
                      * @property right Right padding for a secondary section header.
                      * @property top Top padding for a secondary section header.
-                     * @property bottom Bottom padding for a secondary section header.
                      */
                     @androidx.compose.runtime.Immutable
                     data class Padding(
+                        val bottom: Float,
                         val left: Float,
                         val right: Float,
                         val top: Float,
-                        val bottom: Float,
                     )
                 }
                 /**
                  * @property fontFamily secondary section header font-family.
-                 * @property fontWeight secondary section header font-weight.
                  * @property fontSize secondary section header font-size.
-                 * @property lineHeight secondary section header line-height.
+                 * @property fontWeight secondary section header font-weight.
                  * @property letterSpacing secondary section header letter-spacing.
+                 * @property lineHeight secondary section header line-height.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Typography(
                     val fontFamily: String,
-                    val fontWeight: String,
                     val fontSize: Float,
-                    val lineHeight: Float,
+                    val fontWeight: String,
                     val letterSpacing: Float,
+                    val lineHeight: Float,
                 )
             }
             @androidx.compose.runtime.Immutable
@@ -5648,90 +5687,51 @@ data class Components(
                     val padding: Padding,
                 ) {
                     /**
+                     * @property bottom Bottom padding for a tertiary section header.
                      * @property left Left padding for a tertiary section header.
                      * @property right Right padding for a tertiary section header.
                      * @property top Top padding for a tertiary section header.
-                     * @property bottom Bottom padding for a tertiary section header.
                      */
                     @androidx.compose.runtime.Immutable
                     data class Padding(
+                        val bottom: Float,
                         val left: Float,
                         val right: Float,
                         val top: Float,
-                        val bottom: Float,
                     )
                 }
                 /**
                  * @property fontFamily tertiary section header font-family.
-                 * @property fontWeight tertiary section header font-weight.
                  * @property fontSize tertiary section header font-size.
-                 * @property lineHeight tertiary section header line-height.
+                 * @property fontWeight tertiary section header font-weight.
                  * @property letterSpacing tertiary section header letter-spacing.
+                 * @property lineHeight tertiary section header line-height.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Typography(
                     val fontFamily: String,
-                    val fontWeight: String,
                     val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Quaternary(
-                val typography: Typography,
-                val size: Size,
-            ) {
-                /**
-                 * @property fontFamily quaternary section header font-family.
-                 * @property fontWeight quaternary section header font-weight.
-                 * @property fontSize quaternary section header font-size.
-                 * @property lineHeight quaternary section header line-height.
-                 * @property letterSpacing quaternary section header letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Typography(
-                    val fontFamily: String,
                     val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
                     val letterSpacing: Float,
+                    val lineHeight: Float,
                 )
-                @androidx.compose.runtime.Immutable
-                data class Size(
-                    val padding: Padding,
-                ) {
-                    /**
-                     * @property left Left padding for a quaternary section header.
-                     * @property right Right padding for a quaternary section header.
-                     * @property top Top padding for a quaternary section header.
-                     * @property bottom Bottom padding for a quaternary section header.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Padding(
-                        val left: Float,
-                        val right: Float,
-                        val top: Float,
-                        val bottom: Float,
-                    )
-                }
             }
         }
     }
     @androidx.compose.runtime.Immutable
     data class SegmentedControls(
         val base: Base,
-        val type: Type,
-        val state: State,
         val size: Size,
+        val state: State,
+        val type: Type,
     ) {
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val typography: Typography,
-            val size: Size,
-            val shape: Shape,
             val opacity: Opacity,
+            val shape: Shape,
+            val size: Size,
+            val typography: Typography,
         ) {
             @androidx.compose.runtime.Immutable
             data class Color(
@@ -5755,24 +5755,29 @@ data class Components(
                     val tag: androidx.compose.ui.graphics.Color,
                 )
             }
+            /**
+             * @property disabled segmented controls: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed segmented controls: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             */
             @androidx.compose.runtime.Immutable
-            data class Typography(
-                val tag: Tag,
+            data class Opacity(
+                val disabled: Float,
+                val pressed: Float,
+            )
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val radius: Radius,
             ) {
                 /**
-                 * @property fontFamily segmented controls: typography › tag › font family. Applies to all variants.
-                 * @property fontWeight segmented controls: typography › tag › font weight. Applies to all variants.
-                 * @property fontSize segmented controls: typography › tag › font size. Applies to all variants.
-                 * @property lineHeight segmented controls: typography › tag › line height. Applies to all variants.
-                 * @property letterSpacing segmented controls: typography › tag › letter spacing. Applies to all variants.
+                 * @property container segmented controls: shape › radius › container. Applies to all variants.
+                 * @property segment segmented controls: shape › radius › segment. Applies to all variants.
+                 * @property tag segmented controls: shape › radius › tag. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
-                data class Tag(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
+                data class Radius(
+                    val container: Float,
+                    val segment: Float,
+                    val tag: Float,
                 )
             }
             /**
@@ -5809,30 +5814,115 @@ data class Components(
                 }
             }
             @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Radius,
+            data class Typography(
+                val tag: Tag,
             ) {
                 /**
-                 * @property container segmented controls: shape › radius › container. Applies to all variants.
-                 * @property segment segmented controls: shape › radius › segment. Applies to all variants.
-                 * @property tag segmented controls: shape › radius › tag. Applies to all variants.
+                 * @property fontFamily segmented controls: typography › tag › font family. Applies to all variants.
+                 * @property fontSize segmented controls: typography › tag › font size. Applies to all variants.
+                 * @property fontWeight segmented controls: typography › tag › font weight. Applies to all variants.
+                 * @property letterSpacing segmented controls: typography › tag › letter spacing. Applies to all variants.
+                 * @property lineHeight segmented controls: typography › tag › line height. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
-                data class Radius(
-                    val container: Float,
-                    val segment: Float,
-                    val tag: Float,
+                data class Tag(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
                 )
             }
-            /**
-             * @property disabled segmented controls: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             * @property pressed segmented controls: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
+        }
+        @androidx.compose.runtime.Immutable
+        data class Size(
+            val large: Large,
+            val small: Small,
+        ) {
             @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val disabled: Float,
-                val pressed: Float,
-            )
+            data class Large(
+                val padding: Padding,
+            ) {
+                /**
+                 * @property horizontal Segment horizontal padding at size lg.
+                 * @property vertical Segment vertical padding at size lg.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Padding(
+                    val horizontal: Float,
+                    val vertical: Float,
+                )
+            }
+            @androidx.compose.runtime.Immutable
+            data class Small(
+                val padding: Padding,
+            ) {
+                /**
+                 * @property horizontal Segment horizontal padding at size sm.
+                 * @property vertical Segment vertical padding at size sm.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Padding(
+                    val horizontal: Float,
+                    val vertical: Float,
+                )
+            }
+        }
+        @androidx.compose.runtime.Immutable
+        data class State(
+            val selected: Selected,
+            val unselected: Unselected,
+        ) {
+            @androidx.compose.runtime.Immutable
+            data class Selected(
+                val typography: Typography,
+            ) {
+                @androidx.compose.runtime.Immutable
+                data class Typography(
+                    val label: Label,
+                ) {
+                    /**
+                     * @property fontFamily Label font-family when selected.
+                     * @property fontSize Label font-size when selected.
+                     * @property fontWeight Label font-weight when selected.
+                     * @property letterSpacing Label letter-spacing when selected.
+                     * @property lineHeight Label line-height when selected.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Label(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Unselected(
+                val typography: Typography,
+            ) {
+                @androidx.compose.runtime.Immutable
+                data class Typography(
+                    val label: Label,
+                ) {
+                    /**
+                     * @property fontFamily Label font-family when unselected.
+                     * @property fontSize Label font-size when unselected.
+                     * @property fontWeight Label font-weight when unselected.
+                     * @property letterSpacing Label letter-spacing when unselected.
+                     * @property lineHeight Label line-height when unselected.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Label(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                }
+            }
         }
         @androidx.compose.runtime.Immutable
         data class Type(
@@ -5938,198 +6028,18 @@ data class Components(
                 }
             }
         }
-        @androidx.compose.runtime.Immutable
-        data class State(
-            val selected: Selected,
-            val unselected: Unselected,
-        ) {
-            @androidx.compose.runtime.Immutable
-            data class Selected(
-                val typography: Typography,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class Typography(
-                    val label: Label,
-                ) {
-                    /**
-                     * @property fontFamily Label font-family when selected.
-                     * @property fontWeight Label font-weight when selected.
-                     * @property fontSize Label font-size when selected.
-                     * @property lineHeight Label line-height when selected.
-                     * @property letterSpacing Label letter-spacing when selected.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Label(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                }
-            }
-            @androidx.compose.runtime.Immutable
-            data class Unselected(
-                val typography: Typography,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class Typography(
-                    val label: Label,
-                ) {
-                    /**
-                     * @property fontFamily Label font-family when unselected.
-                     * @property fontWeight Label font-weight when unselected.
-                     * @property fontSize Label font-size when unselected.
-                     * @property lineHeight Label line-height when unselected.
-                     * @property letterSpacing Label letter-spacing when unselected.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Label(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                }
-            }
-        }
-        @androidx.compose.runtime.Immutable
-        data class Size(
-            val small: Small,
-            val large: Large,
-        ) {
-            @androidx.compose.runtime.Immutable
-            data class Small(
-                val padding: Padding,
-            ) {
-                /**
-                 * @property horizontal Segment horizontal padding at size sm.
-                 * @property vertical Segment vertical padding at size sm.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Padding(
-                    val horizontal: Float,
-                    val vertical: Float,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Large(
-                val padding: Padding,
-            ) {
-                /**
-                 * @property horizontal Segment horizontal padding at size lg.
-                 * @property vertical Segment vertical padding at size lg.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Padding(
-                    val horizontal: Float,
-                    val vertical: Float,
-                )
-            }
-        }
     }
     @androidx.compose.runtime.Immutable
     data class Selectors(
-        val state: State,
         val base: Base,
+        val state: State,
     ) {
-        @androidx.compose.runtime.Immutable
-        data class State(
-            val selected: Selected,
-            val unselected: Unselected,
-        ) {
-            @androidx.compose.runtime.Immutable
-            data class Selected(
-                val color: Color,
-                val typography: Typography,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val text: Text,
-                    val surface: Surface,
-                ) {
-                    /**
-                     * @property label Label colour when selected.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Text(
-                        val label: androidx.compose.ui.graphics.Color,
-                    )
-                    /**
-                     * @property option Option fill when selected.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Surface(
-                        val option: androidx.compose.ui.graphics.Color,
-                    )
-                }
-                @androidx.compose.runtime.Immutable
-                data class Typography(
-                    val label: Label,
-                ) {
-                    /**
-                     * @property fontFamily Label font-family when selected.
-                     * @property fontWeight Label font-weight when selected.
-                     * @property fontSize Label font-size when selected.
-                     * @property lineHeight Label line-height when selected.
-                     * @property letterSpacing Label letter-spacing when selected.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Label(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                }
-            }
-            @androidx.compose.runtime.Immutable
-            data class Unselected(
-                val typography: Typography,
-                val color: Color,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class Typography(
-                    val label: Label,
-                ) {
-                    /**
-                     * @property fontFamily Label font-family when unselected.
-                     * @property fontWeight Label font-weight when unselected.
-                     * @property fontSize Label font-size when unselected.
-                     * @property lineHeight Label line-height when unselected.
-                     * @property letterSpacing Label letter-spacing when unselected.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Label(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                }
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val text: Text,
-                ) {
-                    /**
-                     * @property label Label colour when unselected.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Text(
-                        val label: androidx.compose.ui.graphics.Color,
-                    )
-                }
-            }
-        }
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val size: Size,
-            val shape: Shape,
             val opacity: Opacity,
+            val shape: Shape,
+            val size: Size,
         ) {
             @androidx.compose.runtime.Immutable
             data class Color(
@@ -6141,6 +6051,29 @@ data class Components(
                 @androidx.compose.runtime.Immutable
                 data class Surface(
                     val container: androidx.compose.ui.graphics.Color,
+                )
+            }
+            /**
+             * @property disabled selectors: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed selectors: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             */
+            @androidx.compose.runtime.Immutable
+            data class Opacity(
+                val disabled: Float,
+                val pressed: Float,
+            )
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val radius: Radius,
+            ) {
+                /**
+                 * @property container selectors: shape › radius › container. Applies to all variants.
+                 * @property option selectors: shape › radius › option. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Radius(
+                    val container: Float,
+                    val option: Float,
                 )
             }
             @androidx.compose.runtime.Immutable
@@ -6172,29 +6105,96 @@ data class Components(
                     )
                 }
             }
+        }
+        @androidx.compose.runtime.Immutable
+        data class State(
+            val selected: Selected,
+            val unselected: Unselected,
+        ) {
             @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Radius,
+            data class Selected(
+                val color: Color,
+                val typography: Typography,
             ) {
-                /**
-                 * @property container selectors: shape › radius › container. Applies to all variants.
-                 * @property option selectors: shape › radius › option. Applies to all variants.
-                 */
                 @androidx.compose.runtime.Immutable
-                data class Radius(
-                    val container: Float,
-                    val option: Float,
-                )
+                data class Color(
+                    val surface: Surface,
+                    val text: Text,
+                ) {
+                    /**
+                     * @property option Option fill when selected.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Surface(
+                        val option: androidx.compose.ui.graphics.Color,
+                    )
+                    /**
+                     * @property label Label colour when selected.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Text(
+                        val label: androidx.compose.ui.graphics.Color,
+                    )
+                }
+                @androidx.compose.runtime.Immutable
+                data class Typography(
+                    val label: Label,
+                ) {
+                    /**
+                     * @property fontFamily Label font-family when selected.
+                     * @property fontSize Label font-size when selected.
+                     * @property fontWeight Label font-weight when selected.
+                     * @property letterSpacing Label letter-spacing when selected.
+                     * @property lineHeight Label line-height when selected.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Label(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                }
             }
-            /**
-             * @property disabled selectors: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             * @property pressed selectors: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
             @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val disabled: Float,
-                val pressed: Float,
-            )
+            data class Unselected(
+                val color: Color,
+                val typography: Typography,
+            ) {
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val text: Text,
+                ) {
+                    /**
+                     * @property label Label colour when unselected.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Text(
+                        val label: androidx.compose.ui.graphics.Color,
+                    )
+                }
+                @androidx.compose.runtime.Immutable
+                data class Typography(
+                    val label: Label,
+                ) {
+                    /**
+                     * @property fontFamily Label font-family when unselected.
+                     * @property fontSize Label font-size when unselected.
+                     * @property fontWeight Label font-weight when unselected.
+                     * @property letterSpacing Label letter-spacing when unselected.
+                     * @property lineHeight Label line-height when unselected.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Label(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                }
+            }
         }
     }
     @androidx.compose.runtime.Immutable
@@ -6204,11 +6204,11 @@ data class Components(
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val typography: Typography,
-            val size: Size,
-            val shape: Shape,
             val effect: Effect,
             val opacity: Opacity,
+            val shape: Shape,
+            val size: Size,
+            val typography: Typography,
         ) {
             @androidx.compose.runtime.Immutable
             data class Color(
@@ -6216,60 +6216,64 @@ data class Components(
                 val text: Text,
             ) {
                 /**
-                 * @property track sliders: color › surface › track. Applies to all variants.
                  * @property fill sliders: color › surface › fill. Applies to all variants.
                  * @property thumb sliders: color › surface › thumb. Applies to all variants.
+                 * @property track sliders: color › surface › track. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Surface(
-                    val track: androidx.compose.ui.graphics.Color,
                     val fill: androidx.compose.ui.graphics.Color,
                     val thumb: androidx.compose.ui.graphics.Color,
+                    val track: androidx.compose.ui.graphics.Color,
                 )
                 /**
-                 * @property value sliders: color › text › value. Applies to all variants.
                  * @property unitOfMeasure sliders: color › text › uom. Applies to all variants.
+                 * @property value sliders: color › text › value. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Text(
-                    val value: androidx.compose.ui.graphics.Color,
                     val unitOfMeasure: androidx.compose.ui.graphics.Color,
+                    val value: androidx.compose.ui.graphics.Color,
                 )
             }
+            /**
+             * @property backgroundBlur sliders: effect › background blur. Applies to all variants.
+             */
             @androidx.compose.runtime.Immutable
-            data class Typography(
-                val value: Value,
-                val unitOfMeasure: UnitOfMeasure,
+            data class Effect(
+                val backgroundBlur: Float,
+            )
+            /**
+             * @property fill sliders: opacity › fill. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property thumb sliders: opacity › thumb. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property track sliders: opacity › track. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             */
+            @androidx.compose.runtime.Immutable
+            data class Opacity(
+                val fill: Float,
+                val thumb: Float,
+                val track: Float,
+            )
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val borderWidth: BorderWidth,
+                val radius: Radius,
             ) {
                 /**
-                 * @property fontFamily sliders: typography › value › font family. Applies to all variants.
-                 * @property fontWeight sliders: typography › value › font weight. Applies to all variants.
-                 * @property fontSize sliders: typography › value › font size. Applies to all variants.
-                 * @property lineHeight sliders: typography › value › line height. Applies to all variants.
-                 * @property letterSpacing sliders: typography › value › letter spacing. Applies to all variants.
+                 * @property thumb sliders: shape › border width › thumb. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
-                data class Value(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
+                data class BorderWidth(
+                    val thumb: Float,
                 )
                 /**
-                 * @property fontFamily sliders: typography › uom › font family. Applies to all variants.
-                 * @property fontWeight sliders: typography › uom › font weight. Applies to all variants.
-                 * @property fontSize sliders: typography › uom › font size. Applies to all variants.
-                 * @property lineHeight sliders: typography › uom › line height. Applies to all variants.
-                 * @property letterSpacing sliders: typography › uom › letter spacing. Applies to all variants.
+                 * @property fill sliders: shape › radius › fill. Applies to all variants.
+                 * @property track sliders: shape › radius › track. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
-                data class UnitOfMeasure(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
+                data class Radius(
+                    val fill: Float,
+                    val track: Float,
                 )
             }
             @androidx.compose.runtime.Immutable
@@ -6278,13 +6282,13 @@ data class Components(
                 val padding: Padding,
             ) {
                 /**
-                 * @property valueUnitOfMeasure sliders: size › gap › value uom. Applies to all variants.
                  * @property horizontal sliders: size › gap › horizontal. Applies to all variants.
+                 * @property valueUnitOfMeasure sliders: size › gap › value uom. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Gap(
-                    val valueUnitOfMeasure: Float,
                     val horizontal: Float,
+                    val valueUnitOfMeasure: Float,
                 )
                 @androidx.compose.runtime.Immutable
                 data class Padding(
@@ -6312,45 +6316,41 @@ data class Components(
                 }
             }
             @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Radius,
-                val borderWidth: BorderWidth,
+            data class Typography(
+                val unitOfMeasure: UnitOfMeasure,
+                val value: Value,
             ) {
                 /**
-                 * @property track sliders: shape › radius › track. Applies to all variants.
-                 * @property fill sliders: shape › radius › fill. Applies to all variants.
+                 * @property fontFamily sliders: typography › uom › font family. Applies to all variants.
+                 * @property fontSize sliders: typography › uom › font size. Applies to all variants.
+                 * @property fontWeight sliders: typography › uom › font weight. Applies to all variants.
+                 * @property letterSpacing sliders: typography › uom › letter spacing. Applies to all variants.
+                 * @property lineHeight sliders: typography › uom › line height. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
-                data class Radius(
-                    val track: Float,
-                    val fill: Float,
+                data class UnitOfMeasure(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
                 )
                 /**
-                 * @property thumb sliders: shape › border width › thumb. Applies to all variants.
+                 * @property fontFamily sliders: typography › value › font family. Applies to all variants.
+                 * @property fontSize sliders: typography › value › font size. Applies to all variants.
+                 * @property fontWeight sliders: typography › value › font weight. Applies to all variants.
+                 * @property letterSpacing sliders: typography › value › letter spacing. Applies to all variants.
+                 * @property lineHeight sliders: typography › value › line height. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
-                data class BorderWidth(
-                    val thumb: Float,
+                data class Value(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
                 )
             }
-            /**
-             * @property backgroundBlur sliders: effect › background blur. Applies to all variants.
-             */
-            @androidx.compose.runtime.Immutable
-            data class Effect(
-                val backgroundBlur: Float,
-            )
-            /**
-             * @property track sliders: opacity › track. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             * @property fill sliders: opacity › fill. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             * @property thumb sliders: opacity › thumb. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
-            @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val track: Float,
-                val fill: Float,
-                val thumb: Float,
-            )
         }
     }
     @androidx.compose.runtime.Immutable
@@ -6360,10 +6360,10 @@ data class Components(
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val typography: Typography,
-            val size: Size,
-            val shape: Shape,
             val opacity: Opacity,
+            val shape: Shape,
+            val size: Size,
+            val typography: Typography,
         ) {
             /**
              * @property icon snackbars: color › icon. Applies to all variants.
@@ -6371,62 +6371,49 @@ data class Components(
             @androidx.compose.runtime.Immutable
             data class Color(
                 val icon: androidx.compose.ui.graphics.Color,
-                val text: Text,
                 val surface: Surface,
+                val text: Text,
             ) {
                 /**
-                 * @property message snackbars: color › text › message. Applies to all variants.
-                 * @property buttonLabel snackbars: color › text › button label. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Text(
-                    val message: androidx.compose.ui.graphics.Color,
-                    val buttonLabel: androidx.compose.ui.graphics.Color,
-                )
-                /**
-                 * @property container snackbars: color › surface › container. Applies to all variants.
                  * @property button snackbars: color › surface › button. Applies to all variants.
+                 * @property container snackbars: color › surface › container. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Surface(
-                    val container: androidx.compose.ui.graphics.Color,
                     val button: androidx.compose.ui.graphics.Color,
+                    val container: androidx.compose.ui.graphics.Color,
+                )
+                /**
+                 * @property buttonLabel snackbars: color › text › button label. Applies to all variants.
+                 * @property message snackbars: color › text › message. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Text(
+                    val buttonLabel: androidx.compose.ui.graphics.Color,
+                    val message: androidx.compose.ui.graphics.Color,
                 )
             }
+            /**
+             * @property disabled snackbars: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed snackbars: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             */
             @androidx.compose.runtime.Immutable
-            data class Typography(
-                val message: Message,
-                val button: Button,
+            data class Opacity(
+                val disabled: Float,
+                val pressed: Float,
+            )
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val radius: Radius,
             ) {
                 /**
-                 * @property fontFamily snackbars: typography › message › font family. Applies to all variants.
-                 * @property fontWeight snackbars: typography › message › font weight. Applies to all variants.
-                 * @property fontSize snackbars: typography › message › font size. Applies to all variants.
-                 * @property lineHeight snackbars: typography › message › line height. Applies to all variants.
-                 * @property letterSpacing snackbars: typography › message › letter spacing. Applies to all variants.
+                 * @property button snackbars: shape › radius › button. Applies to all variants.
+                 * @property container snackbars: shape › radius › container. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
-                data class Message(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily snackbars: typography › button › font family. Applies to all variants.
-                 * @property fontWeight snackbars: typography › button › font weight. Applies to all variants.
-                 * @property fontSize snackbars: typography › button › font size. Applies to all variants.
-                 * @property lineHeight snackbars: typography › button › line height. Applies to all variants.
-                 * @property letterSpacing snackbars: typography › button › letter spacing. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Button(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
+                data class Radius(
+                    val button: Float,
+                    val container: Float,
                 )
             }
             /**
@@ -6447,18 +6434,9 @@ data class Components(
                 )
                 @androidx.compose.runtime.Immutable
                 data class Padding(
-                    val container: Container,
                     val button: Button,
+                    val container: Container,
                 ) {
-                    /**
-                     * @property horizontal snackbars: size › padding › container › horizontal. Applies to all variants.
-                     * @property vertical snackbars: size › padding › container › vertical. Applies to all variants.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Container(
-                        val horizontal: Float,
-                        val vertical: Float,
-                    )
                     /**
                      * @property horizontal snackbars: size › padding › button › horizontal. Applies to all variants.
                      * @property vertical snackbars: size › padding › button › vertical. Applies to all variants.
@@ -6468,148 +6446,80 @@ data class Components(
                         val horizontal: Float,
                         val vertical: Float,
                     )
+                    /**
+                     * @property horizontal snackbars: size › padding › container › horizontal. Applies to all variants.
+                     * @property vertical snackbars: size › padding › container › vertical. Applies to all variants.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Container(
+                        val horizontal: Float,
+                        val vertical: Float,
+                    )
                 }
             }
             @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Radius,
+            data class Typography(
+                val button: Button,
+                val message: Message,
             ) {
                 /**
-                 * @property button snackbars: shape › radius › button. Applies to all variants.
-                 * @property container snackbars: shape › radius › container. Applies to all variants.
+                 * @property fontFamily snackbars: typography › button › font family. Applies to all variants.
+                 * @property fontSize snackbars: typography › button › font size. Applies to all variants.
+                 * @property fontWeight snackbars: typography › button › font weight. Applies to all variants.
+                 * @property letterSpacing snackbars: typography › button › letter spacing. Applies to all variants.
+                 * @property lineHeight snackbars: typography › button › line height. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
-                data class Radius(
-                    val button: Float,
-                    val container: Float,
+                data class Button(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily snackbars: typography › message › font family. Applies to all variants.
+                 * @property fontSize snackbars: typography › message › font size. Applies to all variants.
+                 * @property fontWeight snackbars: typography › message › font weight. Applies to all variants.
+                 * @property letterSpacing snackbars: typography › message › letter spacing. Applies to all variants.
+                 * @property lineHeight snackbars: typography › message › line height. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Message(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
                 )
             }
-            /**
-             * @property disabled snackbars: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             * @property pressed snackbars: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
-            @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val disabled: Float,
-                val pressed: Float,
-            )
         }
     }
     @androidx.compose.runtime.Immutable
     data class Tags(
-        val type: Type,
         val base: Base,
+        val type: Type,
     ) {
         @androidx.compose.runtime.Immutable
-        data class Type(
-            val neutral: Neutral,
-            val success: Success,
-            val warning: Warning,
-            val error: Error,
-            val high: High,
-        ) {
-            @androidx.compose.runtime.Immutable
-            data class Neutral(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Container fill for a neutral tag.
-                 * @property icon Icon colour for a neutral tag.
-                 * @property text Label colour for a neutral tag.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val icon: androidx.compose.ui.graphics.Color,
-                    val text: androidx.compose.ui.graphics.Color,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Success(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Container fill for a success tag.
-                 * @property icon Icon colour for a success tag.
-                 * @property text Label colour for a success tag.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val icon: androidx.compose.ui.graphics.Color,
-                    val text: androidx.compose.ui.graphics.Color,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Warning(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Container fill for a warning tag.
-                 * @property icon Icon colour for a warning tag.
-                 * @property text Label colour for a warning tag.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val icon: androidx.compose.ui.graphics.Color,
-                    val text: androidx.compose.ui.graphics.Color,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Error(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Container fill for a error tag.
-                 * @property icon Icon colour for a error tag.
-                 * @property text Label colour for a error tag.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val icon: androidx.compose.ui.graphics.Color,
-                    val text: androidx.compose.ui.graphics.Color,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class High(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Container fill for a neutral tag.
-                 * @property icon Icon colour for a neutral tag.
-                 * @property text Label colour for a neutral tag.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                    val icon: androidx.compose.ui.graphics.Color,
-                    val text: androidx.compose.ui.graphics.Color,
-                )
-            }
-        }
-        @androidx.compose.runtime.Immutable
         data class Base(
-            val typography: Typography,
-            val size: Size,
-            val shape: Shape,
             val opacity: Opacity,
+            val shape: Shape,
+            val size: Size,
+            val typography: Typography,
         ) {
             /**
-             * @property fontFamily Label font family. Applies to all tag types.
-             * @property fontWeight Label font weight. Applies to all tag types.
-             * @property fontSize Label font size. Applies to all tag types.
-             * @property lineHeight Label line height. Applies to all tag types.
-             * @property letterSpacing Label letter spacing. Applies to all tag types.
+             * @property container Container fill opacity. Applies to all tag types. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
-            data class Typography(
-                val fontFamily: String,
-                val fontWeight: String,
-                val fontSize: Float,
-                val lineHeight: Float,
-                val letterSpacing: Float,
+            data class Opacity(
+                val container: Float,
+            )
+            /**
+             * @property radius Container corner radius. Applies to all tag types.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val radius: Float,
             )
             /**
              * @property gap Gap between tag content items. Applies to all tag types.
@@ -6653,19 +6563,109 @@ data class Components(
                 }
             }
             /**
-             * @property radius Container corner radius. Applies to all tag types.
+             * @property fontFamily Label font family. Applies to all tag types.
+             * @property fontSize Label font size. Applies to all tag types.
+             * @property fontWeight Label font weight. Applies to all tag types.
+             * @property letterSpacing Label letter spacing. Applies to all tag types.
+             * @property lineHeight Label line height. Applies to all tag types.
              */
             @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Float,
+            data class Typography(
+                val fontFamily: String,
+                val fontSize: Float,
+                val fontWeight: String,
+                val letterSpacing: Float,
+                val lineHeight: Float,
             )
-            /**
-             * @property container Container fill opacity. Applies to all tag types. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
+        }
+        @androidx.compose.runtime.Immutable
+        data class Type(
+            val error: Error,
+            val high: High,
+            val neutral: Neutral,
+            val success: Success,
+            val warning: Warning,
+        ) {
             @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val container: Float,
-            )
+            data class Error(
+                val color: Color,
+            ) {
+                /**
+                 * @property icon Icon colour for a error tag.
+                 * @property surface Container fill for a error tag.
+                 * @property text Label colour for a error tag.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val icon: androidx.compose.ui.graphics.Color,
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: androidx.compose.ui.graphics.Color,
+                )
+            }
+            @androidx.compose.runtime.Immutable
+            data class High(
+                val color: Color,
+            ) {
+                /**
+                 * @property icon Icon colour for a neutral tag.
+                 * @property surface Container fill for a neutral tag.
+                 * @property text Label colour for a neutral tag.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val icon: androidx.compose.ui.graphics.Color,
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: androidx.compose.ui.graphics.Color,
+                )
+            }
+            @androidx.compose.runtime.Immutable
+            data class Neutral(
+                val color: Color,
+            ) {
+                /**
+                 * @property icon Icon colour for a neutral tag.
+                 * @property surface Container fill for a neutral tag.
+                 * @property text Label colour for a neutral tag.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val icon: androidx.compose.ui.graphics.Color,
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: androidx.compose.ui.graphics.Color,
+                )
+            }
+            @androidx.compose.runtime.Immutable
+            data class Success(
+                val color: Color,
+            ) {
+                /**
+                 * @property icon Icon colour for a success tag.
+                 * @property surface Container fill for a success tag.
+                 * @property text Label colour for a success tag.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val icon: androidx.compose.ui.graphics.Color,
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: androidx.compose.ui.graphics.Color,
+                )
+            }
+            @androidx.compose.runtime.Immutable
+            data class Warning(
+                val color: Color,
+            ) {
+                /**
+                 * @property icon Icon colour for a warning tag.
+                 * @property surface Container fill for a warning tag.
+                 * @property text Label colour for a warning tag.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val icon: androidx.compose.ui.graphics.Color,
+                    val surface: androidx.compose.ui.graphics.Color,
+                    val text: androidx.compose.ui.graphics.Color,
+                )
+            }
         }
     }
     @androidx.compose.runtime.Immutable
@@ -6676,17 +6676,24 @@ data class Components(
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val typography: Typography,
-            val size: Size,
-            val shape: Shape,
             val opacity: Opacity,
+            val shape: Shape,
+            val size: Size,
+            val typography: Typography,
         ) {
             @androidx.compose.runtime.Immutable
             data class Color(
+                val icon: Icon,
                 val surface: Surface,
                 val text: Text,
-                val icon: Icon,
             ) {
+                /**
+                 * @property clear Clear icon colour.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Icon(
+                    val clear: androidx.compose.ui.graphics.Color,
+                )
                 /**
                  * @property container Field container fill.
                  */
@@ -6695,94 +6702,33 @@ data class Components(
                     val container: androidx.compose.ui.graphics.Color,
                 )
                 /**
+                 * @property counter counter text colour.
                  * @property input input text colour.
                  * @property placeholder placeholder text colour.
                  * @property supporting supporting text colour.
-                 * @property counter counter text colour.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Text(
+                    val counter: androidx.compose.ui.graphics.Color,
                     val input: androidx.compose.ui.graphics.Color,
                     val placeholder: androidx.compose.ui.graphics.Color,
                     val supporting: androidx.compose.ui.graphics.Color,
-                    val counter: androidx.compose.ui.graphics.Color,
-                )
-                /**
-                 * @property clear Clear icon colour.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Icon(
-                    val clear: androidx.compose.ui.graphics.Color,
                 )
             }
+            /**
+             * @property disabled Opacity when disabled. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             */
             @androidx.compose.runtime.Immutable
-            data class Typography(
-                val input: Input,
-                val placeholder: Placeholder,
-                val supporting: Supporting,
-                val counter: Counter,
-            ) {
-                /**
-                 * @property fontFamily input font-family.
-                 * @property fontWeight input font-weight.
-                 * @property fontSize input font-size.
-                 * @property lineHeight input line-height.
-                 * @property letterSpacing input letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Input(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily placeholder font-family.
-                 * @property fontWeight placeholder font-weight.
-                 * @property fontSize placeholder font-size.
-                 * @property lineHeight placeholder line-height.
-                 * @property letterSpacing placeholder letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Placeholder(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily supporting font-family.
-                 * @property fontWeight supporting font-weight.
-                 * @property fontSize supporting font-size.
-                 * @property lineHeight supporting line-height.
-                 * @property letterSpacing supporting letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Supporting(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily counter font-family.
-                 * @property fontWeight counter font-weight.
-                 * @property fontSize counter font-size.
-                 * @property lineHeight counter line-height.
-                 * @property letterSpacing counter letter-spacing.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Counter(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-            }
+            data class Opacity(
+                val disabled: Float,
+            )
+            /**
+             * @property radius Field corner radius.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val radius: Float,
+            )
             @androidx.compose.runtime.Immutable
             data class Size(
                 val gap: Gap,
@@ -6790,13 +6736,13 @@ data class Components(
                 val padding: Padding,
             ) {
                 /**
-                 * @property supportCounter Gap between supporting text and counter.
                  * @property labelText Gap between label and input text.
+                 * @property supportCounter Gap between supporting text and counter.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Gap(
-                    val supportCounter: Float,
                     val labelText: Float,
+                    val supportCounter: Float,
                 )
                 /**
                  * @property clear Clear icon size.
@@ -6822,81 +6768,89 @@ data class Components(
                     )
                 }
             }
-            /**
-             * @property radius Field corner radius.
-             */
             @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Float,
-            )
-            /**
-             * @property disabled Opacity when disabled. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
-            @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val disabled: Float,
-            )
+            data class Typography(
+                val counter: Counter,
+                val input: Input,
+                val placeholder: Placeholder,
+                val supporting: Supporting,
+            ) {
+                /**
+                 * @property fontFamily counter font-family.
+                 * @property fontSize counter font-size.
+                 * @property fontWeight counter font-weight.
+                 * @property letterSpacing counter letter-spacing.
+                 * @property lineHeight counter line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Counter(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily input font-family.
+                 * @property fontSize input font-size.
+                 * @property fontWeight input font-weight.
+                 * @property letterSpacing input letter-spacing.
+                 * @property lineHeight input line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Input(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily placeholder font-family.
+                 * @property fontSize placeholder font-size.
+                 * @property fontWeight placeholder font-weight.
+                 * @property letterSpacing placeholder letter-spacing.
+                 * @property lineHeight placeholder line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Placeholder(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily supporting font-family.
+                 * @property fontSize supporting font-size.
+                 * @property fontWeight supporting font-weight.
+                 * @property letterSpacing supporting letter-spacing.
+                 * @property lineHeight supporting line-height.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Supporting(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+            }
         }
         @androidx.compose.runtime.Immutable
         data class State(
-            val error: Error,
             val default: Default,
+            val empty: Empty,
+            val error: Error,
             val floating: Floating,
             val focused: Focused,
-            val empty: Empty,
             val populated: Populated,
         ) {
             @androidx.compose.runtime.Immutable
-            data class Error(
-                val color: Color,
-                val typography: Typography,
-            ) {
-                /**
-                 * @property icon Icon colour in the error state.
-                 * @property border Border colour when error.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val icon: androidx.compose.ui.graphics.Color,
-                    val border: androidx.compose.ui.graphics.Color,
-                    val text: Text,
-                ) {
-                    /**
-                     * @property message Error message colour.
-                     * @property label Label colour in the error state.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Text(
-                        val message: androidx.compose.ui.graphics.Color,
-                        val label: androidx.compose.ui.graphics.Color,
-                    )
-                }
-                @androidx.compose.runtime.Immutable
-                data class Typography(
-                    val message: Message,
-                ) {
-                    /**
-                     * @property fontFamily Error message font-family.
-                     * @property fontWeight Error message font-weight.
-                     * @property fontSize Error message font-size.
-                     * @property lineHeight Error message line-height.
-                     * @property letterSpacing Error message letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Message(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                }
-            }
-            @androidx.compose.runtime.Immutable
             data class Default(
                 val color: Color,
-                val typography: Typography,
                 val shape: Shape,
+                val typography: Typography,
             ) {
                 /**
                  * @property border Border colour when default.
@@ -6914,26 +6868,6 @@ data class Components(
                         val label: androidx.compose.ui.graphics.Color,
                     )
                 }
-                @androidx.compose.runtime.Immutable
-                data class Typography(
-                    val label: Label,
-                ) {
-                    /**
-                     * @property fontFamily Default label font-family.
-                     * @property fontWeight Default label font-weight.
-                     * @property fontSize Default label font-size.
-                     * @property lineHeight Default label line-height.
-                     * @property letterSpacing Default label letter-spacing.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Label(
-                        val fontFamily: String,
-                        val fontWeight: String,
-                        val fontSize: Float,
-                        val lineHeight: Float,
-                        val letterSpacing: Float,
-                    )
-                }
                 /**
                  * @property borderWidth Border width when default.
                  */
@@ -6941,64 +6875,26 @@ data class Components(
                 data class Shape(
                     val borderWidth: Float,
                 )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Floating(
-                val color: Color,
-                val typography: Typography,
-            ) {
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val text: Text,
-                ) {
-                    /**
-                     * @property label Label colour when floating.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Text(
-                        val label: androidx.compose.ui.graphics.Color,
-                    )
-                }
                 @androidx.compose.runtime.Immutable
                 data class Typography(
                     val label: Label,
                 ) {
                     /**
-                     * @property fontFamily Floating label font-family.
-                     * @property fontWeight Floating label font-weight.
-                     * @property fontSize Floating label font-size.
-                     * @property lineHeight Floating label line-height.
-                     * @property letterSpacing Floating label letter-spacing.
+                     * @property fontFamily Default label font-family.
+                     * @property fontSize Default label font-size.
+                     * @property fontWeight Default label font-weight.
+                     * @property letterSpacing Default label letter-spacing.
+                     * @property lineHeight Default label line-height.
                      */
                     @androidx.compose.runtime.Immutable
                     data class Label(
                         val fontFamily: String,
-                        val fontWeight: String,
                         val fontSize: Float,
-                        val lineHeight: Float,
+                        val fontWeight: String,
                         val letterSpacing: Float,
+                        val lineHeight: Float,
                     )
                 }
-            }
-            @androidx.compose.runtime.Immutable
-            data class Focused(
-                val shape: Shape,
-                val color: Color,
-            ) {
-                /**
-                 * @property borderWidth Border width when focused.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Shape(
-                    val borderWidth: Float,
-                )
-                /**
-                 * @property border Border colour when focused.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val border: androidx.compose.ui.graphics.Color,
-                )
             }
             @androidx.compose.runtime.Immutable
             data class Empty(
@@ -7023,6 +6919,110 @@ data class Components(
                         )
                     }
                 }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Error(
+                val color: Color,
+                val typography: Typography,
+            ) {
+                /**
+                 * @property border Border colour when error.
+                 * @property icon Icon colour in the error state.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val border: androidx.compose.ui.graphics.Color,
+                    val icon: androidx.compose.ui.graphics.Color,
+                    val text: Text,
+                ) {
+                    /**
+                     * @property label Label colour in the error state.
+                     * @property message Error message colour.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Text(
+                        val label: androidx.compose.ui.graphics.Color,
+                        val message: androidx.compose.ui.graphics.Color,
+                    )
+                }
+                @androidx.compose.runtime.Immutable
+                data class Typography(
+                    val message: Message,
+                ) {
+                    /**
+                     * @property fontFamily Error message font-family.
+                     * @property fontSize Error message font-size.
+                     * @property fontWeight Error message font-weight.
+                     * @property letterSpacing Error message letter-spacing.
+                     * @property lineHeight Error message line-height.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Message(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Floating(
+                val color: Color,
+                val typography: Typography,
+            ) {
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val text: Text,
+                ) {
+                    /**
+                     * @property label Label colour when floating.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Text(
+                        val label: androidx.compose.ui.graphics.Color,
+                    )
+                }
+                @androidx.compose.runtime.Immutable
+                data class Typography(
+                    val label: Label,
+                ) {
+                    /**
+                     * @property fontFamily Floating label font-family.
+                     * @property fontSize Floating label font-size.
+                     * @property fontWeight Floating label font-weight.
+                     * @property letterSpacing Floating label letter-spacing.
+                     * @property lineHeight Floating label line-height.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Label(
+                        val fontFamily: String,
+                        val fontSize: Float,
+                        val fontWeight: String,
+                        val letterSpacing: Float,
+                        val lineHeight: Float,
+                    )
+                }
+            }
+            @androidx.compose.runtime.Immutable
+            data class Focused(
+                val color: Color,
+                val shape: Shape,
+            ) {
+                /**
+                 * @property border Border colour when focused.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val border: androidx.compose.ui.graphics.Color,
+                )
+                /**
+                 * @property borderWidth Border width when focused.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Shape(
+                    val borderWidth: Float,
+                )
             }
             @androidx.compose.runtime.Immutable
             data class Populated(
@@ -7052,59 +7052,16 @@ data class Components(
     }
     @androidx.compose.runtime.Immutable
     data class Tiles(
-        val state: State,
         val base: Base,
+        val state: State,
     ) {
-        @androidx.compose.runtime.Immutable
-        data class State(
-            val default: Default,
-            val selected: Selected,
-            val hover: Hover,
-        ) {
-            @androidx.compose.runtime.Immutable
-            data class Default(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Tile surface fill when default.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Selected(
-                val color: Color,
-            ) {
-                /**
-                 * @property border Tile border colour when selected.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val border: androidx.compose.ui.graphics.Color,
-                )
-            }
-            @androidx.compose.runtime.Immutable
-            data class Hover(
-                val color: Color,
-            ) {
-                /**
-                 * @property surface Tile surface fill when hover.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Color(
-                    val surface: androidx.compose.ui.graphics.Color,
-                )
-            }
-        }
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val typography: Typography,
-            val size: Size,
-            val shape: Shape,
             val opacity: Opacity,
+            val shape: Shape,
+            val size: Size,
+            val typography: Typography,
         ) {
             /**
              * @property icon Tile icon colour.
@@ -7123,19 +7080,22 @@ data class Components(
                 )
             }
             /**
-             * @property fontFamily Tile label font-family.
-             * @property fontWeight Tile label font-weight.
-             * @property fontSize Tile label font-size.
-             * @property lineHeight Tile label line-height.
-             * @property letterSpacing Tile label letter-spacing.
+             * @property disabled Opacity when disabled. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed Opacity when pressed. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
              */
             @androidx.compose.runtime.Immutable
-            data class Typography(
-                val fontFamily: String,
-                val fontWeight: String,
-                val fontSize: Float,
-                val lineHeight: Float,
-                val letterSpacing: Float,
+            data class Opacity(
+                val disabled: Float,
+                val pressed: Float,
+            )
+            /**
+             * @property borderWidth Tile border width.
+             * @property radius Tile corner radius.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val borderWidth: Float,
+                val radius: Float,
             )
             /**
              * @property icon Tile icon size.
@@ -7164,23 +7124,63 @@ data class Components(
                 )
             }
             /**
-             * @property radius Tile corner radius.
-             * @property borderWidth Tile border width.
+             * @property fontFamily Tile label font-family.
+             * @property fontSize Tile label font-size.
+             * @property fontWeight Tile label font-weight.
+             * @property letterSpacing Tile label letter-spacing.
+             * @property lineHeight Tile label line-height.
              */
             @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Float,
-                val borderWidth: Float,
+            data class Typography(
+                val fontFamily: String,
+                val fontSize: Float,
+                val fontWeight: String,
+                val letterSpacing: Float,
+                val lineHeight: Float,
             )
-            /**
-             * @property disabled Opacity when disabled. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             * @property pressed Opacity when pressed. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
+        }
+        @androidx.compose.runtime.Immutable
+        data class State(
+            val default: Default,
+            val hover: Hover,
+            val selected: Selected,
+        ) {
             @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val disabled: Float,
-                val pressed: Float,
-            )
+            data class Default(
+                val color: Color,
+            ) {
+                /**
+                 * @property surface Tile surface fill when default.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val surface: androidx.compose.ui.graphics.Color,
+                )
+            }
+            @androidx.compose.runtime.Immutable
+            data class Hover(
+                val color: Color,
+            ) {
+                /**
+                 * @property surface Tile surface fill when hover.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val surface: androidx.compose.ui.graphics.Color,
+                )
+            }
+            @androidx.compose.runtime.Immutable
+            data class Selected(
+                val color: Color,
+            ) {
+                /**
+                 * @property border Tile border colour when selected.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Color(
+                    val border: androidx.compose.ui.graphics.Color,
+                )
+            }
         }
     }
     @androidx.compose.runtime.Immutable
@@ -7190,10 +7190,10 @@ data class Components(
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val typography: Typography,
-            val size: Size,
-            val shape: Shape,
             val opacity: Opacity,
+            val shape: Shape,
+            val size: Size,
+            val typography: Typography,
         ) {
             /**
              * @property icon tooltips: color › icon. Applies to all variants.
@@ -7203,80 +7203,51 @@ data class Components(
             data class Color(
                 val icon: androidx.compose.ui.graphics.Color,
                 val pointer: androidx.compose.ui.graphics.Color,
-                val text: Text,
                 val surface: Surface,
+                val text: Text,
             ) {
                 /**
-                 * @property title tooltips: color › text › title. Applies to all variants.
-                 * @property message tooltips: color › text › message. Applies to all variants.
-                 * @property buttonLabel tooltips: color › text › button label. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Text(
-                    val title: androidx.compose.ui.graphics.Color,
-                    val message: androidx.compose.ui.graphics.Color,
-                    val buttonLabel: androidx.compose.ui.graphics.Color,
-                )
-                /**
-                 * @property container tooltips: color › surface › container. Applies to all variants.
                  * @property button tooltips: color › surface › button. Applies to all variants.
+                 * @property container tooltips: color › surface › container. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Surface(
-                    val container: androidx.compose.ui.graphics.Color,
                     val button: androidx.compose.ui.graphics.Color,
+                    val container: androidx.compose.ui.graphics.Color,
+                )
+                /**
+                 * @property buttonLabel tooltips: color › text › button label. Applies to all variants.
+                 * @property message tooltips: color › text › message. Applies to all variants.
+                 * @property title tooltips: color › text › title. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Text(
+                    val buttonLabel: androidx.compose.ui.graphics.Color,
+                    val message: androidx.compose.ui.graphics.Color,
+                    val title: androidx.compose.ui.graphics.Color,
                 )
             }
+            /**
+             * @property disabled tooltips: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             * @property pressed tooltips: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             */
             @androidx.compose.runtime.Immutable
-            data class Typography(
-                val title: Title,
-                val message: Message,
-                val button: Button,
+            data class Opacity(
+                val disabled: Float,
+                val pressed: Float,
+            )
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val radius: Radius,
             ) {
                 /**
-                 * @property fontFamily tooltips: typography › title › font family. Applies to all variants.
-                 * @property fontWeight tooltips: typography › title › font weight. Applies to all variants.
-                 * @property fontSize tooltips: typography › title › font size. Applies to all variants.
-                 * @property lineHeight tooltips: typography › title › line height. Applies to all variants.
-                 * @property letterSpacing tooltips: typography › title › letter spacing. Applies to all variants.
+                 * @property button tooltips: shape › radius › button. Applies to all variants.
+                 * @property container tooltips: shape › radius › container. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
-                data class Title(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily tooltips: typography › message › font family. Applies to all variants.
-                 * @property fontWeight tooltips: typography › message › font weight. Applies to all variants.
-                 * @property fontSize tooltips: typography › message › font size. Applies to all variants.
-                 * @property lineHeight tooltips: typography › message › line height. Applies to all variants.
-                 * @property letterSpacing tooltips: typography › message › letter spacing. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Message(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily tooltips: typography › button › font family. Applies to all variants.
-                 * @property fontWeight tooltips: typography › button › font weight. Applies to all variants.
-                 * @property fontSize tooltips: typography › button › font size. Applies to all variants.
-                 * @property lineHeight tooltips: typography › button › line height. Applies to all variants.
-                 * @property letterSpacing tooltips: typography › button › letter spacing. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Button(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
+                data class Radius(
+                    val button: Float,
+                    val container: Float,
                 )
             }
             /**
@@ -7289,30 +7260,21 @@ data class Components(
                 val padding: Padding,
             ) {
                 /**
-                 * @property titleBody tooltips: size › gap › title body. Applies to all variants.
                  * @property textButton tooltips: size › gap › text button. Applies to all variants.
                  * @property textClose tooltips: size › gap › text close. Applies to all variants.
+                 * @property titleBody tooltips: size › gap › title body. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
                 data class Gap(
-                    val titleBody: Float,
                     val textButton: Float,
                     val textClose: Float,
+                    val titleBody: Float,
                 )
                 @androidx.compose.runtime.Immutable
                 data class Padding(
-                    val container: Container,
                     val button: Button,
+                    val container: Container,
                 ) {
-                    /**
-                     * @property horizontal tooltips: size › padding › container › horizontal. Applies to all variants.
-                     * @property vertical tooltips: size › padding › container › vertical. Applies to all variants.
-                     */
-                    @androidx.compose.runtime.Immutable
-                    data class Container(
-                        val horizontal: Float,
-                        val vertical: Float,
-                    )
                     /**
                      * @property horizontal tooltips: size › padding › button › horizontal. Applies to all variants.
                      * @property vertical tooltips: size › padding › button › vertical. Applies to all variants.
@@ -7322,31 +7284,69 @@ data class Components(
                         val horizontal: Float,
                         val vertical: Float,
                     )
+                    /**
+                     * @property horizontal tooltips: size › padding › container › horizontal. Applies to all variants.
+                     * @property vertical tooltips: size › padding › container › vertical. Applies to all variants.
+                     */
+                    @androidx.compose.runtime.Immutable
+                    data class Container(
+                        val horizontal: Float,
+                        val vertical: Float,
+                    )
                 }
             }
             @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Radius,
+            data class Typography(
+                val button: Button,
+                val message: Message,
+                val title: Title,
             ) {
                 /**
-                 * @property container tooltips: shape › radius › container. Applies to all variants.
-                 * @property button tooltips: shape › radius › button. Applies to all variants.
+                 * @property fontFamily tooltips: typography › button › font family. Applies to all variants.
+                 * @property fontSize tooltips: typography › button › font size. Applies to all variants.
+                 * @property fontWeight tooltips: typography › button › font weight. Applies to all variants.
+                 * @property letterSpacing tooltips: typography › button › letter spacing. Applies to all variants.
+                 * @property lineHeight tooltips: typography › button › line height. Applies to all variants.
                  */
                 @androidx.compose.runtime.Immutable
-                data class Radius(
-                    val container: Float,
-                    val button: Float,
+                data class Button(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily tooltips: typography › message › font family. Applies to all variants.
+                 * @property fontSize tooltips: typography › message › font size. Applies to all variants.
+                 * @property fontWeight tooltips: typography › message › font weight. Applies to all variants.
+                 * @property letterSpacing tooltips: typography › message › letter spacing. Applies to all variants.
+                 * @property lineHeight tooltips: typography › message › line height. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Message(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily tooltips: typography › title › font family. Applies to all variants.
+                 * @property fontSize tooltips: typography › title › font size. Applies to all variants.
+                 * @property fontWeight tooltips: typography › title › font weight. Applies to all variants.
+                 * @property letterSpacing tooltips: typography › title › letter spacing. Applies to all variants.
+                 * @property lineHeight tooltips: typography › title › line height. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Title(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
                 )
             }
-            /**
-             * @property disabled tooltips: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             * @property pressed tooltips: opacity › pressed. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
-            @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val disabled: Float,
-                val pressed: Float,
-            )
         }
     }
     @androidx.compose.runtime.Immutable
@@ -7356,19 +7356,19 @@ data class Components(
         @androidx.compose.runtime.Immutable
         data class Base(
             val color: Color,
-            val typography: Typography,
-            val size: Size,
-            val shape: Shape,
             val opacity: Opacity,
+            val shape: Shape,
+            val size: Size,
+            val typography: Typography,
         ) {
             /**
-             * @property icon uploaders: color › icon. Applies to all variants.
              * @property border uploaders: color › border. Applies to all variants.
+             * @property icon uploaders: color › icon. Applies to all variants.
              */
             @androidx.compose.runtime.Immutable
             data class Color(
-                val icon: androidx.compose.ui.graphics.Color,
                 val border: androidx.compose.ui.graphics.Color,
+                val icon: androidx.compose.ui.graphics.Color,
                 val text: Text,
             ) {
                 /**
@@ -7381,42 +7381,22 @@ data class Components(
                     val supportingText: androidx.compose.ui.graphics.Color,
                 )
             }
+            /**
+             * @property disabled uploaders: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
+             */
             @androidx.compose.runtime.Immutable
-            data class Typography(
-                val label: Label,
-                val supporting: Supporting,
-            ) {
-                /**
-                 * @property fontFamily uploaders: typography › label › font family. Applies to all variants.
-                 * @property fontWeight uploaders: typography › label › font weight. Applies to all variants.
-                 * @property fontSize uploaders: typography › label › font size. Applies to all variants.
-                 * @property lineHeight uploaders: typography › label › line height. Applies to all variants.
-                 * @property letterSpacing uploaders: typography › label › letter spacing. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Label(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-                /**
-                 * @property fontFamily uploaders: typography › supporting › font family. Applies to all variants.
-                 * @property fontWeight uploaders: typography › supporting › font weight. Applies to all variants.
-                 * @property fontSize uploaders: typography › supporting › font size. Applies to all variants.
-                 * @property lineHeight uploaders: typography › supporting › line height. Applies to all variants.
-                 * @property letterSpacing uploaders: typography › supporting › letter spacing. Applies to all variants.
-                 */
-                @androidx.compose.runtime.Immutable
-                data class Supporting(
-                    val fontFamily: String,
-                    val fontWeight: String,
-                    val fontSize: Float,
-                    val lineHeight: Float,
-                    val letterSpacing: Float,
-                )
-            }
+            data class Opacity(
+                val disabled: Float,
+            )
+            /**
+             * @property borderWidth uploaders: shape › border width. Applies to all variants.
+             * @property radius uploaders: shape › radius. Applies to all variants.
+             */
+            @androidx.compose.runtime.Immutable
+            data class Shape(
+                val borderWidth: Float,
+                val radius: Float,
+            )
             /**
              * @property icon uploaders: size › icon. Applies to all variants.
              */
@@ -7463,207 +7443,90 @@ data class Components(
                     )
                 }
             }
-            /**
-             * @property radius uploaders: shape › radius. Applies to all variants.
-             * @property borderWidth uploaders: shape › border width. Applies to all variants.
-             */
             @androidx.compose.runtime.Immutable
-            data class Shape(
-                val radius: Float,
-                val borderWidth: Float,
-            )
-            /**
-             * @property disabled uploaders: opacity › disabled. Applies to all variants. Opacity as a 0-1 Compose alpha (Figma stores this value as 0-100).
-             */
-            @androidx.compose.runtime.Immutable
-            data class Opacity(
-                val disabled: Float,
-            )
+            data class Typography(
+                val label: Label,
+                val supporting: Supporting,
+            ) {
+                /**
+                 * @property fontFamily uploaders: typography › label › font family. Applies to all variants.
+                 * @property fontSize uploaders: typography › label › font size. Applies to all variants.
+                 * @property fontWeight uploaders: typography › label › font weight. Applies to all variants.
+                 * @property letterSpacing uploaders: typography › label › letter spacing. Applies to all variants.
+                 * @property lineHeight uploaders: typography › label › line height. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Label(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+                /**
+                 * @property fontFamily uploaders: typography › supporting › font family. Applies to all variants.
+                 * @property fontSize uploaders: typography › supporting › font size. Applies to all variants.
+                 * @property fontWeight uploaders: typography › supporting › font weight. Applies to all variants.
+                 * @property letterSpacing uploaders: typography › supporting › letter spacing. Applies to all variants.
+                 * @property lineHeight uploaders: typography › supporting › line height. Applies to all variants.
+                 */
+                @androidx.compose.runtime.Immutable
+                data class Supporting(
+                    val fontFamily: String,
+                    val fontSize: Float,
+                    val fontWeight: String,
+                    val letterSpacing: Float,
+                    val lineHeight: Float,
+                )
+            }
         }
     }
 }
 
 fun componentsValue(base: Base, primitives: Primitives, typography: Typography): Components =
     Components(
-        banners = Components.Banners(
-            type = Components.Banners.Type(
-                informative = Components.Banners.Type.Informative(
-                    color = Components.Banners.Type.Informative.Color(
-                        surface = base.color.surface.status.neutral.minimal,
-                        icon = base.color.icon.status.info,
-                        text = base.color.text.status.neutral,
-                    ),
-                ),
-                warning = Components.Banners.Type.Warning(
-                    color = Components.Banners.Type.Warning.Color(
-                        surface = base.color.surface.status.warning.strong,
-                        icon = base.color.icon.status.warning.strong,
-                        text = base.color.text.status.warning.strong,
-                    ),
-                ),
-                success = Components.Banners.Type.Success(
-                    color = Components.Banners.Type.Success.Color(
-                        surface = base.color.surface.status.success.strong,
-                        icon = base.color.icon.status.success.strong,
-                        text = base.color.text.status.success.strong,
-                    ),
-                ),
-                danger = Components.Banners.Type.Danger(
-                    color = Components.Banners.Type.Danger.Color(
-                        surface = primitives.palette.uNDEFINED,
-                        text = primitives.palette.uNDEFINED,
-                        icon = primitives.palette.uNDEFINED,
-                    ),
-                ),
-            ),
-            base = Components.Banners.Base(
-                opacity = Components.Banners.Base.Opacity(
-                    container = base.opacity._10,
-                ),
-                typography = Components.Banners.Base.Typography(
-                    fontFamily = typography.callout.family,
-                    fontWeight = typography.weight.regular,
-                    fontSize = typography.callout.size,
-                    lineHeight = typography.callout.lineHeight,
-                    letterSpacing = typography.callout.letterSpacing,
-                ),
-                size = Components.Banners.Base.Size(
-                    icon = base.scale._300,
-                    gap = Components.Banners.Base.Size.Gap(
-                        iconText = base.scale._100,
-                    ),
-                    padding = Components.Banners.Base.Size.Padding(
-                        horizontal = base.scale._200,
-                        vertical = base.scale._100,
-                    ),
-                ),
-                shape = Components.Banners.Base.Shape(
-                    radius = base.radius.large,
-                ),
-            ),
-        ),
-        badges = Components.Badges(
-            type = Components.Badges.Type(
-                new = Components.Badges.Type.New(
-                    color = Components.Badges.Type.New.Color(
-                        surface = base.color.surface.status.success.strong,
-                        text = base.color.text.status.danger.emphasized.default,
-                    ),
-                ),
-                important = Components.Badges.Type.Important(
-                    color = Components.Badges.Type.Important.Color(
-                        surface = base.color.surface.status.danger.strong,
-                        text = base.color.text.status.danger.emphasized.default,
-                    ),
-                ),
-                system = Components.Badges.Type.System(
-                    color = Components.Badges.Type.System.Color(
-                        surface = base.apple.color.systemRed,
-                        text = base.apple.color.systemWhite,
-                    ),
-                ),
-            ),
-            size = Components.Badges.Size(
-                large = Components.Badges.Size.Large(
-                    minSize = base.scale._300,
-                    padding = Components.Badges.Size.Large.Padding(
-                        horizontal = base.scale._100,
-                        vertical = base.scale._25,
-                    ),
-                    typography = Components.Badges.Size.Large.Typography(
-                        fontFamily = typography.footnote.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.footnote.size,
-                        lineHeight = typography.footnote.lineHeight,
-                        letterSpacing = typography.footnote.letterSpacing,
-                    ),
-                ),
-                medium = Components.Badges.Size.Medium(
-                    minSize = base.scale._200,
-                    padding = Components.Badges.Size.Medium.Padding(
-                        horizontal = base.scale._50,
-                        top = base.scale._25,
-                        bottom = base.scale._12_5,
-                    ),
-                    typography = Components.Badges.Size.Medium.Typography(
-                        fontFamily = typography.caption2.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.caption2.size,
-                        lineHeight = typography.caption2.lineHeight,
-                        letterSpacing = typography.caption2.letterSpacing,
-                    ),
-                ),
-                small = Components.Badges.Size.Small(
-                    minSize = base.scale._100,
-                ),
-            ),
-            base = Components.Badges.Base(
-                shape = Components.Badges.Base.Shape(
-                    radius = base.radius.full,
-                ),
-            ),
-        ),
         accordions = Components.Accordions(
             base = Components.Accordions.Base(
                 color = Components.Accordions.Base.Color(
                     icon = base.color.icon.base.default,
                     text = Components.Accordions.Base.Color.Text(
                         body = base.color.text.emphasis.default,
-                        value = base.color.text.base.default,
                         unitOfMeasure = base.color.text.muted.default,
-                    ),
-                ),
-                typography = Components.Accordions.Base.Typography(
-                    body = Components.Accordions.Base.Typography.Body(
-                        fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
-                        letterSpacing = typography.callout.letterSpacing,
-                    ),
-                    value = Components.Accordions.Base.Typography.Value(
-                        fontFamily = typography.expressive.title2.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.expressive.title2.size,
-                        lineHeight = typography.expressive.title2.lineHeight,
-                        letterSpacing = typography.expressive.title2.letterSpacing,
-                    ),
-                    unitOfMeasure = Components.Accordions.Base.Typography.UnitOfMeasure(
-                        fontFamily = typography.subheadline.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.subheadline.size,
-                        lineHeight = typography.subheadline.lineHeight,
-                        letterSpacing = typography.subheadline.letterSpacing,
+                        value = base.color.text.base.default,
                     ),
                 ),
                 size = Components.Accordions.Base.Size(
                     icon = base.scale._400,
                     gap = Components.Accordions.Base.Size.Gap(
                         row = base.scale._25,
-                        valueUnitOfMeasure = base.scale._50,
                         textIcon = base.scale._100,
+                        valueUnitOfMeasure = base.scale._50,
                     ),
                     padding = Components.Accordions.Base.Size.Padding(
-                        unitOfMeasure = Components.Accordions.Base.Size.Padding.UnitOfMeasure(
-                            bottom = base.scale._12_5,
-                        ),
                         leftContent = Components.Accordions.Base.Size.Padding.LeftContent(
-                            headerOptions = Components.Accordions.Base.Size.Padding.LeftContent.HeaderOptions(
-                                noScore = Components.Accordions.Base.Size.Padding.LeftContent.HeaderOptions.NoScore(
-                                    vertical = base.scale._200,
-                                    left = base.scale._200,
-                                    right = base.scale._100,
-                                ),
-                                hasScore = Components.Accordions.Base.Size.Padding.LeftContent.HeaderOptions.HasScore(
-                                    vertical = 11.0f,
-                                    left = base.scale._200,
-                                    right = base.scale._100,
-                                ),
-                            ),
                             body = Components.Accordions.Base.Size.Padding.LeftContent.Body(
-                                vertical = base.scale._0,
                                 left = base.scale._0,
                                 right = base.scale._100,
+                                vertical = base.scale._0,
+                            ),
+                            headerOptions = Components.Accordions.Base.Size.Padding.LeftContent.HeaderOptions(
+                                hasScore = Components.Accordions.Base.Size.Padding.LeftContent.HeaderOptions.HasScore(
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    vertical = 11.0f,
+                                ),
+                                noScore = Components.Accordions.Base.Size.Padding.LeftContent.HeaderOptions.NoScore(
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    vertical = base.scale._200,
+                                ),
+                            ),
+                        ),
+                        panelRow = Components.Accordions.Base.Size.Padding.PanelRow(
+                            body = Components.Accordions.Base.Size.Padding.PanelRow.Body(
+                                left = base.scale._200,
+                                right = base.scale._0,
+                                vertical = base.scale._50,
                             ),
                         ),
                         rightContent = Components.Accordions.Base.Size.Padding.RightContent(
@@ -7672,13 +7535,32 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                                 vertical = base.scale._100,
                             ),
                         ),
-                        panelRow = Components.Accordions.Base.Size.Padding.PanelRow(
-                            body = Components.Accordions.Base.Size.Padding.PanelRow.Body(
-                                vertical = base.scale._50,
-                                left = base.scale._200,
-                                right = base.scale._0,
-                            ),
+                        unitOfMeasure = Components.Accordions.Base.Size.Padding.UnitOfMeasure(
+                            bottom = base.scale._12_5,
                         ),
+                    ),
+                ),
+                typography = Components.Accordions.Base.Typography(
+                    body = Components.Accordions.Base.Typography.Body(
+                        fontFamily = typography.callout.family,
+                        fontSize = typography.callout.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.callout.letterSpacing,
+                        lineHeight = typography.callout.lineHeight,
+                    ),
+                    unitOfMeasure = Components.Accordions.Base.Typography.UnitOfMeasure(
+                        fontFamily = typography.subheadline.family,
+                        fontSize = typography.subheadline.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.subheadline.letterSpacing,
+                        lineHeight = typography.subheadline.lineHeight,
+                    ),
+                    value = Components.Accordions.Base.Typography.Value(
+                        fontFamily = typography.expressive.title2.family,
+                        fontSize = typography.expressive.title2.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.expressive.title2.letterSpacing,
+                        lineHeight = typography.expressive.title2.lineHeight,
                     ),
                 ),
             ),
@@ -7686,20 +7568,11 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                 primary = Components.Accordions.Type.Primary(
                     color = Components.Accordions.Type.Primary.Color(
                         surface = Components.Accordions.Type.Primary.Color.Surface(
-                            header = base.color.surface.tone.emphasis,
                             body = primitives.palette.uNDEFINED,
+                            header = base.color.surface.tone.emphasis,
                         ),
                         text = Components.Accordions.Type.Primary.Color.Text(
                             header = base.color.text.base.default,
-                        ),
-                    ),
-                    typography = Components.Accordions.Type.Primary.Typography(
-                        header = Components.Accordions.Type.Primary.Typography.Header(
-                            fontFamily = typography.expressive.body.family,
-                            fontWeight = typography.weight.medium,
-                            fontSize = typography.expressive.body.size,
-                            lineHeight = typography.expressive.body.lineHeight,
-                            letterSpacing = typography.expressive.body.letterSpacing,
                         ),
                     ),
                     state = Components.Accordions.Type.Primary.State(
@@ -7712,330 +7585,220 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                             shape = Components.Accordions.Type.Primary.State.Expanded.Shape(
                                 radius = Components.Accordions.Type.Primary.State.Expanded.Shape.Radius(
                                     middleRow = base.radius.none,
-                                    topRow = Components.Accordions.Type.Primary.State.Expanded.Shape.Radius.TopRow(
-                                        top = Components.Accordions.Type.Primary.State.Expanded.Shape.Radius.TopRow.Top(
+                                    bottomRow = Components.Accordions.Type.Primary.State.Expanded.Shape.Radius.BottomRow(
+                                        bottom = Components.Accordions.Type.Primary.State.Expanded.Shape.Radius.BottomRow.Bottom(
                                             left = base.radius.extraExtraLarge,
                                             right = base.radius.extraExtraLarge,
                                         ),
-                                        bottom = Components.Accordions.Type.Primary.State.Expanded.Shape.Radius.TopRow.Bottom(
-                                            left = base.radius.none,
-                                            right = base.radius.none,
-                                        ),
-                                    ),
-                                    bottomRow = Components.Accordions.Type.Primary.State.Expanded.Shape.Radius.BottomRow(
                                         top = Components.Accordions.Type.Primary.State.Expanded.Shape.Radius.BottomRow.Top(
                                             left = base.radius.none,
                                             right = base.radius.none,
                                         ),
-                                        bottom = Components.Accordions.Type.Primary.State.Expanded.Shape.Radius.BottomRow.Bottom(
+                                    ),
+                                    topRow = Components.Accordions.Type.Primary.State.Expanded.Shape.Radius.TopRow(
+                                        bottom = Components.Accordions.Type.Primary.State.Expanded.Shape.Radius.TopRow.Bottom(
+                                            left = base.radius.none,
+                                            right = base.radius.none,
+                                        ),
+                                        top = Components.Accordions.Type.Primary.State.Expanded.Shape.Radius.TopRow.Top(
                                             left = base.radius.extraExtraLarge,
                                             right = base.radius.extraExtraLarge,
                                         ),
                                     ),
                                 ),
                             ),
+                        ),
+                    ),
+                    typography = Components.Accordions.Type.Primary.Typography(
+                        header = Components.Accordions.Type.Primary.Typography.Header(
+                            fontFamily = typography.expressive.body.family,
+                            fontSize = typography.expressive.body.size,
+                            fontWeight = typography.weight.medium,
+                            letterSpacing = typography.expressive.body.letterSpacing,
+                            lineHeight = typography.expressive.body.lineHeight,
                         ),
                     ),
                 ),
                 secondary = Components.Accordions.Type.Secondary(
                     color = Components.Accordions.Type.Secondary.Color(
                         surface = Components.Accordions.Type.Secondary.Color.Surface(
-                            header = base.color.surface.tone.base,
                             body = base.color.surface.tone.emphasis,
+                            header = base.color.surface.tone.base,
                         ),
                         text = Components.Accordions.Type.Secondary.Color.Text(
                             header = base.color.text.accent.subtle.default,
                         ),
                     ),
-                    typography = Components.Accordions.Type.Secondary.Typography(
-                        header = Components.Accordions.Type.Secondary.Typography.Header(
-                            fontFamily = typography.callout.family,
-                            fontWeight = typography.weight.medium,
-                            fontSize = typography.callout.size,
-                            lineHeight = typography.callout.lineHeight,
-                            letterSpacing = typography.callout.letterSpacing,
-                        ),
-                    ),
                     state = Components.Accordions.Type.Secondary.State(
-                        expanded = Components.Accordions.Type.Secondary.State.Expanded(
-                            shape = Components.Accordions.Type.Secondary.State.Expanded.Shape(
-                                radius = Components.Accordions.Type.Secondary.State.Expanded.Shape.Radius(
-                                    middleRow = base.radius.small,
-                                    topRow = Components.Accordions.Type.Secondary.State.Expanded.Shape.Radius.TopRow(
-                                        top = Components.Accordions.Type.Secondary.State.Expanded.Shape.Radius.TopRow.Top(
-                                            left = base.radius.extraExtraLarge,
-                                            right = base.radius.extraExtraLarge,
-                                        ),
-                                        bottom = Components.Accordions.Type.Secondary.State.Expanded.Shape.Radius.TopRow.Bottom(
-                                            left = base.radius.small,
-                                            right = base.radius.small,
-                                        ),
-                                    ),
-                                    bottomRow = Components.Accordions.Type.Secondary.State.Expanded.Shape.Radius.BottomRow(
-                                        top = Components.Accordions.Type.Secondary.State.Expanded.Shape.Radius.BottomRow.Top(
-                                            left = base.radius.small,
-                                            right = base.radius.small,
-                                        ),
-                                        bottom = Components.Accordions.Type.Secondary.State.Expanded.Shape.Radius.BottomRow.Bottom(
-                                            left = base.radius.large,
-                                            right = base.radius.large,
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
                         collapsed = Components.Accordions.Type.Secondary.State.Collapsed(
                             shape = Components.Accordions.Type.Secondary.State.Collapsed.Shape(
                                 radius = base.radius.extraExtraLarge,
                             ),
                         ),
+                        expanded = Components.Accordions.Type.Secondary.State.Expanded(
+                            shape = Components.Accordions.Type.Secondary.State.Expanded.Shape(
+                                radius = Components.Accordions.Type.Secondary.State.Expanded.Shape.Radius(
+                                    middleRow = base.radius.small,
+                                    bottomRow = Components.Accordions.Type.Secondary.State.Expanded.Shape.Radius.BottomRow(
+                                        bottom = Components.Accordions.Type.Secondary.State.Expanded.Shape.Radius.BottomRow.Bottom(
+                                            left = base.radius.large,
+                                            right = base.radius.large,
+                                        ),
+                                        top = Components.Accordions.Type.Secondary.State.Expanded.Shape.Radius.BottomRow.Top(
+                                            left = base.radius.small,
+                                            right = base.radius.small,
+                                        ),
+                                    ),
+                                    topRow = Components.Accordions.Type.Secondary.State.Expanded.Shape.Radius.TopRow(
+                                        bottom = Components.Accordions.Type.Secondary.State.Expanded.Shape.Radius.TopRow.Bottom(
+                                            left = base.radius.small,
+                                            right = base.radius.small,
+                                        ),
+                                        top = Components.Accordions.Type.Secondary.State.Expanded.Shape.Radius.TopRow.Top(
+                                            left = base.radius.extraExtraLarge,
+                                            right = base.radius.extraExtraLarge,
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    typography = Components.Accordions.Type.Secondary.Typography(
+                        header = Components.Accordions.Type.Secondary.Typography.Header(
+                            fontFamily = typography.callout.family,
+                            fontSize = typography.callout.size,
+                            fontWeight = typography.weight.medium,
+                            letterSpacing = typography.callout.letterSpacing,
+                            lineHeight = typography.callout.lineHeight,
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        badges = Components.Badges(
+            base = Components.Badges.Base(
+                shape = Components.Badges.Base.Shape(
+                    radius = base.radius.full,
+                ),
+            ),
+            size = Components.Badges.Size(
+                large = Components.Badges.Size.Large(
+                    minSize = base.scale._300,
+                    padding = Components.Badges.Size.Large.Padding(
+                        horizontal = base.scale._100,
+                        vertical = base.scale._25,
+                    ),
+                    typography = Components.Badges.Size.Large.Typography(
+                        fontFamily = typography.footnote.family,
+                        fontSize = typography.footnote.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.footnote.letterSpacing,
+                        lineHeight = typography.footnote.lineHeight,
+                    ),
+                ),
+                medium = Components.Badges.Size.Medium(
+                    minSize = base.scale._200,
+                    padding = Components.Badges.Size.Medium.Padding(
+                        bottom = base.scale._12_5,
+                        horizontal = base.scale._50,
+                        top = base.scale._25,
+                    ),
+                    typography = Components.Badges.Size.Medium.Typography(
+                        fontFamily = typography.caption2.family,
+                        fontSize = typography.caption2.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.caption2.letterSpacing,
+                        lineHeight = typography.caption2.lineHeight,
+                    ),
+                ),
+                small = Components.Badges.Size.Small(
+                    minSize = base.scale._100,
+                ),
+            ),
+            type = Components.Badges.Type(
+                important = Components.Badges.Type.Important(
+                    color = Components.Badges.Type.Important.Color(
+                        surface = base.color.surface.status.danger.strong,
+                        text = base.color.text.status.danger.emphasized.default,
+                    ),
+                ),
+                new = Components.Badges.Type.New(
+                    color = Components.Badges.Type.New.Color(
+                        surface = base.color.surface.status.success.strong,
+                        text = base.color.text.status.danger.emphasized.default,
+                    ),
+                ),
+                system = Components.Badges.Type.System(
+                    color = Components.Badges.Type.System.Color(
+                        surface = base.apple.color.systemRed,
+                        text = base.apple.color.systemWhite,
+                    ),
+                ),
+            ),
+        ),
+        banners = Components.Banners(
+            base = Components.Banners.Base(
+                opacity = Components.Banners.Base.Opacity(
+                    container = base.opacity._10,
+                ),
+                shape = Components.Banners.Base.Shape(
+                    radius = base.radius.large,
+                ),
+                size = Components.Banners.Base.Size(
+                    icon = base.scale._300,
+                    gap = Components.Banners.Base.Size.Gap(
+                        iconText = base.scale._100,
+                    ),
+                    padding = Components.Banners.Base.Size.Padding(
+                        horizontal = base.scale._200,
+                        vertical = base.scale._100,
+                    ),
+                ),
+                typography = Components.Banners.Base.Typography(
+                    fontFamily = typography.callout.family,
+                    fontSize = typography.callout.size,
+                    fontWeight = typography.weight.regular,
+                    letterSpacing = typography.callout.letterSpacing,
+                    lineHeight = typography.callout.lineHeight,
+                ),
+            ),
+            type = Components.Banners.Type(
+                danger = Components.Banners.Type.Danger(
+                    color = Components.Banners.Type.Danger.Color(
+                        icon = primitives.palette.uNDEFINED,
+                        surface = primitives.palette.uNDEFINED,
+                        text = primitives.palette.uNDEFINED,
+                    ),
+                ),
+                informative = Components.Banners.Type.Informative(
+                    color = Components.Banners.Type.Informative.Color(
+                        icon = base.color.icon.status.info,
+                        surface = base.color.surface.status.neutral.minimal,
+                        text = base.color.text.status.neutral,
+                    ),
+                ),
+                success = Components.Banners.Type.Success(
+                    color = Components.Banners.Type.Success.Color(
+                        icon = base.color.icon.status.success.strong,
+                        surface = base.color.surface.status.success.strong,
+                        text = base.color.text.status.success.strong,
+                    ),
+                ),
+                warning = Components.Banners.Type.Warning(
+                    color = Components.Banners.Type.Warning.Color(
+                        icon = base.color.icon.status.warning.strong,
+                        surface = base.color.surface.status.warning.strong,
+                        text = base.color.text.status.warning.strong,
                     ),
                 ),
             ),
         ),
         buttons = Components.Buttons(
-            type = Components.Buttons.Type(
-                primary = Components.Buttons.Type.Primary(
-                    state = Components.Buttons.Type.Primary.State(
-                        default = Components.Buttons.Type.Primary.State.Default(
-                            color = Components.Buttons.Type.Primary.State.Default.Color(
-                                surface = base.color.surface.action.primary.default,
-                                text = base.color.text.onAccent.default,
-                                icon = base.color.icon.onAccent.default,
-                            ),
-                        ),
-                        hover = Components.Buttons.Type.Primary.State.Hover(
-                            color = Components.Buttons.Type.Primary.State.Hover.Color(
-                                surface = base.color.surface.action.primary.hover,
-                                text = base.color.text.onAccent.hover,
-                                icon = base.color.icon.onAccent.hover,
-                            ),
-                        ),
-                    ),
-                    color = Components.Buttons.Type.Primary.Color(
-                        feedback = Components.Buttons.Type.Primary.Color.Feedback(
-                            loader = base.color.feedback.loading.primary,
-                        ),
-                    ),
-                ),
-                secondary = Components.Buttons.Type.Secondary(
-                    state = Components.Buttons.Type.Secondary.State(
-                        default = Components.Buttons.Type.Secondary.State.Default(
-                            color = Components.Buttons.Type.Secondary.State.Default.Color(
-                                surface = base.color.surface.action.secondary.default,
-                            ),
-                        ),
-                        hover = Components.Buttons.Type.Secondary.State.Hover(
-                            color = Components.Buttons.Type.Secondary.State.Hover.Color(
-                                surface = base.color.surface.action.secondary.hover,
-                            ),
-                        ),
-                    ),
-                    emphasis = Components.Buttons.Type.Secondary.Emphasis(
-                        base = Components.Buttons.Type.Secondary.Emphasis.Base(
-                            state = Components.Buttons.Type.Secondary.Emphasis.Base.State(
-                                default = Components.Buttons.Type.Secondary.Emphasis.Base.State.Default(
-                                    color = Components.Buttons.Type.Secondary.Emphasis.Base.State.Default.Color(
-                                        text = base.color.text.accent.subtle.default,
-                                        icon = base.color.text.accent.subtle.default,
-                                    ),
-                                ),
-                                hover = Components.Buttons.Type.Secondary.Emphasis.Base.State.Hover(
-                                    color = Components.Buttons.Type.Secondary.Emphasis.Base.State.Hover.Color(
-                                        text = base.color.text.accent.subtle.hover,
-                                        icon = base.color.text.accent.subtle.hover,
-                                    ),
-                                ),
-                            ),
-                        ),
-                        emphasized = Components.Buttons.Type.Secondary.Emphasis.Emphasized(
-                            state = Components.Buttons.Type.Secondary.Emphasis.Emphasized.State(
-                                default = Components.Buttons.Type.Secondary.Emphasis.Emphasized.State.Default(
-                                    color = Components.Buttons.Type.Secondary.Emphasis.Emphasized.State.Default.Color(
-                                        text = base.color.text.base.default,
-                                        icon = base.color.icon.base.default,
-                                    ),
-                                ),
-                                hover = Components.Buttons.Type.Secondary.Emphasis.Emphasized.State.Hover(
-                                    color = Components.Buttons.Type.Secondary.Emphasis.Emphasized.State.Hover.Color(
-                                        text = base.color.text.base.hover,
-                                        icon = base.color.icon.base.hover,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                    color = Components.Buttons.Type.Secondary.Color(
-                        feedback = Components.Buttons.Type.Secondary.Color.Feedback(
-                            loader = base.color.feedback.loading.secondary,
-                        ),
-                    ),
-                ),
-                destructive = Components.Buttons.Type.Destructive(
-                    state = Components.Buttons.Type.Destructive.State(
-                        default = Components.Buttons.Type.Destructive.State.Default(
-                            color = Components.Buttons.Type.Destructive.State.Default.Color(
-                                surface = base.color.surface.action.secondary.default,
-                                text = base.color.text.status.danger.base.default,
-                            ),
-                        ),
-                        hover = Components.Buttons.Type.Destructive.State.Hover(
-                            color = Components.Buttons.Type.Destructive.State.Hover.Color(
-                                surface = base.color.surface.action.secondary.hover,
-                                text = base.color.text.status.danger.base.hover,
-                            ),
-                        ),
-                    ),
-                    emphasis = Components.Buttons.Type.Destructive.Emphasis(
-                        emphasized = Components.Buttons.Type.Destructive.Emphasis.Emphasized(
-                            state = Components.Buttons.Type.Destructive.Emphasis.Emphasized.State(
-                                default = Components.Buttons.Type.Destructive.Emphasis.Emphasized.State.Default(
-                                    color = Components.Buttons.Type.Destructive.Emphasis.Emphasized.State.Default.Color(
-                                        surface = base.color.surface.action.destructive.default,
-                                        text = base.color.text.status.danger.emphasized.default,
-                                    ),
-                                ),
-                                hover = Components.Buttons.Type.Destructive.Emphasis.Emphasized.State.Hover(
-                                    color = Components.Buttons.Type.Destructive.Emphasis.Emphasized.State.Hover.Color(
-                                        surface = base.color.surface.action.destructive.hover,
-                                        text = base.color.text.status.danger.emphasized.hover,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                    color = Components.Buttons.Type.Destructive.Color(
-                        feedback = Components.Buttons.Type.Destructive.Color.Feedback(
-                            loader = base.color.feedback.loading.destructive,
-                        ),
-                    ),
-                ),
-                tertiary = Components.Buttons.Type.Tertiary(
-                    state = Components.Buttons.Type.Tertiary.State(
-                        default = Components.Buttons.Type.Tertiary.State.Default(
-                            color = Components.Buttons.Type.Tertiary.State.Default.Color(
-                                text = base.color.text.base.default,
-                                icon = base.color.icon.base.default,
-                                border = base.color.border.emphasis.default,
-                            ),
-                        ),
-                        hover = Components.Buttons.Type.Tertiary.State.Hover(
-                            color = Components.Buttons.Type.Tertiary.State.Hover.Color(
-                                text = base.color.text.base.hover,
-                                icon = base.color.icon.base.hover,
-                                border = base.color.border.emphasis.hover,
-                            ),
-                        ),
-                    ),
-                    color = Components.Buttons.Type.Tertiary.Color(
-                        feedback = Components.Buttons.Type.Tertiary.Color.Feedback(
-                            loader = base.color.feedback.loading.tertiary,
-                        ),
-                    ),
-                    shape = Components.Buttons.Type.Tertiary.Shape(
-                        borderWidth = base.borderWidth.small,
-                    ),
-                ),
-                link = Components.Buttons.Type.Link(
-                    state = Components.Buttons.Type.Link.State(
-                        default = Components.Buttons.Type.Link.State.Default(
-                            color = Components.Buttons.Type.Link.State.Default.Color(
-                                text = base.color.text.link.default,
-                                icon = base.color.text.link.default,
-                            ),
-                        ),
-                        hover = Components.Buttons.Type.Link.State.Hover(
-                            color = Components.Buttons.Type.Link.State.Hover.Color(
-                                text = base.color.text.link.hover,
-                                icon = base.color.text.link.hover,
-                            ),
-                        ),
-                    ),
-                    emphasis = Components.Buttons.Type.Link.Emphasis(
-                        emphasized = Components.Buttons.Type.Link.Emphasis.Emphasized(
-                            state = Components.Buttons.Type.Link.Emphasis.Emphasized.State(
-                                default = Components.Buttons.Type.Link.Emphasis.Emphasized.State.Default(
-                                    color = Components.Buttons.Type.Link.Emphasis.Emphasized.State.Default.Color(
-                                        text = base.color.text.link.emphasized.default,
-                                        icon = base.color.text.link.emphasized.default,
-                                    ),
-                                ),
-                                hover = Components.Buttons.Type.Link.Emphasis.Emphasized.State.Hover(
-                                    color = Components.Buttons.Type.Link.Emphasis.Emphasized.State.Hover.Color(
-                                        text = base.color.text.link.emphasized.hover,
-                                        icon = base.color.text.link.emphasized.hover,
-                                    ),
-                                ),
-                            ),
-                        ),
-                        subtle = Components.Buttons.Type.Link.Emphasis.Subtle(
-                            state = Components.Buttons.Type.Link.Emphasis.Subtle.State(
-                                default = Components.Buttons.Type.Link.Emphasis.Subtle.State.Default(
-                                    color = Components.Buttons.Type.Link.Emphasis.Subtle.State.Default.Color(
-                                        text = base.color.text.link.subtle.default,
-                                        icon = base.color.icon.muted.default,
-                                    ),
-                                ),
-                                hover = Components.Buttons.Type.Link.Emphasis.Subtle.State.Hover(
-                                    color = Components.Buttons.Type.Link.Emphasis.Subtle.State.Hover.Color(
-                                        text = base.color.text.link.subtle.hover,
-                                        icon = base.color.icon.muted.hover,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                    color = Components.Buttons.Type.Link.Color(
-                        feedback = Components.Buttons.Type.Link.Color.Feedback(
-                            loader = base.color.feedback.loading.link,
-                        ),
-                    ),
-                ),
-            ),
-            size = Components.Buttons.Size(
-                small = Components.Buttons.Size.Small(
-                    icon = base.scale._250,
-                    loader = base.scale._250,
-                    typography = Components.Buttons.Size.Small.Typography(
-                        fontFamily = typography.subheadline.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.subheadline.size,
-                        lineHeight = typography.subheadline.lineHeight,
-                        letterSpacing = typography.subheadline.letterSpacing,
-                    ),
-                ),
-                medium = Components.Buttons.Size.Medium(
-                    icon = base.scale._250,
-                    loader = base.scale._250,
-                    typography = Components.Buttons.Size.Medium.Typography(
-                        fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
-                        letterSpacing = typography.callout.letterSpacing,
-                    ),
-                ),
-                large = Components.Buttons.Size.Large(
-                    icon = base.scale._300,
-                    loader = base.scale._300,
-                    typography = Components.Buttons.Size.Large.Typography(
-                        fontFamily = typography.body.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.body.size,
-                        lineHeight = typography.body.lineHeight,
-                        letterSpacing = typography.body.letterSpacing,
-                    ),
-                ),
-                extraLarge = Components.Buttons.Size.ExtraLarge(
-                    icon = base.scale._400,
-                    loader = base.scale._400,
-                ),
-                extraSmall = Components.Buttons.Size.ExtraSmall(
-                    icon = base.scale._200,
-                    loader = base.scale._200,
-                ),
-            ),
             base = Components.Buttons.Base(
+                opacity = Components.Buttons.Base.Opacity(
+                    disabled = base.opacity._40,
+                    pressed = base.opacity._60,
+                ),
                 size = Components.Buttons.Base.Size(
                     gap = Components.Buttons.Base.Size.Gap(
                         textLoader = base.scale._100,
@@ -8047,37 +7810,8 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         ),
                     ),
                 ),
-                opacity = Components.Buttons.Base.Opacity(
-                    pressed = base.opacity._60,
-                    disabled = base.opacity._40,
-                ),
             ),
             shape = Components.Buttons.Shape(
-                rounded = Components.Buttons.Shape.Rounded(
-                    size = Components.Buttons.Shape.Rounded.Size(
-                        large = Components.Buttons.Shape.Rounded.Size.Large(
-                            radius = base.radius.large,
-                            padding = Components.Buttons.Shape.Rounded.Size.Large.Padding(
-                                horizontal = base.scale._200,
-                                vertical = base.scale._150,
-                            ),
-                        ),
-                        medium = Components.Buttons.Shape.Rounded.Size.Medium(
-                            radius = base.radius.medium,
-                            padding = Components.Buttons.Shape.Rounded.Size.Medium.Padding(
-                                horizontal = base.scale._200,
-                                vertical = base.scale._125,
-                            ),
-                        ),
-                        small = Components.Buttons.Shape.Rounded.Size.Small(
-                            radius = base.radius.small,
-                            padding = Components.Buttons.Shape.Rounded.Size.Small.Padding(
-                                horizontal = base.scale._100,
-                                vertical = base.scale._75,
-                            ),
-                        ),
-                    ),
-                ),
                 circular = Components.Buttons.Shape.Circular(
                     size = Components.Buttons.Shape.Circular.Size(
                         large = Components.Buttons.Shape.Circular.Size.Large(
@@ -8099,6 +7833,31 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                             padding = Components.Buttons.Shape.Circular.Size.Small.Padding(
                                 horizontal = base.scale._50,
                                 vertical = base.scale._50,
+                            ),
+                        ),
+                    ),
+                ),
+                rounded = Components.Buttons.Shape.Rounded(
+                    size = Components.Buttons.Shape.Rounded.Size(
+                        large = Components.Buttons.Shape.Rounded.Size.Large(
+                            radius = base.radius.large,
+                            padding = Components.Buttons.Shape.Rounded.Size.Large.Padding(
+                                horizontal = base.scale._200,
+                                vertical = base.scale._150,
+                            ),
+                        ),
+                        medium = Components.Buttons.Shape.Rounded.Size.Medium(
+                            radius = base.radius.medium,
+                            padding = Components.Buttons.Shape.Rounded.Size.Medium.Padding(
+                                horizontal = base.scale._200,
+                                vertical = base.scale._125,
+                            ),
+                        ),
+                        small = Components.Buttons.Shape.Rounded.Size.Small(
+                            radius = base.radius.small,
+                            padding = Components.Buttons.Shape.Rounded.Size.Small.Padding(
+                                horizontal = base.scale._100,
+                                vertical = base.scale._75,
                             ),
                         ),
                     ),
@@ -8136,34 +7895,277 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                     ),
                 ),
             ),
+            size = Components.Buttons.Size(
+                extraLarge = Components.Buttons.Size.ExtraLarge(
+                    icon = base.scale._400,
+                    loader = base.scale._400,
+                ),
+                extraSmall = Components.Buttons.Size.ExtraSmall(
+                    icon = base.scale._200,
+                    loader = base.scale._200,
+                ),
+                large = Components.Buttons.Size.Large(
+                    icon = base.scale._300,
+                    loader = base.scale._300,
+                    typography = Components.Buttons.Size.Large.Typography(
+                        fontFamily = typography.body.family,
+                        fontSize = typography.body.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.body.letterSpacing,
+                        lineHeight = typography.body.lineHeight,
+                    ),
+                ),
+                medium = Components.Buttons.Size.Medium(
+                    icon = base.scale._250,
+                    loader = base.scale._250,
+                    typography = Components.Buttons.Size.Medium.Typography(
+                        fontFamily = typography.callout.family,
+                        fontSize = typography.callout.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.callout.letterSpacing,
+                        lineHeight = typography.callout.lineHeight,
+                    ),
+                ),
+                small = Components.Buttons.Size.Small(
+                    icon = base.scale._250,
+                    loader = base.scale._250,
+                    typography = Components.Buttons.Size.Small.Typography(
+                        fontFamily = typography.subheadline.family,
+                        fontSize = typography.subheadline.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.subheadline.letterSpacing,
+                        lineHeight = typography.subheadline.lineHeight,
+                    ),
+                ),
+            ),
+            type = Components.Buttons.Type(
+                destructive = Components.Buttons.Type.Destructive(
+                    color = Components.Buttons.Type.Destructive.Color(
+                        feedback = Components.Buttons.Type.Destructive.Color.Feedback(
+                            loader = base.color.feedback.loading.destructive,
+                        ),
+                    ),
+                    emphasis = Components.Buttons.Type.Destructive.Emphasis(
+                        emphasized = Components.Buttons.Type.Destructive.Emphasis.Emphasized(
+                            state = Components.Buttons.Type.Destructive.Emphasis.Emphasized.State(
+                                default = Components.Buttons.Type.Destructive.Emphasis.Emphasized.State.Default(
+                                    color = Components.Buttons.Type.Destructive.Emphasis.Emphasized.State.Default.Color(
+                                        surface = base.color.surface.action.destructive.default,
+                                        text = base.color.text.status.danger.emphasized.default,
+                                    ),
+                                ),
+                                hover = Components.Buttons.Type.Destructive.Emphasis.Emphasized.State.Hover(
+                                    color = Components.Buttons.Type.Destructive.Emphasis.Emphasized.State.Hover.Color(
+                                        surface = base.color.surface.action.destructive.hover,
+                                        text = base.color.text.status.danger.emphasized.hover,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    state = Components.Buttons.Type.Destructive.State(
+                        default = Components.Buttons.Type.Destructive.State.Default(
+                            color = Components.Buttons.Type.Destructive.State.Default.Color(
+                                surface = base.color.surface.action.secondary.default,
+                                text = base.color.text.status.danger.base.default,
+                            ),
+                        ),
+                        hover = Components.Buttons.Type.Destructive.State.Hover(
+                            color = Components.Buttons.Type.Destructive.State.Hover.Color(
+                                surface = base.color.surface.action.secondary.hover,
+                                text = base.color.text.status.danger.base.hover,
+                            ),
+                        ),
+                    ),
+                ),
+                link = Components.Buttons.Type.Link(
+                    color = Components.Buttons.Type.Link.Color(
+                        feedback = Components.Buttons.Type.Link.Color.Feedback(
+                            loader = base.color.feedback.loading.link,
+                        ),
+                    ),
+                    emphasis = Components.Buttons.Type.Link.Emphasis(
+                        emphasized = Components.Buttons.Type.Link.Emphasis.Emphasized(
+                            state = Components.Buttons.Type.Link.Emphasis.Emphasized.State(
+                                default = Components.Buttons.Type.Link.Emphasis.Emphasized.State.Default(
+                                    color = Components.Buttons.Type.Link.Emphasis.Emphasized.State.Default.Color(
+                                        icon = base.color.text.link.emphasized.default,
+                                        text = base.color.text.link.emphasized.default,
+                                    ),
+                                ),
+                                hover = Components.Buttons.Type.Link.Emphasis.Emphasized.State.Hover(
+                                    color = Components.Buttons.Type.Link.Emphasis.Emphasized.State.Hover.Color(
+                                        icon = base.color.text.link.emphasized.hover,
+                                        text = base.color.text.link.emphasized.hover,
+                                    ),
+                                ),
+                            ),
+                        ),
+                        subtle = Components.Buttons.Type.Link.Emphasis.Subtle(
+                            state = Components.Buttons.Type.Link.Emphasis.Subtle.State(
+                                default = Components.Buttons.Type.Link.Emphasis.Subtle.State.Default(
+                                    color = Components.Buttons.Type.Link.Emphasis.Subtle.State.Default.Color(
+                                        icon = base.color.icon.muted.default,
+                                        text = base.color.text.link.subtle.default,
+                                    ),
+                                ),
+                                hover = Components.Buttons.Type.Link.Emphasis.Subtle.State.Hover(
+                                    color = Components.Buttons.Type.Link.Emphasis.Subtle.State.Hover.Color(
+                                        icon = base.color.icon.muted.hover,
+                                        text = base.color.text.link.subtle.hover,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    state = Components.Buttons.Type.Link.State(
+                        default = Components.Buttons.Type.Link.State.Default(
+                            color = Components.Buttons.Type.Link.State.Default.Color(
+                                icon = base.color.text.link.default,
+                                text = base.color.text.link.default,
+                            ),
+                        ),
+                        hover = Components.Buttons.Type.Link.State.Hover(
+                            color = Components.Buttons.Type.Link.State.Hover.Color(
+                                icon = base.color.text.link.hover,
+                                text = base.color.text.link.hover,
+                            ),
+                        ),
+                    ),
+                ),
+                primary = Components.Buttons.Type.Primary(
+                    color = Components.Buttons.Type.Primary.Color(
+                        feedback = Components.Buttons.Type.Primary.Color.Feedback(
+                            loader = base.color.feedback.loading.primary,
+                        ),
+                    ),
+                    state = Components.Buttons.Type.Primary.State(
+                        default = Components.Buttons.Type.Primary.State.Default(
+                            color = Components.Buttons.Type.Primary.State.Default.Color(
+                                icon = base.color.icon.onAccent.default,
+                                surface = base.color.surface.action.primary.default,
+                                text = base.color.text.onAccent.default,
+                            ),
+                        ),
+                        hover = Components.Buttons.Type.Primary.State.Hover(
+                            color = Components.Buttons.Type.Primary.State.Hover.Color(
+                                icon = base.color.icon.onAccent.hover,
+                                surface = base.color.surface.action.primary.hover,
+                                text = base.color.text.onAccent.hover,
+                            ),
+                        ),
+                    ),
+                ),
+                secondary = Components.Buttons.Type.Secondary(
+                    color = Components.Buttons.Type.Secondary.Color(
+                        feedback = Components.Buttons.Type.Secondary.Color.Feedback(
+                            loader = base.color.feedback.loading.secondary,
+                        ),
+                    ),
+                    emphasis = Components.Buttons.Type.Secondary.Emphasis(
+                        base = Components.Buttons.Type.Secondary.Emphasis.Base(
+                            state = Components.Buttons.Type.Secondary.Emphasis.Base.State(
+                                default = Components.Buttons.Type.Secondary.Emphasis.Base.State.Default(
+                                    color = Components.Buttons.Type.Secondary.Emphasis.Base.State.Default.Color(
+                                        icon = base.color.text.accent.subtle.default,
+                                        text = base.color.text.accent.subtle.default,
+                                    ),
+                                ),
+                                hover = Components.Buttons.Type.Secondary.Emphasis.Base.State.Hover(
+                                    color = Components.Buttons.Type.Secondary.Emphasis.Base.State.Hover.Color(
+                                        icon = base.color.text.accent.subtle.hover,
+                                        text = base.color.text.accent.subtle.hover,
+                                    ),
+                                ),
+                            ),
+                        ),
+                        emphasized = Components.Buttons.Type.Secondary.Emphasis.Emphasized(
+                            state = Components.Buttons.Type.Secondary.Emphasis.Emphasized.State(
+                                default = Components.Buttons.Type.Secondary.Emphasis.Emphasized.State.Default(
+                                    color = Components.Buttons.Type.Secondary.Emphasis.Emphasized.State.Default.Color(
+                                        icon = base.color.icon.base.default,
+                                        text = base.color.text.base.default,
+                                    ),
+                                ),
+                                hover = Components.Buttons.Type.Secondary.Emphasis.Emphasized.State.Hover(
+                                    color = Components.Buttons.Type.Secondary.Emphasis.Emphasized.State.Hover.Color(
+                                        icon = base.color.icon.base.hover,
+                                        text = base.color.text.base.hover,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    state = Components.Buttons.Type.Secondary.State(
+                        default = Components.Buttons.Type.Secondary.State.Default(
+                            color = Components.Buttons.Type.Secondary.State.Default.Color(
+                                surface = base.color.surface.action.secondary.default,
+                            ),
+                        ),
+                        hover = Components.Buttons.Type.Secondary.State.Hover(
+                            color = Components.Buttons.Type.Secondary.State.Hover.Color(
+                                surface = base.color.surface.action.secondary.hover,
+                            ),
+                        ),
+                    ),
+                ),
+                tertiary = Components.Buttons.Type.Tertiary(
+                    color = Components.Buttons.Type.Tertiary.Color(
+                        feedback = Components.Buttons.Type.Tertiary.Color.Feedback(
+                            loader = base.color.feedback.loading.tertiary,
+                        ),
+                    ),
+                    shape = Components.Buttons.Type.Tertiary.Shape(
+                        borderWidth = base.borderWidth.small,
+                    ),
+                    state = Components.Buttons.Type.Tertiary.State(
+                        default = Components.Buttons.Type.Tertiary.State.Default(
+                            color = Components.Buttons.Type.Tertiary.State.Default.Color(
+                                border = base.color.border.emphasis.default,
+                                icon = base.color.icon.base.default,
+                                text = base.color.text.base.default,
+                            ),
+                        ),
+                        hover = Components.Buttons.Type.Tertiary.State.Hover(
+                            color = Components.Buttons.Type.Tertiary.State.Hover.Color(
+                                border = base.color.border.emphasis.hover,
+                                icon = base.color.icon.base.hover,
+                                text = base.color.text.base.hover,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         ),
         cards = Components.Cards(
             base = Components.Cards.Base(
                 color = Components.Cards.Base.Color(
+                    icon = Components.Cards.Base.Color.Icon(
+                        accent = Components.Cards.Base.Color.Icon.Accent(
+                            default = base.color.icon.accent.emphasized.default,
+                            hover = base.color.icon.accent.emphasized.hover,
+                        ),
+                        action = Components.Cards.Base.Color.Icon.Action(
+                            default = base.color.icon.accent.emphasized.default,
+                            hover = base.color.icon.accent.emphasized.hover,
+                        ),
+                        base = Components.Cards.Base.Color.Icon.Base(
+                            default = base.color.icon.base.default,
+                            hover = base.color.icon.base.hover,
+                        ),
+                    ),
                     surface = Components.Cards.Base.Color.Surface(
                         symbol = base.color.surface.accent.muted,
                     ),
                     text = Components.Cards.Base.Color.Text(
-                        header = base.color.text.base.default,
-                        footer = base.color.text.muted.default,
-                        value = base.color.text.base.default,
-                        unitOfMeasure = base.color.text.muted.default,
                         description = base.color.text.muted.default,
-                        title = Components.Cards.Base.Color.Text.Title(
-                            base = base.color.text.base.default,
-                            muted = base.color.text.muted.default,
-                        ),
+                        footer = base.color.text.muted.default,
+                        header = base.color.text.base.default,
+                        unitOfMeasure = base.color.text.muted.default,
+                        value = base.color.text.base.default,
                         detail = Components.Cards.Base.Color.Text.Detail(
                             base = base.color.text.base.default,
                             muted = base.color.text.muted.default,
-                        ),
-                        subtitle = Components.Cards.Base.Color.Text.Subtitle(
-                            base = base.color.text.emphasis.default,
-                            muted = base.color.text.muted.default,
-                        ),
-                        statusText = Components.Cards.Base.Color.Text.StatusText(
-                            default = base.color.text.accent.subtle.default,
-                            critical = base.color.text.status.danger.subtle.default,
                         ),
                         link = Components.Cards.Base.Color.Text.Link(
                             base = Components.Cards.Base.Color.Text.Link.Base(
@@ -8175,69 +8177,81 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                                 hover = base.color.text.link.emphasized.hover,
                             ),
                         ),
+                        statusText = Components.Cards.Base.Color.Text.StatusText(
+                            critical = base.color.text.status.danger.subtle.default,
+                            default = base.color.text.accent.subtle.default,
+                        ),
+                        subtitle = Components.Cards.Base.Color.Text.Subtitle(
+                            base = base.color.text.emphasis.default,
+                            muted = base.color.text.muted.default,
+                        ),
+                        title = Components.Cards.Base.Color.Text.Title(
+                            base = base.color.text.base.default,
+                            muted = base.color.text.muted.default,
+                        ),
                     ),
-                    icon = Components.Cards.Base.Color.Icon(
-                        base = Components.Cards.Base.Color.Icon.Base(
-                            default = base.color.icon.base.default,
-                            hover = base.color.icon.base.hover,
-                        ),
-                        accent = Components.Cards.Base.Color.Icon.Accent(
-                            default = base.color.icon.accent.emphasized.default,
-                            hover = base.color.icon.accent.emphasized.hover,
-                        ),
-                        action = Components.Cards.Base.Color.Icon.Action(
-                            default = base.color.icon.accent.emphasized.default,
-                            hover = base.color.icon.accent.emphasized.hover,
-                        ),
+                ),
+                opacity = Components.Cards.Base.Opacity(
+                    opaque = base.opacity._5,
+                ),
+                shape = Components.Cards.Base.Shape(
+                    radius = Components.Cards.Base.Shape.Radius(
+                        symbol = base.radius.full,
                     ),
                 ),
                 size = Components.Cards.Base.Size(
                     symbol = base.scale._600,
+                    gap = Components.Cards.Base.Size.Gap(
+                        cardActions = base.scale._100,
+                        titleSubtitleStatus = base.scale._50,
+                        header = Components.Cards.Base.Size.Gap.Header(
+                            iconIcon = base.scale._200,
+                            textIcon = base.scale._200,
+                        ),
+                    ),
                     icon = Components.Cards.Base.Size.Icon(
                         _24 = base.scale._300,
                         _32 = base.scale._400,
                     ),
-                    gap = Components.Cards.Base.Size.Gap(
-                        titleSubtitleStatus = base.scale._50,
-                        cardActions = base.scale._100,
-                        header = Components.Cards.Base.Size.Gap.Header(
-                            textIcon = base.scale._200,
-                            iconIcon = base.scale._200,
-                        ),
-                    ),
                     padding = Components.Cards.Base.Size.Padding(
                         cardActions = Components.Cards.Base.Size.Padding.CardActions(
+                            bottom = base.scale._75,
                             horizontal = base.scale._0,
                             top = base.scale._0,
-                            bottom = base.scale._75,
+                        ),
+                        header = Components.Cards.Base.Size.Padding.Header(
+                            bottom = base.scale._0,
+                            left = base.scale._200,
+                            right = base.scale._200,
+                            top = base.scale._100,
+                            content = Components.Cards.Base.Size.Padding.Header.Content(
+                                horizontal = base.scale._0,
+                                vertical = base.scale._100,
+                            ),
                         ),
                         leftContent = Components.Cards.Base.Size.Padding.LeftContent(
                             description = Components.Cards.Base.Size.Padding.LeftContent.Description(
                                 horizontal = base.scale._200,
                                 vertical = base.scale._150,
                             ),
-                            descriptionLink = Components.Cards.Base.Size.Padding.LeftContent.DescriptionLink(
-                                left = base.scale._200,
-                                top = base.scale._150,
-                                right = base.scale._200,
-                                bottom = base.scale._200,
-                            ),
                             descriptionIcon = Components.Cards.Base.Size.Padding.LeftContent.DescriptionIcon(
                                 horizontal = base.scale._200,
                                 vertical = base.scale._150,
                             ),
                             descriptionIconLink = Components.Cards.Base.Size.Padding.LeftContent.DescriptionIconLink(
-                                left = base.scale._200,
-                                top = base.scale._150,
-                                right = base.scale._200,
                                 bottom = base.scale._200,
+                                left = base.scale._200,
+                                right = base.scale._200,
+                                top = base.scale._150,
+                            ),
+                            descriptionLink = Components.Cards.Base.Size.Padding.LeftContent.DescriptionLink(
+                                bottom = base.scale._200,
+                                left = base.scale._200,
+                                right = base.scale._200,
+                                top = base.scale._150,
                             ),
                             textButton = Components.Cards.Base.Size.Padding.LeftContent.TextButton(
                                 default = Components.Cards.Base.Size.Padding.LeftContent.TextButton.Default(
-                                    horizontal = base.scale._200,
-                                    vertical = base.scale._100,
-                                ),
-                                link = Components.Cards.Base.Size.Padding.LeftContent.TextButton.Link(
                                     horizontal = base.scale._200,
                                     vertical = base.scale._100,
                                 ),
@@ -8245,54 +8259,59 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                                     horizontal = base.scale._200,
                                     vertical = base.scale._100,
                                 ),
+                                link = Components.Cards.Base.Size.Padding.LeftContent.TextButton.Link(
+                                    horizontal = base.scale._200,
+                                    vertical = base.scale._100,
+                                ),
                             ),
                         ),
                         rightContent = Components.Cards.Base.Size.Padding.RightContent(
+                            badgeChevron = Components.Cards.Base.Size.Padding.RightContent.BadgeChevron(
+                                horizontal = base.scale._0,
+                                vertical = base.scale._100,
+                            ),
+                            checkmark = Components.Cards.Base.Size.Padding.RightContent.Checkmark(
+                                horizontal = base.scale._0,
+                                vertical = base.scale._100,
+                            ),
+                            chevron = Components.Cards.Base.Size.Padding.RightContent.Chevron(
+                                horizontal = base.scale._0,
+                                vertical = base.scale._100,
+                            ),
+                            detail = Components.Cards.Base.Size.Padding.RightContent.Detail(
+                                horizontal = base.scale._0,
+                                right = base.scale._100,
+                                vertical = base.scale._100,
+                            ),
+                            detailBadge = Components.Cards.Base.Size.Padding.RightContent.DetailBadge(
+                                horizontal = base.scale._0,
+                                right = base.scale._100,
+                                vertical = base.scale._100,
+                            ),
                             detailChevron = Components.Cards.Base.Size.Padding.RightContent.DetailChevron(
                                 horizontal = base.scale._0,
                                 vertical = base.scale._100,
                             ),
-                            tag = Components.Cards.Base.Size.Padding.RightContent.Tag(
-                                left = base.scale._0,
-                                top = base.scale._0,
-                                right = base.scale._100,
-                                bottom = base.scale._0,
-                            ),
-                            icon = Components.Cards.Base.Size.Padding.RightContent.Icon(
-                                top = base.scale._100,
-                                bottom = base.scale._100,
-                                right = base.scale._100,
-                            ),
-                            iconChevron = Components.Cards.Base.Size.Padding.RightContent.IconChevron(
+                            detailIcon24 = Components.Cards.Base.Size.Padding.RightContent.DetailIcon24(
                                 horizontal = base.scale._0,
+                                right = base.scale._100,
                                 vertical = base.scale._100,
                             ),
-                            valueUnitOfMeasure = Components.Cards.Base.Size.Padding.RightContent.ValueUnitOfMeasure(
+                            detailIcon32 = Components.Cards.Base.Size.Padding.RightContent.DetailIcon32(
                                 horizontal = base.scale._0,
                                 vertical = base.scale._100,
-                                right = base.scale._100,
-                            ),
-                            detail = Components.Cards.Base.Size.Padding.RightContent.Detail(
-                                horizontal = base.scale._0,
-                                vertical = base.scale._100,
-                                right = base.scale._100,
-                            ),
-                            detailBadge = Components.Cards.Base.Size.Padding.RightContent.DetailBadge(
-                                horizontal = base.scale._0,
-                                vertical = base.scale._100,
-                                right = base.scale._100,
                             ),
                             detailSwitch = Components.Cards.Base.Size.Padding.RightContent.DetailSwitch(
                                 horizontal = base.scale._0,
-                                vertical = base.scale._100,
                                 right = base.scale._100,
-                            ),
-                            detailIcon24 = Components.Cards.Base.Size.Padding.RightContent.DetailIcon24(
-                                horizontal = base.scale._0,
                                 vertical = base.scale._100,
-                                right = base.scale._100,
                             ),
-                            detailIcon32 = Components.Cards.Base.Size.Padding.RightContent.DetailIcon32(
+                            icon = Components.Cards.Base.Size.Padding.RightContent.Icon(
+                                bottom = base.scale._100,
+                                right = base.scale._100,
+                                top = base.scale._100,
+                            ),
+                            iconChevron = Components.Cards.Base.Size.Padding.RightContent.IconChevron(
                                 horizontal = base.scale._0,
                                 vertical = base.scale._100,
                             ),
@@ -8301,176 +8320,157 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                                 vertical = base.scale._100,
                             ),
                             switch = Components.Cards.Base.Size.Padding.RightContent.Switch(
-                                left = base.scale._0,
-                                top = base.scale._0,
-                                right = base.scale._100,
                                 bottom = base.scale._0,
+                                left = base.scale._0,
+                                right = base.scale._100,
+                                top = base.scale._0,
                             ),
-                            chevron = Components.Cards.Base.Size.Padding.RightContent.Chevron(
-                                horizontal = base.scale._0,
-                                vertical = base.scale._100,
+                            tag = Components.Cards.Base.Size.Padding.RightContent.Tag(
+                                bottom = base.scale._0,
+                                left = base.scale._0,
+                                right = base.scale._100,
+                                top = base.scale._0,
                             ),
-                            checkmark = Components.Cards.Base.Size.Padding.RightContent.Checkmark(
+                            valueUnitOfMeasure = Components.Cards.Base.Size.Padding.RightContent.ValueUnitOfMeasure(
                                 horizontal = base.scale._0,
-                                vertical = base.scale._100,
-                            ),
-                            badgeChevron = Components.Cards.Base.Size.Padding.RightContent.BadgeChevron(
-                                horizontal = base.scale._0,
-                                vertical = base.scale._100,
-                            ),
-                        ),
-                        header = Components.Cards.Base.Size.Padding.Header(
-                            left = base.scale._200,
-                            top = base.scale._100,
-                            right = base.scale._200,
-                            bottom = base.scale._0,
-                            content = Components.Cards.Base.Size.Padding.Header.Content(
-                                horizontal = base.scale._0,
+                                right = base.scale._100,
                                 vertical = base.scale._100,
                             ),
                         ),
                     ),
                 ),
                 typography = Components.Cards.Base.Typography(
+                    description = Components.Cards.Base.Typography.Description(
+                        fontFamily = typography.callout.family,
+                        fontSize = typography.callout.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.callout.letterSpacing,
+                        lineHeight = typography.callout.lineHeight,
+                    ),
+                    detail = Components.Cards.Base.Typography.Detail(
+                        regular = Components.Cards.Base.Typography.Detail.Regular(
+                            fontFamily = typography.body.family,
+                            fontSize = typography.body.size,
+                            fontWeight = typography.weight.regular,
+                            letterSpacing = typography.body.letterSpacing,
+                            lineHeight = typography.body.lineHeight,
+                        ),
+                        semibold = Components.Cards.Base.Typography.Detail.Semibold(
+                            fontFamily = typography.body.family,
+                            fontSize = typography.body.size,
+                            fontWeight = typography.weight.semibold,
+                            letterSpacing = typography.body.letterSpacing,
+                            lineHeight = typography.body.lineHeight,
+                        ),
+                    ),
+                    footer = Components.Cards.Base.Typography.Footer(
+                        fontFamily = typography.caption1.family,
+                        fontSize = typography.caption1.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.caption1.letterSpacing,
+                        lineHeight = typography.caption1.lineHeight,
+                    ),
+                    header = Components.Cards.Base.Typography.Header(
+                        fontFamily = typography.expressive.title2.family,
+                        fontSize = typography.expressive.title2.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.expressive.title2.letterSpacing,
+                        lineHeight = typography.expressive.title2.lineHeight,
+                    ),
+                    link = Components.Cards.Base.Typography.Link(
+                        fontFamily = typography.callout.family,
+                        fontSize = typography.callout.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.callout.letterSpacing,
+                        lineHeight = typography.callout.lineHeight,
+                    ),
+                    statusText = Components.Cards.Base.Typography.StatusText(
+                        fontFamily = typography.subheadline.family,
+                        fontSize = typography.subheadline.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.subheadline.letterSpacing,
+                        lineHeight = typography.subheadline.lineHeight,
+                    ),
+                    subtitle = Components.Cards.Base.Typography.Subtitle(
+                        base = Components.Cards.Base.Typography.Subtitle.Base(
+                            fontFamily = typography.callout.family,
+                            fontSize = typography.callout.size,
+                            fontWeight = typography.weight.regular,
+                            letterSpacing = typography.callout.letterSpacing,
+                            lineHeight = typography.callout.lineHeight,
+                        ),
+                        small = Components.Cards.Base.Typography.Subtitle.Small(
+                            fontFamily = typography.subheadline.family,
+                            fontSize = typography.subheadline.size,
+                            fontWeight = typography.weight.regular,
+                            letterSpacing = typography.subheadline.letterSpacing,
+                            lineHeight = typography.subheadline.lineHeight,
+                        ),
+                    ),
                     title = Components.Cards.Base.Typography.Title(
-                        regular = Components.Cards.Base.Typography.Title.Regular(
-                            base = Components.Cards.Base.Typography.Title.Regular.Base(
+                        bold = Components.Cards.Base.Typography.Title.Bold(
+                            base = Components.Cards.Base.Typography.Title.Bold.Base(
                                 fontFamily = typography.body.family,
-                                fontWeight = typography.weight.regular,
                                 fontSize = typography.body.size,
-                                lineHeight = typography.body.lineHeight,
+                                fontWeight = typography.weight.bold,
                                 letterSpacing = typography.body.letterSpacing,
+                                lineHeight = typography.body.lineHeight,
                             ),
-                            compact = Components.Cards.Base.Typography.Title.Regular.Compact(
+                            compact = Components.Cards.Base.Typography.Title.Bold.Compact(
                                 fontFamily = typography.callout.family,
-                                fontWeight = typography.weight.regular,
                                 fontSize = typography.callout.size,
-                                lineHeight = typography.callout.lineHeight,
+                                fontWeight = typography.weight.bold,
                                 letterSpacing = typography.callout.letterSpacing,
+                                lineHeight = typography.callout.lineHeight,
                             ),
                         ),
                         medium = Components.Cards.Base.Typography.Title.Medium(
                             base = Components.Cards.Base.Typography.Title.Medium.Base(
                                 fontFamily = typography.body.family,
-                                fontWeight = typography.weight.medium,
                                 fontSize = typography.body.size,
-                                lineHeight = typography.body.lineHeight,
+                                fontWeight = typography.weight.medium,
                                 letterSpacing = typography.body.letterSpacing,
+                                lineHeight = typography.body.lineHeight,
                             ),
                             compact = Components.Cards.Base.Typography.Title.Medium.Compact(
                                 fontFamily = typography.callout.family,
+                                fontSize = typography.callout.size,
                                 fontWeight = typography.weight.medium,
-                                fontSize = typography.callout.size,
-                                lineHeight = typography.callout.lineHeight,
                                 letterSpacing = typography.callout.letterSpacing,
+                                lineHeight = typography.callout.lineHeight,
                             ),
                         ),
-                        bold = Components.Cards.Base.Typography.Title.Bold(
-                            base = Components.Cards.Base.Typography.Title.Bold.Base(
+                        regular = Components.Cards.Base.Typography.Title.Regular(
+                            base = Components.Cards.Base.Typography.Title.Regular.Base(
                                 fontFamily = typography.body.family,
-                                fontWeight = typography.weight.bold,
                                 fontSize = typography.body.size,
-                                lineHeight = typography.body.lineHeight,
+                                fontWeight = typography.weight.regular,
                                 letterSpacing = typography.body.letterSpacing,
+                                lineHeight = typography.body.lineHeight,
                             ),
-                            compact = Components.Cards.Base.Typography.Title.Bold.Compact(
+                            compact = Components.Cards.Base.Typography.Title.Regular.Compact(
                                 fontFamily = typography.callout.family,
-                                fontWeight = typography.weight.bold,
                                 fontSize = typography.callout.size,
-                                lineHeight = typography.callout.lineHeight,
+                                fontWeight = typography.weight.regular,
                                 letterSpacing = typography.callout.letterSpacing,
+                                lineHeight = typography.callout.lineHeight,
                             ),
                         ),
-                    ),
-                    detail = Components.Cards.Base.Typography.Detail(
-                        regular = Components.Cards.Base.Typography.Detail.Regular(
-                            fontFamily = typography.body.family,
-                            fontWeight = typography.weight.regular,
-                            fontSize = typography.body.size,
-                            lineHeight = typography.body.lineHeight,
-                            letterSpacing = typography.body.letterSpacing,
-                        ),
-                        semibold = Components.Cards.Base.Typography.Detail.Semibold(
-                            fontFamily = typography.body.family,
-                            fontWeight = typography.weight.semibold,
-                            fontSize = typography.body.size,
-                            lineHeight = typography.body.lineHeight,
-                            letterSpacing = typography.body.letterSpacing,
-                        ),
-                    ),
-                    footer = Components.Cards.Base.Typography.Footer(
-                        fontFamily = typography.caption1.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.caption1.size,
-                        lineHeight = typography.caption1.lineHeight,
-                        letterSpacing = typography.caption1.letterSpacing,
-                    ),
-                    subtitle = Components.Cards.Base.Typography.Subtitle(
-                        base = Components.Cards.Base.Typography.Subtitle.Base(
-                            fontFamily = typography.callout.family,
-                            fontWeight = typography.weight.regular,
-                            fontSize = typography.callout.size,
-                            lineHeight = typography.callout.lineHeight,
-                            letterSpacing = typography.callout.letterSpacing,
-                        ),
-                        small = Components.Cards.Base.Typography.Subtitle.Small(
-                            fontFamily = typography.subheadline.family,
-                            fontWeight = typography.weight.regular,
-                            fontSize = typography.subheadline.size,
-                            lineHeight = typography.subheadline.lineHeight,
-                            letterSpacing = typography.subheadline.letterSpacing,
-                        ),
-                    ),
-                    statusText = Components.Cards.Base.Typography.StatusText(
-                        fontFamily = typography.subheadline.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.subheadline.size,
-                        lineHeight = typography.subheadline.lineHeight,
-                        letterSpacing = typography.subheadline.letterSpacing,
-                    ),
-                    value = Components.Cards.Base.Typography.Value(
-                        fontFamily = typography.title3.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.title3.size,
-                        lineHeight = typography.title3.lineHeight,
-                        letterSpacing = typography.title3.letterSpacing,
                     ),
                     unitOfMeasure = Components.Cards.Base.Typography.UnitOfMeasure(
                         fontFamily = typography.body.family,
-                        fontWeight = typography.weight.regular,
                         fontSize = typography.body.size,
-                        lineHeight = typography.body.lineHeight,
+                        fontWeight = typography.weight.regular,
                         letterSpacing = typography.body.letterSpacing,
+                        lineHeight = typography.body.lineHeight,
                     ),
-                    link = Components.Cards.Base.Typography.Link(
-                        fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
-                        letterSpacing = typography.callout.letterSpacing,
-                    ),
-                    header = Components.Cards.Base.Typography.Header(
-                        fontFamily = typography.expressive.title2.family,
+                    value = Components.Cards.Base.Typography.Value(
+                        fontFamily = typography.title3.family,
+                        fontSize = typography.title3.size,
                         fontWeight = typography.weight.medium,
-                        fontSize = typography.expressive.title2.size,
-                        lineHeight = typography.expressive.title2.lineHeight,
-                        letterSpacing = typography.expressive.title2.letterSpacing,
+                        letterSpacing = typography.title3.letterSpacing,
+                        lineHeight = typography.title3.lineHeight,
                     ),
-                    description = Components.Cards.Base.Typography.Description(
-                        fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
-                        letterSpacing = typography.callout.letterSpacing,
-                    ),
-                ),
-                shape = Components.Cards.Base.Shape(
-                    radius = Components.Cards.Base.Shape.Radius(
-                        symbol = base.radius.full,
-                    ),
-                ),
-                opacity = Components.Cards.Base.Opacity(
-                    opaque = base.opacity._5,
                 ),
             ),
             indent = Components.Cards.Indent(
@@ -8479,70 +8479,70 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         padding = Components.Cards.Indent.Default.Size.Padding(
                             leftContent = Components.Cards.Indent.Default.Size.Padding.LeftContent(
                                 title = Components.Cards.Indent.Default.Size.Padding.LeftContent.Title(
-                                    left = base.scale._200,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleControl = Components.Cards.Indent.Default.Size.Padding.LeftContent.TitleControl(
-                                    left = base.scale._200,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleIcon = Components.Cards.Indent.Default.Size.Padding.LeftContent.TitleIcon(
-                                    left = base.scale._200,
-                                    top = base.scale._100,
-                                    right = base.scale._100,
                                     bottom = base.scale._100,
-                                ),
-                                titleSymbol = Components.Cards.Indent.Default.Size.Padding.LeftContent.TitleSymbol(
                                     left = base.scale._200,
-                                    top = base.scale._150,
                                     right = base.scale._100,
-                                    bottom = base.scale._150,
+                                    top = base.scale._100,
                                 ),
                                 titleScore = Components.Cards.Indent.Default.Size.Padding.LeftContent.TitleScore(
-                                    left = base.scale._200,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitle = Components.Cards.Indent.Default.Size.Padding.LeftContent.TitleSubtitle(
-                                    left = base.scale._200,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitleControl = Components.Cards.Indent.Default.Size.Padding.LeftContent.TitleSubtitleControl(
-                                    left = base.scale._200,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitleIcon24 = Components.Cards.Indent.Default.Size.Padding.LeftContent.TitleSubtitleIcon24(
-                                    left = base.scale._200,
-                                    top = base.scale._100,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._100,
                                 ),
                                 titleSubtitleIcon32 = Components.Cards.Indent.Default.Size.Padding.LeftContent.TitleSubtitleIcon32(
-                                    left = base.scale._200,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
-                                ),
-                                titleSubtitleSymbol = Components.Cards.Indent.Default.Size.Padding.LeftContent.TitleSubtitleSymbol(
                                     left = base.scale._200,
-                                    top = base.scale._150,
                                     right = base.scale._100,
-                                    bottom = base.scale._150,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitleScore = Components.Cards.Indent.Default.Size.Padding.LeftContent.TitleSubtitleScore(
-                                    left = base.scale._200,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
+                                ),
+                                titleSubtitleSymbol = Components.Cards.Indent.Default.Size.Padding.LeftContent.TitleSubtitleSymbol(
+                                    bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
+                                ),
+                                titleSymbol = Components.Cards.Indent.Default.Size.Padding.LeftContent.TitleSymbol(
+                                    bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                             ),
                         ),
@@ -8553,70 +8553,70 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         padding = Components.Cards.Indent.Indented.Size.Padding(
                             leftContent = Components.Cards.Indent.Indented.Size.Padding.LeftContent(
                                 title = Components.Cards.Indent.Indented.Size.Padding.LeftContent.Title(
-                                    left = base.scale._400,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleControl = Components.Cards.Indent.Indented.Size.Padding.LeftContent.TitleControl(
-                                    left = base.scale._400,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleIcon = Components.Cards.Indent.Indented.Size.Padding.LeftContent.TitleIcon(
-                                    left = base.scale._400,
-                                    top = base.scale._100,
-                                    right = base.scale._100,
                                     bottom = base.scale._100,
-                                ),
-                                titleSymbol = Components.Cards.Indent.Indented.Size.Padding.LeftContent.TitleSymbol(
                                     left = base.scale._400,
-                                    top = base.scale._150,
                                     right = base.scale._100,
-                                    bottom = base.scale._150,
+                                    top = base.scale._100,
                                 ),
                                 titleScore = Components.Cards.Indent.Indented.Size.Padding.LeftContent.TitleScore(
-                                    left = base.scale._400,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitle = Components.Cards.Indent.Indented.Size.Padding.LeftContent.TitleSubtitle(
-                                    left = base.scale._400,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitleControl = Components.Cards.Indent.Indented.Size.Padding.LeftContent.TitleSubtitleControl(
-                                    left = base.scale._400,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitleIcon24 = Components.Cards.Indent.Indented.Size.Padding.LeftContent.TitleSubtitleIcon24(
-                                    left = base.scale._400,
-                                    top = base.scale._100,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._100,
                                 ),
                                 titleSubtitleIcon32 = Components.Cards.Indent.Indented.Size.Padding.LeftContent.TitleSubtitleIcon32(
-                                    left = base.scale._400,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
-                                ),
-                                titleSubtitleSymbol = Components.Cards.Indent.Indented.Size.Padding.LeftContent.TitleSubtitleSymbol(
                                     left = base.scale._400,
-                                    top = base.scale._150,
                                     right = base.scale._100,
-                                    bottom = base.scale._150,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitleScore = Components.Cards.Indent.Indented.Size.Padding.LeftContent.TitleSubtitleScore(
-                                    left = base.scale._400,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
+                                ),
+                                titleSubtitleSymbol = Components.Cards.Indent.Indented.Size.Padding.LeftContent.TitleSubtitleSymbol(
+                                    bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
+                                ),
+                                titleSymbol = Components.Cards.Indent.Indented.Size.Padding.LeftContent.TitleSymbol(
+                                    bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                             ),
                         ),
@@ -8625,36 +8625,31 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
             ),
         ),
         chips = Components.Chips(
-            type = Components.Chips.Type(
-                subgroup = Components.Chips.Type.Subgroup(
-                    color = Components.Chips.Type.Subgroup.Color(
-                        surface = base.color.surface.accent.base,
-                        text = Components.Chips.Type.Subgroup.Color.Text(
-                            label = base.color.text.onAccent.default,
-                        ),
-                    ),
-                    size = Components.Chips.Type.Subgroup.Size(
-                        gap = -16.0f,
-                        padding = Components.Chips.Type.Subgroup.Size.Padding(
-                            vertical = base.scale._125,
-                            left = base.scale._400,
-                            right = base.scale._200,
-                        ),
-                    ),
-                    shape = Components.Chips.Type.Subgroup.Shape(
-                        radius = Components.Chips.Type.Subgroup.Shape.Radius(
-                            bottom = Components.Chips.Type.Subgroup.Shape.Radius.Bottom(
-                                left = base.radius.none,
-                                right = base.radius.large,
-                            ),
-                            top = Components.Chips.Type.Subgroup.Shape.Radius.Top(
-                                left = base.radius.none,
-                                right = base.radius.large,
-                            ),
-                        ),
+            base = Components.Chips.Base(
+                opacity = Components.Chips.Base.Opacity(
+                    disabled = base.opacity._40,
+                    pressed = base.opacity._60,
+                ),
+                size = Components.Chips.Base.Size(
+                    gap = Components.Chips.Base.Size.Gap(
+                        buttonChip = base.scale._100,
+                        group = base.scale._150,
                     ),
                 ),
+            ),
+            type = Components.Chips.Type(
                 primary = Components.Chips.Type.Primary(
+                    shape = Components.Chips.Type.Primary.Shape(
+                        radius = base.radius.large,
+                    ),
+                    size = Components.Chips.Type.Primary.Size(
+                        padding = Components.Chips.Type.Primary.Size.Padding(
+                            container = Components.Chips.Type.Primary.Size.Padding.Container(
+                                horizontal = base.scale._200,
+                                vertical = base.scale._125,
+                            ),
+                        ),
+                    ),
                     state = Components.Chips.Type.Primary.State(
                         selected = Components.Chips.Type.Primary.State.Selected(
                             color = Components.Chips.Type.Primary.State.Selected.Color(
@@ -8676,30 +8671,34 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                     typography = Components.Chips.Type.Primary.Typography(
                         label = Components.Chips.Type.Primary.Typography.Label(
                             fontFamily = typography.callout.family,
-                            fontWeight = typography.weight.medium,
                             fontSize = typography.callout.size,
-                            lineHeight = typography.callout.lineHeight,
+                            fontWeight = typography.weight.medium,
                             letterSpacing = typography.callout.letterSpacing,
+                            lineHeight = typography.callout.lineHeight,
                         ),
-                    ),
-                    size = Components.Chips.Type.Primary.Size(
-                        padding = Components.Chips.Type.Primary.Size.Padding(
-                            container = Components.Chips.Type.Primary.Size.Padding.Container(
-                                horizontal = base.scale._200,
-                                vertical = base.scale._125,
-                            ),
-                        ),
-                    ),
-                    shape = Components.Chips.Type.Primary.Shape(
-                        radius = base.radius.large,
                     ),
                 ),
                 secondary = Components.Chips.Type.Secondary(
+                    shape = Components.Chips.Type.Secondary.Shape(
+                        radius = base.radius.medium,
+                    ),
+                    size = Components.Chips.Type.Secondary.Size(
+                        padding = Components.Chips.Type.Secondary.Size.Padding(
+                            container = Components.Chips.Type.Secondary.Size.Padding.Container(
+                                horizontal = base.scale._100,
+                                vertical = base.scale._75,
+                            ),
+                            label = Components.Chips.Type.Secondary.Size.Padding.Label(
+                                horizontal = base.scale._50,
+                                vertical = base.scale._0,
+                            ),
+                        ),
+                    ),
                     state = Components.Chips.Type.Secondary.State(
                         selected = Components.Chips.Type.Secondary.State.Selected(
                             color = Components.Chips.Type.Secondary.State.Selected.Color(
-                                surface = base.color.surface.tone.strong,
                                 icon = base.color.icon.base.default,
+                                surface = base.color.surface.tone.strong,
                                 text = Components.Chips.Type.Secondary.State.Selected.Color.Text(
                                     label = base.color.text.base.default,
                                 ),
@@ -8707,8 +8706,8 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         ),
                         unselected = Components.Chips.Type.Secondary.State.Unselected(
                             color = Components.Chips.Type.Secondary.State.Unselected.Color(
-                                surface = base.color.surface.action.secondary.emphasized.default,
                                 icon = base.color.icon.muted.default,
+                                surface = base.color.surface.action.secondary.emphasized.default,
                                 text = Components.Chips.Type.Secondary.State.Unselected.Color.Text(
                                     label = base.color.text.muted.default,
                                 ),
@@ -8718,58 +8717,74 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                     typography = Components.Chips.Type.Secondary.Typography(
                         label = Components.Chips.Type.Secondary.Typography.Label(
                             fontFamily = typography.subheadline.family,
-                            fontWeight = typography.weight.medium,
                             fontSize = typography.subheadline.size,
-                            lineHeight = typography.subheadline.lineHeight,
+                            fontWeight = typography.weight.medium,
                             letterSpacing = typography.subheadline.letterSpacing,
+                            lineHeight = typography.subheadline.lineHeight,
                         ),
                     ),
-                    size = Components.Chips.Type.Secondary.Size(
-                        padding = Components.Chips.Type.Secondary.Size.Padding(
-                            label = Components.Chips.Type.Secondary.Size.Padding.Label(
-                                horizontal = base.scale._50,
-                                vertical = base.scale._0,
+                ),
+                subgroup = Components.Chips.Type.Subgroup(
+                    color = Components.Chips.Type.Subgroup.Color(
+                        surface = base.color.surface.accent.base,
+                        text = Components.Chips.Type.Subgroup.Color.Text(
+                            label = base.color.text.onAccent.default,
+                        ),
+                    ),
+                    shape = Components.Chips.Type.Subgroup.Shape(
+                        radius = Components.Chips.Type.Subgroup.Shape.Radius(
+                            bottom = Components.Chips.Type.Subgroup.Shape.Radius.Bottom(
+                                left = base.radius.none,
+                                right = base.radius.large,
                             ),
-                            container = Components.Chips.Type.Secondary.Size.Padding.Container(
-                                horizontal = base.scale._100,
-                                vertical = base.scale._75,
+                            top = Components.Chips.Type.Subgroup.Shape.Radius.Top(
+                                left = base.radius.none,
+                                right = base.radius.large,
                             ),
                         ),
                     ),
-                    shape = Components.Chips.Type.Secondary.Shape(
-                        radius = base.radius.medium,
+                    size = Components.Chips.Type.Subgroup.Size(
+                        gap = -16.0f,
+                        padding = Components.Chips.Type.Subgroup.Size.Padding(
+                            left = base.scale._400,
+                            right = base.scale._200,
+                            vertical = base.scale._125,
+                        ),
                     ),
-                ),
-            ),
-            base = Components.Chips.Base(
-                size = Components.Chips.Base.Size(
-                    gap = Components.Chips.Base.Size.Gap(
-                        group = base.scale._150,
-                        buttonChip = base.scale._100,
-                    ),
-                ),
-                opacity = Components.Chips.Base.Opacity(
-                    disabled = base.opacity._40,
-                    pressed = base.opacity._60,
                 ),
             ),
         ),
         containers = Components.Containers(
             base = Components.Containers.Base(
                 color = Components.Containers.Base.Color(
-                    surface = Components.Containers.Base.Color.Surface(
-                        base = base.color.surface.tone.emphasis,
-                        strong = base.color.surface.tone.strong,
-                        emphasis = base.color.surface.tone.base,
-                        muted = base.color.surface.tone.muted,
-                        subtle = base.color.surface.tone.subtle,
-                        inverse = base.color.surface.tone.inverse,
-                    ),
                     border = Components.Containers.Base.Color.Border(
+                        focus = base.color.border.base.focus,
                         primary = base.color.border.base.default,
                         secondary = base.color.border.muted.default,
                         selected = base.color.border.accent.selected,
-                        focus = base.color.border.base.focus,
+                    ),
+                    surface = Components.Containers.Base.Color.Surface(
+                        base = base.color.surface.tone.emphasis,
+                        emphasis = base.color.surface.tone.base,
+                        inverse = base.color.surface.tone.inverse,
+                        muted = base.color.surface.tone.muted,
+                        strong = base.color.surface.tone.strong,
+                        subtle = base.color.surface.tone.subtle,
+                    ),
+                ),
+                opacity = Components.Containers.Base.Opacity(
+                    _0 = base.opacity._0,
+                    _100 = base.opacity._100,
+                    _30 = base.opacity._30,
+                    _50 = base.opacity._50,
+                    _60 = base.opacity._60,
+                ),
+                shape = Components.Containers.Base.Shape(
+                    radius = base.radius.extraExtraLarge,
+                    borderWidth = Components.Containers.Base.Shape.BorderWidth(
+                        default = base.borderWidth.small,
+                        medium = base.borderWidth.large,
+                        small = base.borderWidth.medium,
                     ),
                 ),
                 size = Components.Containers.Base.Size(
@@ -8778,24 +8793,17 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         vertical = base.scale._200,
                     ),
                 ),
-                shape = Components.Containers.Base.Shape(
-                    radius = base.radius.extraExtraLarge,
-                    borderWidth = Components.Containers.Base.Shape.BorderWidth(
-                        default = base.borderWidth.small,
-                        small = base.borderWidth.medium,
-                        medium = base.borderWidth.large,
-                    ),
-                ),
-                opacity = Components.Containers.Base.Opacity(
-                    _100 = base.opacity._100,
-                    _60 = base.opacity._60,
-                    _50 = base.opacity._50,
-                    _30 = base.opacity._30,
-                    _0 = base.opacity._0,
-                ),
             ),
         ),
         controls = Components.Controls(
+            base = Components.Controls.Base(
+                opacity = Components.Controls.Base.Opacity(
+                    disabled = base.opacity._40,
+                ),
+                size = Components.Controls.Base.Size(
+                    icon = base.scale._400,
+                ),
+            ),
             type = Components.Controls.Type(
                 checkbox = Components.Controls.Type.Checkbox(
                     state = Components.Controls.Type.Checkbox.State(
@@ -8826,14 +8834,6 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                     ),
                 ),
             ),
-            base = Components.Controls.Base(
-                size = Components.Controls.Base.Size(
-                    icon = base.scale._400,
-                ),
-                opacity = Components.Controls.Base.Opacity(
-                    disabled = base.opacity._40,
-                ),
-            ),
         ),
         dividers = Components.Dividers(
             base = Components.Dividers.Base(
@@ -8843,59 +8843,21 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                 size = Components.Dividers.Base.Size(
                     thickness = base.borderWidth.extraSmall,
                     inset = Components.Dividers.Base.Size.Inset(
+                        extraExtraExtraExtraExtraLarge = base.scale._1150,
+                        extraExtraExtraExtraLarge = base.scale._900,
+                        extraExtraExtraLarge = base.scale._700,
+                        extraExtraLarge = base.scale._400,
+                        extraLarge = base.scale._350,
+                        large = base.scale._300,
+                        medium = base.scale._250,
                         none = base.scale._0,
                         small = base.scale._200,
-                        medium = base.scale._250,
-                        large = base.scale._300,
-                        extraLarge = base.scale._350,
-                        extraExtraLarge = base.scale._400,
-                        extraExtraExtraLarge = base.scale._700,
-                        extraExtraExtraExtraLarge = base.scale._900,
-                        extraExtraExtraExtraExtraLarge = base.scale._1150,
                     ),
                 ),
             ),
         ),
         infoBoxes = Components.InfoBoxes(
-            emphasis = Components.InfoBoxes.Emphasis(
-                high = Components.InfoBoxes.Emphasis.High(
-                    color = Components.InfoBoxes.Emphasis.High.Color(
-                        surface = base.color.surface.tone.base,
-                        icon = base.color.icon.base.default,
-                        text = Components.InfoBoxes.Emphasis.High.Color.Text(
-                            title = base.color.text.base.default,
-                            message = base.color.text.base.default,
-                        ),
-                    ),
-                ),
-                low = Components.InfoBoxes.Emphasis.Low(
-                    color = Components.InfoBoxes.Emphasis.Low.Color(
-                        surface = base.color.surface.tone.muted,
-                        icon = base.color.icon.muted.default,
-                        text = Components.InfoBoxes.Emphasis.Low.Color.Text(
-                            title = base.color.text.muted.default,
-                            message = base.color.text.muted.default,
-                        ),
-                    ),
-                ),
-            ),
             base = Components.InfoBoxes.Base(
-                typography = Components.InfoBoxes.Base.Typography(
-                    title = Components.InfoBoxes.Base.Typography.Title(
-                        fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.semibold,
-                        fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
-                        letterSpacing = typography.callout.letterSpacing,
-                    ),
-                    body = Components.InfoBoxes.Base.Typography.Body(
-                        fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
-                        letterSpacing = typography.callout.letterSpacing,
-                    ),
-                ),
                 shape = Components.InfoBoxes.Base.Shape(
                     radius = base.radius.extraExtraLarge,
                 ),
@@ -8912,23 +8874,74 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         ),
                     ),
                 ),
+                typography = Components.InfoBoxes.Base.Typography(
+                    body = Components.InfoBoxes.Base.Typography.Body(
+                        fontFamily = typography.callout.family,
+                        fontSize = typography.callout.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.callout.letterSpacing,
+                        lineHeight = typography.callout.lineHeight,
+                    ),
+                    title = Components.InfoBoxes.Base.Typography.Title(
+                        fontFamily = typography.callout.family,
+                        fontSize = typography.callout.size,
+                        fontWeight = typography.weight.semibold,
+                        letterSpacing = typography.callout.letterSpacing,
+                        lineHeight = typography.callout.lineHeight,
+                    ),
+                ),
+            ),
+            emphasis = Components.InfoBoxes.Emphasis(
+                high = Components.InfoBoxes.Emphasis.High(
+                    color = Components.InfoBoxes.Emphasis.High.Color(
+                        icon = base.color.icon.base.default,
+                        surface = base.color.surface.tone.base,
+                        text = Components.InfoBoxes.Emphasis.High.Color.Text(
+                            message = base.color.text.base.default,
+                            title = base.color.text.base.default,
+                        ),
+                    ),
+                ),
+                low = Components.InfoBoxes.Emphasis.Low(
+                    color = Components.InfoBoxes.Emphasis.Low.Color(
+                        icon = base.color.icon.muted.default,
+                        surface = base.color.surface.tone.muted,
+                        text = Components.InfoBoxes.Emphasis.Low.Color.Text(
+                            message = base.color.text.muted.default,
+                            title = base.color.text.muted.default,
+                        ),
+                    ),
+                ),
             ),
         ),
         lists = Components.Lists(
             base = Components.Lists.Base(
                 color = Components.Lists.Base.Color(
+                    icon = Components.Lists.Base.Color.Icon(
+                        accent = base.color.icon.accent.subtle.default,
+                        action = Components.Lists.Base.Color.Icon.Action(
+                            base = Components.Lists.Base.Color.Icon.Action.Base(
+                                default = base.color.icon.base.default,
+                                hover = base.color.icon.base.hover,
+                            ),
+                            emphasized = Components.Lists.Base.Color.Icon.Action.Emphasized(
+                                default = base.color.icon.emphasis.default,
+                                hover = base.color.icon.emphasis.hover,
+                            ),
+                            link = Components.Lists.Base.Color.Icon.Action.Link(
+                                default = base.color.icon.link.emphasized.default,
+                                hover = base.color.icon.link.emphasized.default,
+                            ),
+                        ),
+                    ),
                     text = Components.Lists.Base.Color.Text(
-                        value = base.color.text.base.default,
-                        unitOfMeasure = base.color.text.muted.default,
+                        description = base.color.text.muted.default,
                         header = base.color.text.base.default,
                         sensorId = base.color.text.base.default,
                         subtitle = base.color.text.muted.default,
                         textCentered = base.color.text.muted.default,
-                        description = base.color.text.muted.default,
-                        title = Components.Lists.Base.Color.Text.Title(
-                            base = base.color.text.base.default,
-                            muted = base.color.text.muted.default,
-                        ),
+                        unitOfMeasure = base.color.text.muted.default,
+                        value = base.color.text.base.default,
                         detail = Components.Lists.Base.Color.Text.Detail(
                             base = base.color.text.muted.default,
                             strong = base.color.text.base.default,
@@ -8951,185 +8964,55 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                                 hover = base.color.text.link.emphasized.hover,
                             ),
                         ),
-                    ),
-                    icon = Components.Lists.Base.Color.Icon(
-                        accent = base.color.icon.accent.subtle.default,
-                        action = Components.Lists.Base.Color.Icon.Action(
-                            base = Components.Lists.Base.Color.Icon.Action.Base(
-                                default = base.color.icon.base.default,
-                                hover = base.color.icon.base.hover,
-                            ),
-                            emphasized = Components.Lists.Base.Color.Icon.Action.Emphasized(
-                                default = base.color.icon.emphasis.default,
-                                hover = base.color.icon.emphasis.hover,
-                            ),
-                            link = Components.Lists.Base.Color.Icon.Action.Link(
-                                default = base.color.icon.link.emphasized.default,
-                                hover = base.color.icon.link.emphasized.default,
-                            ),
+                        title = Components.Lists.Base.Color.Text.Title(
+                            base = base.color.text.base.default,
+                            muted = base.color.text.muted.default,
                         ),
                     ),
                 ),
-                typography = Components.Lists.Base.Typography(
-                    detail = Components.Lists.Base.Typography.Detail(
-                        default = Components.Lists.Base.Typography.Detail.Default(
-                            fontFamily = typography.body.family,
-                            fontWeight = typography.weight.regular,
-                            fontSize = typography.body.size,
-                            lineHeight = typography.body.lineHeight,
-                            letterSpacing = typography.body.letterSpacing,
-                        ),
-                        medium = Components.Lists.Base.Typography.Detail.Medium(
-                            fontFamily = typography.body.family,
-                            fontWeight = typography.weight.medium,
-                            fontSize = typography.body.size,
-                            lineHeight = typography.body.lineHeight,
-                            letterSpacing = typography.body.letterSpacing,
-                        ),
-                    ),
-                    value = Components.Lists.Base.Typography.Value(
-                        fontFamily = typography.title3.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.title3.size,
-                        lineHeight = typography.title3.lineHeight,
-                        letterSpacing = typography.title3.letterSpacing,
-                    ),
-                    unitOfMeasure = Components.Lists.Base.Typography.UnitOfMeasure(
-                        fontFamily = typography.body.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.body.size,
-                        lineHeight = typography.body.lineHeight,
-                        letterSpacing = typography.body.letterSpacing,
-                    ),
-                    title = Components.Lists.Base.Typography.Title(
-                        regular = Components.Lists.Base.Typography.Title.Regular(
-                            fontFamily = typography.body.family,
-                            fontWeight = typography.weight.regular,
-                            fontSize = typography.body.size,
-                            lineHeight = typography.body.lineHeight,
-                            letterSpacing = typography.body.letterSpacing,
-                        ),
-                        medium = Components.Lists.Base.Typography.Title.Medium(
-                            fontFamily = typography.body.family,
-                            fontWeight = typography.weight.medium,
-                            fontSize = typography.body.size,
-                            lineHeight = typography.body.lineHeight,
-                            letterSpacing = typography.body.letterSpacing,
-                        ),
-                        semibold = Components.Lists.Base.Typography.Title.Semibold(
-                            fontFamily = typography.body.family,
-                            fontWeight = typography.weight.semibold,
-                            fontSize = typography.body.size,
-                            lineHeight = typography.body.lineHeight,
-                            letterSpacing = typography.body.letterSpacing,
-                        ),
-                    ),
-                    subtitle = Components.Lists.Base.Typography.Subtitle(
-                        small = Components.Lists.Base.Typography.Subtitle.Small(
-                            fontFamily = typography.footnote.family,
-                            fontWeight = typography.weight.regular,
-                            fontSize = typography.footnote.size,
-                            lineHeight = typography.footnote.lineHeight,
-                            letterSpacing = typography.footnote.letterSpacing,
-                        ),
-                        medium = Components.Lists.Base.Typography.Subtitle.Medium(
-                            fontFamily = typography.subheadline.family,
-                            fontWeight = typography.weight.regular,
-                            fontSize = typography.subheadline.size,
-                            lineHeight = typography.subheadline.lineHeight,
-                            letterSpacing = typography.subheadline.letterSpacing,
-                        ),
-                        large = Components.Lists.Base.Typography.Subtitle.Large(
-                            fontFamily = typography.callout.family,
-                            fontWeight = typography.weight.regular,
-                            fontSize = typography.callout.size,
-                            lineHeight = typography.callout.lineHeight,
-                            letterSpacing = typography.callout.letterSpacing,
-                        ),
-                    ),
-                    textButton = Components.Lists.Base.Typography.TextButton(
-                        fontFamily = typography.body.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.body.size,
-                        lineHeight = typography.body.lineHeight,
-                        letterSpacing = typography.body.letterSpacing,
-                    ),
-                    description = Components.Lists.Base.Typography.Description(
-                        fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
-                        letterSpacing = typography.callout.letterSpacing,
-                    ),
-                    link = Components.Lists.Base.Typography.Link(
-                        fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
-                        letterSpacing = typography.callout.letterSpacing,
-                    ),
-                    sensorId = Components.Lists.Base.Typography.SensorId(
-                        fontFamily = typography.expressive.display.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.expressive.display.size,
-                        lineHeight = typography.expressive.display.lineHeight,
-                        letterSpacing = typography.expressive.display.letterSpacing,
-                    ),
-                    textCentered = Components.Lists.Base.Typography.TextCentered(
-                        fontFamily = typography.subheadline.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.subheadline.size,
-                        lineHeight = typography.subheadline.lineHeight,
-                        letterSpacing = typography.subheadline.letterSpacing,
-                    ),
-                    header = Components.Lists.Base.Typography.Header(
-                        fontFamily = typography.title3.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.title3.size,
-                        lineHeight = typography.title3.lineHeight,
-                        letterSpacing = typography.title3.letterSpacing,
-                    ),
+                opacity = Components.Lists.Base.Opacity(
+                    inverted = base.opacity._5,
                 ),
                 size = Components.Lists.Base.Size(
-                    icon = Components.Lists.Base.Size.Icon(
-                        _24 = base.scale._300,
-                        _32 = base.scale._400,
-                    ),
                     gap = Components.Lists.Base.Size.Gap(
                         row = base.scale._25,
                         header = Components.Lists.Base.Size.Gap.Header(
-                            textIcon = base.scale._200,
                             iconIcon = base.scale._200,
+                            textIcon = base.scale._200,
                         ),
                         leftContent = Components.Lists.Base.Size.Gap.LeftContent(
-                            descriptionLink = base.scale._100,
-                            titleSubtitle = base.scale._100,
                             controlText = base.scale._100,
+                            descriptionLink = base.scale._100,
                             iconText = base.scale._100,
-                            symbolText = base.scale._100,
                             scoreText = base.scale._100,
                             sensorId = base.scale._100,
+                            symbolText = base.scale._100,
+                            titleSubtitle = base.scale._100,
                             textButton = Components.Lists.Base.Size.Gap.LeftContent.TextButton(
                                 default = base.scale._100,
                                 link = base.scale._100,
                             ),
                         ),
                         rightContent = Components.Lists.Base.Size.Gap.RightContent(
-                            valueUnitOfMeasure = base.scale._50,
                             detailBadge = base.scale._100,
-                            detailSwitch = base.scale._100,
                             detailIcon24 = base.scale._100,
                             detailIcon32 = base.scale._100,
+                            detailSwitch = base.scale._100,
                             sort = base.scale._100,
+                            valueUnitOfMeasure = base.scale._50,
                             valueUnitOfMeasureValueUnitOfMeasure = base.scale._50,
                         ),
                     ),
+                    icon = Components.Lists.Base.Size.Icon(
+                        _24 = base.scale._300,
+                        _32 = base.scale._400,
+                    ),
                     padding = Components.Lists.Base.Size.Padding(
                         header = Components.Lists.Base.Size.Padding.Header(
-                            left = base.scale._0,
-                            top = base.scale._100,
-                            right = base.scale._0,
                             bottom = base.scale._0,
+                            left = base.scale._0,
+                            right = base.scale._0,
+                            top = base.scale._100,
                             content = Components.Lists.Base.Size.Padding.Header.Content(
                                 horizontal = base.scale._200,
                                 vertical = base.scale._150,
@@ -9140,28 +9023,24 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                                 horizontal = base.scale._200,
                                 vertical = base.scale._150,
                             ),
-                            descriptionLink = Components.Lists.Base.Size.Padding.LeftContent.DescriptionLink(
-                                left = base.scale._200,
-                                top = base.scale._150,
-                                right = base.scale._200,
-                                bottom = base.scale._200,
-                            ),
                             descriptionIcon = Components.Lists.Base.Size.Padding.LeftContent.DescriptionIcon(
                                 horizontal = base.scale._200,
                                 vertical = base.scale._150,
                             ),
                             descriptionIconLink = Components.Lists.Base.Size.Padding.LeftContent.DescriptionIconLink(
-                                left = base.scale._200,
-                                top = base.scale._150,
-                                right = base.scale._200,
                                 bottom = base.scale._200,
+                                left = base.scale._200,
+                                right = base.scale._200,
+                                top = base.scale._150,
+                            ),
+                            descriptionLink = Components.Lists.Base.Size.Padding.LeftContent.DescriptionLink(
+                                bottom = base.scale._200,
+                                left = base.scale._200,
+                                right = base.scale._200,
+                                top = base.scale._150,
                             ),
                             textButton = Components.Lists.Base.Size.Padding.LeftContent.TextButton(
                                 default = Components.Lists.Base.Size.Padding.LeftContent.TextButton.Default(
-                                    horizontal = base.scale._200,
-                                    vertical = base.scale._100,
-                                ),
-                                link = Components.Lists.Base.Size.Padding.LeftContent.TextButton.Link(
                                     horizontal = base.scale._200,
                                     vertical = base.scale._100,
                                 ),
@@ -9169,45 +9048,34 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                                     horizontal = base.scale._200,
                                     vertical = base.scale._100,
                                 ),
+                                link = Components.Lists.Base.Size.Padding.LeftContent.TextButton.Link(
+                                    horizontal = base.scale._200,
+                                    vertical = base.scale._100,
+                                ),
                             ),
-                        ),
-                        textCentered = Components.Lists.Base.Size.Padding.TextCentered(
-                            horizontal = base.scale._200,
-                            vertical = base.scale._100,
                         ),
                         rightContent = Components.Lists.Base.Size.Padding.RightContent(
-                            icon = Components.Lists.Base.Size.Padding.RightContent.Icon(
-                                top = base.scale._100,
-                                bottom = base.scale._100,
-                                right = base.scale._100,
-                            ),
-                            iconChevron = Components.Lists.Base.Size.Padding.RightContent.IconChevron(
+                            badgeChevron = Components.Lists.Base.Size.Padding.RightContent.BadgeChevron(
                                 horizontal = base.scale._0,
                                 vertical = base.scale._100,
                             ),
-                            valueUnitOfMeasure = Components.Lists.Base.Size.Padding.RightContent.ValueUnitOfMeasure(
+                            checkmark = Components.Lists.Base.Size.Padding.RightContent.Checkmark(
                                 horizontal = base.scale._0,
                                 vertical = base.scale._100,
-                                right = base.scale._100,
                             ),
-                            tag = Components.Lists.Base.Size.Padding.RightContent.Tag(
+                            chevron = Components.Lists.Base.Size.Padding.RightContent.Chevron(
                                 horizontal = base.scale._0,
                                 vertical = base.scale._100,
                             ),
                             detail = Components.Lists.Base.Size.Padding.RightContent.Detail(
                                 horizontal = base.scale._0,
-                                vertical = base.scale._100,
                                 right = base.scale._100,
+                                vertical = base.scale._100,
                             ),
                             detailBadge = Components.Lists.Base.Size.Padding.RightContent.DetailBadge(
                                 horizontal = base.scale._0,
-                                vertical = base.scale._100,
                                 right = base.scale._100,
-                            ),
-                            detailSwitch = Components.Lists.Base.Size.Padding.RightContent.DetailSwitch(
-                                horizontal = base.scale._0,
                                 vertical = base.scale._100,
-                                right = base.scale._100,
                             ),
                             detailChevron = Components.Lists.Base.Size.Padding.RightContent.DetailChevron(
                                 horizontal = base.scale._0,
@@ -9215,10 +9083,24 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                             ),
                             detailIcon24 = Components.Lists.Base.Size.Padding.RightContent.DetailIcon24(
                                 horizontal = base.scale._0,
-                                vertical = base.scale._100,
                                 right = base.scale._100,
+                                vertical = base.scale._100,
                             ),
                             detailIcon32 = Components.Lists.Base.Size.Padding.RightContent.DetailIcon32(
+                                horizontal = base.scale._0,
+                                vertical = base.scale._100,
+                            ),
+                            detailSwitch = Components.Lists.Base.Size.Padding.RightContent.DetailSwitch(
+                                horizontal = base.scale._0,
+                                right = base.scale._100,
+                                vertical = base.scale._100,
+                            ),
+                            icon = Components.Lists.Base.Size.Padding.RightContent.Icon(
+                                bottom = base.scale._100,
+                                right = base.scale._100,
+                                top = base.scale._100,
+                            ),
+                            iconChevron = Components.Lists.Base.Size.Padding.RightContent.IconChevron(
                                 horizontal = base.scale._0,
                                 vertical = base.scale._100,
                             ),
@@ -9227,21 +9109,18 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                                 vertical = base.scale._100,
                             ),
                             switch = Components.Lists.Base.Size.Padding.RightContent.Switch(
-                                left = base.scale._0,
-                                top = base.scale._0,
-                                right = base.scale._100,
                                 bottom = base.scale._0,
+                                left = base.scale._0,
+                                right = base.scale._100,
+                                top = base.scale._0,
                             ),
-                            chevron = Components.Lists.Base.Size.Padding.RightContent.Chevron(
+                            tag = Components.Lists.Base.Size.Padding.RightContent.Tag(
                                 horizontal = base.scale._0,
                                 vertical = base.scale._100,
                             ),
-                            checkmark = Components.Lists.Base.Size.Padding.RightContent.Checkmark(
+                            valueUnitOfMeasure = Components.Lists.Base.Size.Padding.RightContent.ValueUnitOfMeasure(
                                 horizontal = base.scale._0,
-                                vertical = base.scale._100,
-                            ),
-                            badgeChevron = Components.Lists.Base.Size.Padding.RightContent.BadgeChevron(
-                                horizontal = base.scale._0,
+                                right = base.scale._100,
                                 vertical = base.scale._100,
                             ),
                         ),
@@ -9249,83 +9128,130 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                             horizontal = base.scale._200,
                             vertical = base.scale._75,
                         ),
-                    ),
-                ),
-                opacity = Components.Lists.Base.Opacity(
-                    inverted = base.opacity._5,
-                ),
-            ),
-            size = Components.Lists.Size(
-                small = Components.Lists.Size.Small(
-                    grouping = Components.Lists.Size.Small.Grouping(
-                        single = Components.Lists.Size.Small.Grouping.Single(
-                            shape = Components.Lists.Size.Small.Grouping.Single.Shape(
-                                radius = base.radius.large,
-                            ),
-                        ),
-                        multi = Components.Lists.Size.Small.Grouping.Multi(
-                            shape = Components.Lists.Size.Small.Grouping.Multi.Shape(
-                                radius = Components.Lists.Size.Small.Grouping.Multi.Shape.Radius(
-                                    middleRow = base.radius.small,
-                                    topRow = Components.Lists.Size.Small.Grouping.Multi.Shape.Radius.TopRow(
-                                        top = Components.Lists.Size.Small.Grouping.Multi.Shape.Radius.TopRow.Top(
-                                            left = base.radius.large,
-                                            right = base.radius.large,
-                                        ),
-                                        bottom = Components.Lists.Size.Small.Grouping.Multi.Shape.Radius.TopRow.Bottom(
-                                            left = base.radius.small,
-                                            right = base.radius.small,
-                                        ),
-                                    ),
-                                    bottomRow = Components.Lists.Size.Small.Grouping.Multi.Shape.Radius.BottomRow(
-                                        top = Components.Lists.Size.Small.Grouping.Multi.Shape.Radius.BottomRow.Top(
-                                            left = base.radius.small,
-                                            right = base.radius.small,
-                                        ),
-                                        bottom = Components.Lists.Size.Small.Grouping.Multi.Shape.Radius.BottomRow.Bottom(
-                                            left = base.radius.large,
-                                            right = base.radius.large,
-                                        ),
-                                    ),
-                                ),
-                            ),
+                        textCentered = Components.Lists.Base.Size.Padding.TextCentered(
+                            horizontal = base.scale._200,
+                            vertical = base.scale._100,
                         ),
                     ),
                 ),
-                large = Components.Lists.Size.Large(
-                    grouping = Components.Lists.Size.Large.Grouping(
-                        single = Components.Lists.Size.Large.Grouping.Single(
-                            shape = Components.Lists.Size.Large.Grouping.Single.Shape(
-                                radius = base.radius.extraExtraLarge,
-                            ),
+                typography = Components.Lists.Base.Typography(
+                    description = Components.Lists.Base.Typography.Description(
+                        fontFamily = typography.callout.family,
+                        fontSize = typography.callout.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.callout.letterSpacing,
+                        lineHeight = typography.callout.lineHeight,
+                    ),
+                    detail = Components.Lists.Base.Typography.Detail(
+                        default = Components.Lists.Base.Typography.Detail.Default(
+                            fontFamily = typography.body.family,
+                            fontSize = typography.body.size,
+                            fontWeight = typography.weight.regular,
+                            letterSpacing = typography.body.letterSpacing,
+                            lineHeight = typography.body.lineHeight,
                         ),
-                        multi = Components.Lists.Size.Large.Grouping.Multi(
-                            shape = Components.Lists.Size.Large.Grouping.Multi.Shape(
-                                radius = Components.Lists.Size.Large.Grouping.Multi.Shape.Radius(
-                                    middleRow = base.radius.small,
-                                    topRow = Components.Lists.Size.Large.Grouping.Multi.Shape.Radius.TopRow(
-                                        top = Components.Lists.Size.Large.Grouping.Multi.Shape.Radius.TopRow.Top(
-                                            left = base.radius.extraExtraLarge,
-                                            right = base.radius.extraExtraLarge,
-                                        ),
-                                        bottom = Components.Lists.Size.Large.Grouping.Multi.Shape.Radius.TopRow.Bottom(
-                                            left = base.radius.small,
-                                            right = base.radius.small,
-                                        ),
-                                    ),
-                                    bottomRow = Components.Lists.Size.Large.Grouping.Multi.Shape.Radius.BottomRow(
-                                        top = Components.Lists.Size.Large.Grouping.Multi.Shape.Radius.BottomRow.Top(
-                                            left = base.radius.small,
-                                            right = base.radius.small,
-                                        ),
-                                        bottom = Components.Lists.Size.Large.Grouping.Multi.Shape.Radius.BottomRow.Bottom(
-                                            left = base.radius.extraExtraLarge,
-                                            right = base.radius.extraExtraLarge,
-                                        ),
-                                    ),
-                                ),
-                            ),
+                        medium = Components.Lists.Base.Typography.Detail.Medium(
+                            fontFamily = typography.body.family,
+                            fontSize = typography.body.size,
+                            fontWeight = typography.weight.medium,
+                            letterSpacing = typography.body.letterSpacing,
+                            lineHeight = typography.body.lineHeight,
                         ),
+                    ),
+                    header = Components.Lists.Base.Typography.Header(
+                        fontFamily = typography.title3.family,
+                        fontSize = typography.title3.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.title3.letterSpacing,
+                        lineHeight = typography.title3.lineHeight,
+                    ),
+                    link = Components.Lists.Base.Typography.Link(
+                        fontFamily = typography.callout.family,
+                        fontSize = typography.callout.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.callout.letterSpacing,
+                        lineHeight = typography.callout.lineHeight,
+                    ),
+                    sensorId = Components.Lists.Base.Typography.SensorId(
+                        fontFamily = typography.expressive.display.family,
+                        fontSize = typography.expressive.display.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.expressive.display.letterSpacing,
+                        lineHeight = typography.expressive.display.lineHeight,
+                    ),
+                    subtitle = Components.Lists.Base.Typography.Subtitle(
+                        large = Components.Lists.Base.Typography.Subtitle.Large(
+                            fontFamily = typography.callout.family,
+                            fontSize = typography.callout.size,
+                            fontWeight = typography.weight.regular,
+                            letterSpacing = typography.callout.letterSpacing,
+                            lineHeight = typography.callout.lineHeight,
+                        ),
+                        medium = Components.Lists.Base.Typography.Subtitle.Medium(
+                            fontFamily = typography.subheadline.family,
+                            fontSize = typography.subheadline.size,
+                            fontWeight = typography.weight.regular,
+                            letterSpacing = typography.subheadline.letterSpacing,
+                            lineHeight = typography.subheadline.lineHeight,
+                        ),
+                        small = Components.Lists.Base.Typography.Subtitle.Small(
+                            fontFamily = typography.footnote.family,
+                            fontSize = typography.footnote.size,
+                            fontWeight = typography.weight.regular,
+                            letterSpacing = typography.footnote.letterSpacing,
+                            lineHeight = typography.footnote.lineHeight,
+                        ),
+                    ),
+                    textButton = Components.Lists.Base.Typography.TextButton(
+                        fontFamily = typography.body.family,
+                        fontSize = typography.body.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.body.letterSpacing,
+                        lineHeight = typography.body.lineHeight,
+                    ),
+                    textCentered = Components.Lists.Base.Typography.TextCentered(
+                        fontFamily = typography.subheadline.family,
+                        fontSize = typography.subheadline.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.subheadline.letterSpacing,
+                        lineHeight = typography.subheadline.lineHeight,
+                    ),
+                    title = Components.Lists.Base.Typography.Title(
+                        medium = Components.Lists.Base.Typography.Title.Medium(
+                            fontFamily = typography.body.family,
+                            fontSize = typography.body.size,
+                            fontWeight = typography.weight.medium,
+                            letterSpacing = typography.body.letterSpacing,
+                            lineHeight = typography.body.lineHeight,
+                        ),
+                        regular = Components.Lists.Base.Typography.Title.Regular(
+                            fontFamily = typography.body.family,
+                            fontSize = typography.body.size,
+                            fontWeight = typography.weight.regular,
+                            letterSpacing = typography.body.letterSpacing,
+                            lineHeight = typography.body.lineHeight,
+                        ),
+                        semibold = Components.Lists.Base.Typography.Title.Semibold(
+                            fontFamily = typography.body.family,
+                            fontSize = typography.body.size,
+                            fontWeight = typography.weight.semibold,
+                            letterSpacing = typography.body.letterSpacing,
+                            lineHeight = typography.body.lineHeight,
+                        ),
+                    ),
+                    unitOfMeasure = Components.Lists.Base.Typography.UnitOfMeasure(
+                        fontFamily = typography.body.family,
+                        fontSize = typography.body.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.body.letterSpacing,
+                        lineHeight = typography.body.lineHeight,
+                    ),
+                    value = Components.Lists.Base.Typography.Value(
+                        fontFamily = typography.title3.family,
+                        fontSize = typography.title3.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.title3.letterSpacing,
+                        lineHeight = typography.title3.lineHeight,
                     ),
                 ),
             ),
@@ -9335,70 +9261,70 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         padding = Components.Lists.Indent.Default.Size.Padding(
                             leftContent = Components.Lists.Indent.Default.Size.Padding.LeftContent(
                                 title = Components.Lists.Indent.Default.Size.Padding.LeftContent.Title(
-                                    left = base.scale._200,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleControl = Components.Lists.Indent.Default.Size.Padding.LeftContent.TitleControl(
-                                    left = base.scale._200,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleIcon = Components.Lists.Indent.Default.Size.Padding.LeftContent.TitleIcon(
-                                    left = base.scale._200,
-                                    top = base.scale._100,
-                                    right = base.scale._100,
                                     bottom = base.scale._100,
-                                ),
-                                titleSymbol = Components.Lists.Indent.Default.Size.Padding.LeftContent.TitleSymbol(
                                     left = base.scale._200,
-                                    top = base.scale._150,
                                     right = base.scale._100,
-                                    bottom = base.scale._150,
+                                    top = base.scale._100,
                                 ),
                                 titleScore = Components.Lists.Indent.Default.Size.Padding.LeftContent.TitleScore(
-                                    left = base.scale._200,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitle = Components.Lists.Indent.Default.Size.Padding.LeftContent.TitleSubtitle(
-                                    left = base.scale._200,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitleControl = Components.Lists.Indent.Default.Size.Padding.LeftContent.TitleSubtitleControl(
-                                    left = base.scale._200,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitleIcon24 = Components.Lists.Indent.Default.Size.Padding.LeftContent.TitleSubtitleIcon24(
-                                    left = base.scale._200,
-                                    top = base.scale._100,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._100,
                                 ),
                                 titleSubtitleIcon32 = Components.Lists.Indent.Default.Size.Padding.LeftContent.TitleSubtitleIcon32(
-                                    left = base.scale._200,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
-                                ),
-                                titleSubtitleSymbol = Components.Lists.Indent.Default.Size.Padding.LeftContent.TitleSubtitleSymbol(
                                     left = base.scale._200,
-                                    top = base.scale._150,
                                     right = base.scale._100,
-                                    bottom = base.scale._150,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitleScore = Components.Lists.Indent.Default.Size.Padding.LeftContent.TitleSubtitleScore(
-                                    left = base.scale._200,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
+                                ),
+                                titleSubtitleSymbol = Components.Lists.Indent.Default.Size.Padding.LeftContent.TitleSubtitleSymbol(
+                                    bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
+                                ),
+                                titleSymbol = Components.Lists.Indent.Default.Size.Padding.LeftContent.TitleSymbol(
+                                    bottom = base.scale._150,
+                                    left = base.scale._200,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                             ),
                         ),
@@ -9409,71 +9335,145 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         padding = Components.Lists.Indent.Indented.Size.Padding(
                             leftContent = Components.Lists.Indent.Indented.Size.Padding.LeftContent(
                                 title = Components.Lists.Indent.Indented.Size.Padding.LeftContent.Title(
-                                    left = base.scale._400,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleControl = Components.Lists.Indent.Indented.Size.Padding.LeftContent.TitleControl(
-                                    left = base.scale._400,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleIcon = Components.Lists.Indent.Indented.Size.Padding.LeftContent.TitleIcon(
-                                    left = base.scale._400,
-                                    top = base.scale._100,
-                                    right = base.scale._100,
                                     bottom = base.scale._100,
-                                ),
-                                titleSymbol = Components.Lists.Indent.Indented.Size.Padding.LeftContent.TitleSymbol(
                                     left = base.scale._400,
-                                    top = base.scale._150,
                                     right = base.scale._100,
-                                    bottom = base.scale._150,
+                                    top = base.scale._100,
                                 ),
                                 titleScore = Components.Lists.Indent.Indented.Size.Padding.LeftContent.TitleScore(
-                                    left = base.scale._400,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitle = Components.Lists.Indent.Indented.Size.Padding.LeftContent.TitleSubtitle(
-                                    left = base.scale._400,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitleControl = Components.Lists.Indent.Indented.Size.Padding.LeftContent.TitleSubtitleControl(
-                                    left = base.scale._400,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitleIcon24 = Components.Lists.Indent.Indented.Size.Padding.LeftContent.TitleSubtitleIcon24(
-                                    left = base.scale._400,
-                                    top = base.scale._100,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._100,
                                 ),
                                 titleSubtitleIcon32 = Components.Lists.Indent.Indented.Size.Padding.LeftContent.TitleSubtitleIcon32(
-                                    left = base.scale._400,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
-                                ),
-                                titleSubtitleSymbol = Components.Lists.Indent.Indented.Size.Padding.LeftContent.TitleSubtitleSymbol(
                                     left = base.scale._400,
-                                    top = base.scale._150,
                                     right = base.scale._100,
-                                    bottom = base.scale._150,
+                                    top = base.scale._150,
                                 ),
                                 titleSubtitleScore = Components.Lists.Indent.Indented.Size.Padding.LeftContent.TitleSubtitleScore(
-                                    left = base.scale._400,
-                                    top = base.scale._150,
-                                    right = base.scale._100,
                                     bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
                                 ),
+                                titleSubtitleSymbol = Components.Lists.Indent.Indented.Size.Padding.LeftContent.TitleSubtitleSymbol(
+                                    bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
+                                ),
+                                titleSymbol = Components.Lists.Indent.Indented.Size.Padding.LeftContent.TitleSymbol(
+                                    bottom = base.scale._150,
+                                    left = base.scale._400,
+                                    right = base.scale._100,
+                                    top = base.scale._150,
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            size = Components.Lists.Size(
+                large = Components.Lists.Size.Large(
+                    grouping = Components.Lists.Size.Large.Grouping(
+                        multi = Components.Lists.Size.Large.Grouping.Multi(
+                            shape = Components.Lists.Size.Large.Grouping.Multi.Shape(
+                                radius = Components.Lists.Size.Large.Grouping.Multi.Shape.Radius(
+                                    middleRow = base.radius.small,
+                                    bottomRow = Components.Lists.Size.Large.Grouping.Multi.Shape.Radius.BottomRow(
+                                        bottom = Components.Lists.Size.Large.Grouping.Multi.Shape.Radius.BottomRow.Bottom(
+                                            left = base.radius.extraExtraLarge,
+                                            right = base.radius.extraExtraLarge,
+                                        ),
+                                        top = Components.Lists.Size.Large.Grouping.Multi.Shape.Radius.BottomRow.Top(
+                                            left = base.radius.small,
+                                            right = base.radius.small,
+                                        ),
+                                    ),
+                                    topRow = Components.Lists.Size.Large.Grouping.Multi.Shape.Radius.TopRow(
+                                        bottom = Components.Lists.Size.Large.Grouping.Multi.Shape.Radius.TopRow.Bottom(
+                                            left = base.radius.small,
+                                            right = base.radius.small,
+                                        ),
+                                        top = Components.Lists.Size.Large.Grouping.Multi.Shape.Radius.TopRow.Top(
+                                            left = base.radius.extraExtraLarge,
+                                            right = base.radius.extraExtraLarge,
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                        single = Components.Lists.Size.Large.Grouping.Single(
+                            shape = Components.Lists.Size.Large.Grouping.Single.Shape(
+                                radius = base.radius.extraExtraLarge,
+                            ),
+                        ),
+                    ),
+                ),
+                small = Components.Lists.Size.Small(
+                    grouping = Components.Lists.Size.Small.Grouping(
+                        multi = Components.Lists.Size.Small.Grouping.Multi(
+                            shape = Components.Lists.Size.Small.Grouping.Multi.Shape(
+                                radius = Components.Lists.Size.Small.Grouping.Multi.Shape.Radius(
+                                    middleRow = base.radius.small,
+                                    bottomRow = Components.Lists.Size.Small.Grouping.Multi.Shape.Radius.BottomRow(
+                                        bottom = Components.Lists.Size.Small.Grouping.Multi.Shape.Radius.BottomRow.Bottom(
+                                            left = base.radius.large,
+                                            right = base.radius.large,
+                                        ),
+                                        top = Components.Lists.Size.Small.Grouping.Multi.Shape.Radius.BottomRow.Top(
+                                            left = base.radius.small,
+                                            right = base.radius.small,
+                                        ),
+                                    ),
+                                    topRow = Components.Lists.Size.Small.Grouping.Multi.Shape.Radius.TopRow(
+                                        bottom = Components.Lists.Size.Small.Grouping.Multi.Shape.Radius.TopRow.Bottom(
+                                            left = base.radius.small,
+                                            right = base.radius.small,
+                                        ),
+                                        top = Components.Lists.Size.Small.Grouping.Multi.Shape.Radius.TopRow.Top(
+                                            left = base.radius.large,
+                                            right = base.radius.large,
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                        single = Components.Lists.Size.Small.Grouping.Single(
+                            shape = Components.Lists.Size.Small.Grouping.Single.Shape(
+                                radius = base.radius.large,
                             ),
                         ),
                     ),
@@ -9484,94 +9484,94 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
             base = Components.Messages.Base(
                 color = Components.Messages.Base.Color(
                     surface = Components.Messages.Base.Color.Surface(
-                        container = base.color.surface.accent.base,
                         button = base.color.surface.action.secondary.default,
+                        container = base.color.surface.accent.base,
                     ),
                     text = Components.Messages.Base.Color.Text(
-                        title = base.color.text.onAccent.default,
-                        message = base.color.text.onAccent.default,
                         buttonLabel = base.color.text.base.default,
-                    ),
-                ),
-                typography = Components.Messages.Base.Typography(
-                    title = Components.Messages.Base.Typography.Title(
-                        fontFamily = typography.body.family,
-                        fontWeight = typography.weight.semibold,
-                        fontSize = typography.body.size,
-                        lineHeight = typography.body.lineHeight,
-                        letterSpacing = typography.body.letterSpacing,
-                    ),
-                    body = Components.Messages.Base.Typography.Body(
-                        fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
-                        letterSpacing = typography.callout.letterSpacing,
-                    ),
-                    action = Components.Messages.Base.Typography.Action(
-                        fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
-                        letterSpacing = typography.callout.letterSpacing,
-                    ),
-                ),
-                size = Components.Messages.Base.Size(
-                    padding = Components.Messages.Base.Size.Padding(
-                        container = Components.Messages.Base.Size.Padding.Container(
-                            horizontal = base.scale._300,
-                            vertical = base.scale._200,
-                        ),
-                        button = Components.Messages.Base.Size.Padding.Button(
-                            horizontal = base.scale._200,
-                            vertical = base.scale._100,
-                        ),
-                    ),
-                    gap = Components.Messages.Base.Size.Gap(
-                        container = base.scale._200,
-                        button = base.scale._200,
-                        text = base.scale._100,
-                    ),
-                ),
-                shape = Components.Messages.Base.Shape(
-                    radius = Components.Messages.Base.Shape.Radius(
-                        container = base.radius.extraExtraLarge,
-                        button = base.radius.small,
+                        message = base.color.text.onAccent.default,
+                        title = base.color.text.onAccent.default,
                     ),
                 ),
                 opacity = Components.Messages.Base.Opacity(
                     disabled = base.opacity._40,
                     pressed = base.opacity._60,
                 ),
+                shape = Components.Messages.Base.Shape(
+                    radius = Components.Messages.Base.Shape.Radius(
+                        button = base.radius.small,
+                        container = base.radius.extraExtraLarge,
+                    ),
+                ),
+                size = Components.Messages.Base.Size(
+                    gap = Components.Messages.Base.Size.Gap(
+                        button = base.scale._200,
+                        container = base.scale._200,
+                        text = base.scale._100,
+                    ),
+                    padding = Components.Messages.Base.Size.Padding(
+                        button = Components.Messages.Base.Size.Padding.Button(
+                            horizontal = base.scale._200,
+                            vertical = base.scale._100,
+                        ),
+                        container = Components.Messages.Base.Size.Padding.Container(
+                            horizontal = base.scale._300,
+                            vertical = base.scale._200,
+                        ),
+                    ),
+                ),
+                typography = Components.Messages.Base.Typography(
+                    action = Components.Messages.Base.Typography.Action(
+                        fontFamily = typography.callout.family,
+                        fontSize = typography.callout.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.callout.letterSpacing,
+                        lineHeight = typography.callout.lineHeight,
+                    ),
+                    body = Components.Messages.Base.Typography.Body(
+                        fontFamily = typography.callout.family,
+                        fontSize = typography.callout.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.callout.letterSpacing,
+                        lineHeight = typography.callout.lineHeight,
+                    ),
+                    title = Components.Messages.Base.Typography.Title(
+                        fontFamily = typography.body.family,
+                        fontSize = typography.body.size,
+                        fontWeight = typography.weight.semibold,
+                        letterSpacing = typography.body.letterSpacing,
+                        lineHeight = typography.body.lineHeight,
+                    ),
+                ),
             ),
         ),
         pageControls = Components.PageControls(
             base = Components.PageControls.Base(
                 color = Components.PageControls.Base.Color(
-                    text = base.color.text.muted.default,
                     icon = base.color.icon.base.default,
+                    text = base.color.text.muted.default,
+                ),
+                shape = Components.PageControls.Base.Shape(
+                    radius = base.radius.full,
                 ),
                 size = Components.PageControls.Base.Size(
                     icon = base.scale._400,
                     gap = Components.PageControls.Base.Size.Gap(
-                        indicatorIndicator = base.scale._100,
                         iconTextIcon = base.scale._200,
+                        indicatorIndicator = base.scale._100,
                     ),
                     padding = Components.PageControls.Base.Size.Padding(
                         horizontal = base.scale._150,
                         vertical = base.scale._100,
                     ),
                 ),
-                shape = Components.PageControls.Base.Shape(
-                    radius = base.radius.full,
-                ),
                 typography = Components.PageControls.Base.Typography(
                     label = Components.PageControls.Base.Typography.Label(
                         fontFamily = typography.footnote.family,
-                        fontWeight = typography.weight.regular,
                         fontSize = typography.footnote.size,
-                        lineHeight = typography.subheadline.lineHeight,
+                        fontWeight = typography.weight.regular,
                         letterSpacing = typography.subheadline.letterSpacing,
+                        lineHeight = typography.subheadline.lineHeight,
                     ),
                 ),
             ),
@@ -9593,6 +9593,16 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
             ),
         ),
         progressBars = Components.ProgressBars(
+            base = Components.ProgressBars.Base(
+                shape = Components.ProgressBars.Base.Shape(
+                    radius = base.radius.full,
+                ),
+                size = Components.ProgressBars.Base.Size(
+                    gap = base.scale._100,
+                    height = 6.0f,
+                    width = 6.0f,
+                ),
+            ),
             type = Components.ProgressBars.Type(
                 active = Components.ProgressBars.Type.Active(
                     color = Components.ProgressBars.Type.Active.Color(
@@ -9611,57 +9621,47 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                     ),
                 ),
             ),
-            base = Components.ProgressBars.Base(
-                size = Components.ProgressBars.Base.Size(
-                    gap = base.scale._100,
-                    width = 6.0f,
-                    height = 6.0f,
-                ),
-                shape = Components.ProgressBars.Base.Shape(
-                    radius = base.radius.full,
-                ),
-            ),
         ),
         searchBars = Components.SearchBars(
             base = Components.SearchBars.Base(
                 color = Components.SearchBars.Base.Color(
                     surface = base.color.surface.tone.muted,
-                    text = Components.SearchBars.Base.Color.Text(
-                        placeholder = base.color.text.muted.default,
-                        input = base.color.text.base.default,
-                    ),
                     icon = Components.SearchBars.Base.Color.Icon(
                         leading = base.color.icon.muted.default,
                         trailing = base.color.icon.muted.default,
                     ),
+                    text = Components.SearchBars.Base.Color.Text(
+                        input = base.color.text.base.default,
+                        placeholder = base.color.text.muted.default,
+                    ),
                 ),
-                typography = Components.SearchBars.Base.Typography(
-                    fontFamily = typography.body.family,
-                    fontWeight = typography.weight.regular,
-                    fontSize = typography.body.size,
-                    lineHeight = typography.body.lineHeight,
-                    letterSpacing = typography.body.letterSpacing,
+                opacity = Components.SearchBars.Base.Opacity(
+                    disabled = base.opacity._40,
+                    pressed = base.opacity._60,
+                ),
+                shape = Components.SearchBars.Base.Shape(
+                    radius = base.radius.medium,
                 ),
                 size = Components.SearchBars.Base.Size(
                     gap = Components.SearchBars.Base.Size.Gap(
                         iconText = base.scale._0,
                         textIcon = base.scale._150,
                     ),
-                    padding = Components.SearchBars.Base.Size.Padding(
-                        horizontal = base.scale._100,
-                        vertical = base.scale._100,
-                    ),
                     icon = Components.SearchBars.Base.Size.Icon(
                         leading = base.scale._400,
                         trailing = base.scale._400,
                     ),
+                    padding = Components.SearchBars.Base.Size.Padding(
+                        horizontal = base.scale._100,
+                        vertical = base.scale._100,
+                    ),
                 ),
-                shape = Components.SearchBars.Base.Shape(
-                    radius = base.radius.medium,
-                ),
-                opacity = Components.SearchBars.Base.Opacity(
-                    disabled = base.opacity._40,
-                    pressed = base.opacity._60,
+                typography = Components.SearchBars.Base.Typography(
+                    fontFamily = typography.body.family,
+                    fontSize = typography.body.size,
+                    fontWeight = typography.weight.regular,
+                    letterSpacing = typography.body.letterSpacing,
+                    lineHeight = typography.body.lineHeight,
                 ),
             ),
             state = Components.SearchBars.State(
@@ -9688,41 +9688,41 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                 color = Components.SectionFooters.Base.Color(
                     text = base.color.text.muted.default,
                 ),
-                typography = Components.SectionFooters.Base.Typography(
-                    fontFamily = typography.footnote.family,
-                    fontWeight = typography.weight.regular,
-                    fontSize = typography.footnote.size,
-                    lineHeight = typography.footnote.lineHeight,
-                    letterSpacing = typography.footnote.letterSpacing,
-                ),
                 size = Components.SectionFooters.Base.Size(
                     padding = Components.SectionFooters.Base.Size.Padding(
                         horizontal = base.scale._200,
                         vertical = base.scale._100,
                     ),
                 ),
+                typography = Components.SectionFooters.Base.Typography(
+                    fontFamily = typography.footnote.family,
+                    fontSize = typography.footnote.size,
+                    fontWeight = typography.weight.regular,
+                    letterSpacing = typography.footnote.letterSpacing,
+                    lineHeight = typography.footnote.lineHeight,
+                ),
             ),
         ),
         sectionHeaders = Components.SectionHeaders(
             base = Components.SectionHeaders.Base(
                 color = Components.SectionHeaders.Base.Color(
-                    text = Components.SectionHeaders.Base.Color.Text(
-                        primary = base.color.text.base.default,
-                        secondary = base.color.text.base.default,
-                        tertiary = base.color.text.base.default,
-                        quaternary = base.color.text.muted.default,
-                    ),
                     icon = Components.SectionHeaders.Base.Color.Icon(
                         leading = base.color.icon.accent.emphasized.default,
                         trailing = base.color.icon.accent.emphasized.default,
                     ),
+                    text = Components.SectionHeaders.Base.Color.Text(
+                        primary = base.color.text.base.default,
+                        quaternary = base.color.text.muted.default,
+                        secondary = base.color.text.base.default,
+                        tertiary = base.color.text.base.default,
+                    ),
                 ),
                 size = Components.SectionHeaders.Base.Size(
                     gap = Components.SectionHeaders.Base.Size.Gap(
-                        iconText = base.scale._50,
                         iconIcon = base.scale._100,
-                        textIcon = base.scale._100,
+                        iconText = base.scale._50,
                         textBadge = base.scale._100,
+                        textIcon = base.scale._100,
                     ),
                     icon = Components.SectionHeaders.Base.Size.Icon(
                         leading = base.scale._300,
@@ -9732,71 +9732,71 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
             ),
             type = Components.SectionHeaders.Type(
                 primary = Components.SectionHeaders.Type.Primary(
-                    typography = Components.SectionHeaders.Type.Primary.Typography(
-                        fontFamily = typography.expressive.title2.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.expressive.title2.size,
-                        lineHeight = typography.expressive.title2.lineHeight,
-                        letterSpacing = typography.expressive.title2.letterSpacing,
-                    ),
                     size = Components.SectionHeaders.Type.Primary.Size(
                         padding = Components.SectionHeaders.Type.Primary.Size.Padding(
+                            bottom = base.scale._0,
                             left = base.scale._200,
                             right = base.scale._0,
                             top = base.scale._0,
-                            bottom = base.scale._0,
                         ),
+                    ),
+                    typography = Components.SectionHeaders.Type.Primary.Typography(
+                        fontFamily = typography.expressive.title2.family,
+                        fontSize = typography.expressive.title2.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.expressive.title2.letterSpacing,
+                        lineHeight = typography.expressive.title2.lineHeight,
+                    ),
+                ),
+                quaternary = Components.SectionHeaders.Type.Quaternary(
+                    size = Components.SectionHeaders.Type.Quaternary.Size(
+                        padding = Components.SectionHeaders.Type.Quaternary.Size.Padding(
+                            bottom = base.scale._50,
+                            left = base.scale._200,
+                            right = base.scale._0,
+                            top = base.scale._50,
+                        ),
+                    ),
+                    typography = Components.SectionHeaders.Type.Quaternary.Typography(
+                        fontFamily = typography.footnote.family,
+                        fontSize = typography.footnote.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.footnote.letterSpacing,
+                        lineHeight = typography.footnote.lineHeight,
                     ),
                 ),
                 secondary = Components.SectionHeaders.Type.Secondary(
                     size = Components.SectionHeaders.Type.Secondary.Size(
                         padding = Components.SectionHeaders.Type.Secondary.Size.Padding(
+                            bottom = base.scale._50,
                             left = base.scale._200,
                             right = base.scale._0,
                             top = base.scale._50,
-                            bottom = base.scale._50,
                         ),
                     ),
                     typography = Components.SectionHeaders.Type.Secondary.Typography(
                         fontFamily = typography.title3.family,
-                        fontWeight = typography.weight.semibold,
                         fontSize = typography.title3.size,
-                        lineHeight = typography.title3.lineHeight,
+                        fontWeight = typography.weight.semibold,
                         letterSpacing = typography.title3.letterSpacing,
+                        lineHeight = typography.title3.lineHeight,
                     ),
                 ),
                 tertiary = Components.SectionHeaders.Type.Tertiary(
                     size = Components.SectionHeaders.Type.Tertiary.Size(
                         padding = Components.SectionHeaders.Type.Tertiary.Size.Padding(
+                            bottom = base.scale._50,
                             left = base.scale._200,
                             right = base.scale._0,
                             top = base.scale._50,
-                            bottom = base.scale._50,
                         ),
                     ),
                     typography = Components.SectionHeaders.Type.Tertiary.Typography(
                         fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.medium,
                         fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
+                        fontWeight = typography.weight.medium,
                         letterSpacing = typography.callout.letterSpacing,
-                    ),
-                ),
-                quaternary = Components.SectionHeaders.Type.Quaternary(
-                    typography = Components.SectionHeaders.Type.Quaternary.Typography(
-                        fontFamily = typography.footnote.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.footnote.size,
-                        lineHeight = typography.footnote.lineHeight,
-                        letterSpacing = typography.footnote.letterSpacing,
-                    ),
-                    size = Components.SectionHeaders.Type.Quaternary.Size(
-                        padding = Components.SectionHeaders.Type.Quaternary.Size.Padding(
-                            left = base.scale._200,
-                            right = base.scale._0,
-                            top = base.scale._50,
-                            bottom = base.scale._50,
-                        ),
+                        lineHeight = typography.callout.lineHeight,
                     ),
                 ),
             ),
@@ -9812,13 +9812,15 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         tag = base.color.text.status.info,
                     ),
                 ),
-                typography = Components.SegmentedControls.Base.Typography(
-                    tag = Components.SegmentedControls.Base.Typography.Tag(
-                        fontFamily = typography.caption2.family,
-                        fontWeight = typography.weight.semibold,
-                        fontSize = typography.caption2.size,
-                        lineHeight = typography.caption2.lineHeight,
-                        letterSpacing = typography.caption2.letterSpacing,
+                opacity = Components.SegmentedControls.Base.Opacity(
+                    disabled = base.opacity._40,
+                    pressed = base.opacity._60,
+                ),
+                shape = Components.SegmentedControls.Base.Shape(
+                    radius = Components.SegmentedControls.Base.Shape.Radius(
+                        container = base.radius.full,
+                        segment = base.radius.extraExtraLarge,
+                        tag = base.radius.full,
                     ),
                 ),
                 size = Components.SegmentedControls.Base.Size(
@@ -9834,16 +9836,52 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         ),
                     ),
                 ),
-                shape = Components.SegmentedControls.Base.Shape(
-                    radius = Components.SegmentedControls.Base.Shape.Radius(
-                        container = base.radius.full,
-                        segment = base.radius.extraExtraLarge,
-                        tag = base.radius.full,
+                typography = Components.SegmentedControls.Base.Typography(
+                    tag = Components.SegmentedControls.Base.Typography.Tag(
+                        fontFamily = typography.caption2.family,
+                        fontSize = typography.caption2.size,
+                        fontWeight = typography.weight.semibold,
+                        letterSpacing = typography.caption2.letterSpacing,
+                        lineHeight = typography.caption2.lineHeight,
                     ),
                 ),
-                opacity = Components.SegmentedControls.Base.Opacity(
-                    disabled = base.opacity._40,
-                    pressed = base.opacity._60,
+            ),
+            size = Components.SegmentedControls.Size(
+                large = Components.SegmentedControls.Size.Large(
+                    padding = Components.SegmentedControls.Size.Large.Padding(
+                        horizontal = base.scale._150,
+                        vertical = base.scale._50,
+                    ),
+                ),
+                small = Components.SegmentedControls.Size.Small(
+                    padding = Components.SegmentedControls.Size.Small.Padding(
+                        horizontal = base.scale._100,
+                        vertical = base.scale._50,
+                    ),
+                ),
+            ),
+            state = Components.SegmentedControls.State(
+                selected = Components.SegmentedControls.State.Selected(
+                    typography = Components.SegmentedControls.State.Selected.Typography(
+                        label = Components.SegmentedControls.State.Selected.Typography.Label(
+                            fontFamily = typography.footnote.family,
+                            fontSize = typography.footnote.size,
+                            fontWeight = typography.weight.semibold,
+                            letterSpacing = typography.footnote.letterSpacing,
+                            lineHeight = typography.footnote.lineHeight,
+                        ),
+                    ),
+                ),
+                unselected = Components.SegmentedControls.State.Unselected(
+                    typography = Components.SegmentedControls.State.Unselected.Typography(
+                        label = Components.SegmentedControls.State.Unselected.Typography.Label(
+                            fontFamily = typography.footnote.family,
+                            fontSize = typography.footnote.size,
+                            fontWeight = typography.weight.medium,
+                            letterSpacing = typography.footnote.letterSpacing,
+                            lineHeight = typography.footnote.lineHeight,
+                        ),
+                    ),
                 ),
             ),
             type = Components.SegmentedControls.Type(
@@ -9886,87 +9924,22 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                     ),
                 ),
             ),
-            state = Components.SegmentedControls.State(
-                selected = Components.SegmentedControls.State.Selected(
-                    typography = Components.SegmentedControls.State.Selected.Typography(
-                        label = Components.SegmentedControls.State.Selected.Typography.Label(
-                            fontFamily = typography.footnote.family,
-                            fontWeight = typography.weight.semibold,
-                            fontSize = typography.footnote.size,
-                            lineHeight = typography.footnote.lineHeight,
-                            letterSpacing = typography.footnote.letterSpacing,
-                        ),
-                    ),
-                ),
-                unselected = Components.SegmentedControls.State.Unselected(
-                    typography = Components.SegmentedControls.State.Unselected.Typography(
-                        label = Components.SegmentedControls.State.Unselected.Typography.Label(
-                            fontFamily = typography.footnote.family,
-                            fontWeight = typography.weight.medium,
-                            fontSize = typography.footnote.size,
-                            lineHeight = typography.footnote.lineHeight,
-                            letterSpacing = typography.footnote.letterSpacing,
-                        ),
-                    ),
-                ),
-            ),
-            size = Components.SegmentedControls.Size(
-                small = Components.SegmentedControls.Size.Small(
-                    padding = Components.SegmentedControls.Size.Small.Padding(
-                        horizontal = base.scale._100,
-                        vertical = base.scale._50,
-                    ),
-                ),
-                large = Components.SegmentedControls.Size.Large(
-                    padding = Components.SegmentedControls.Size.Large.Padding(
-                        horizontal = base.scale._150,
-                        vertical = base.scale._50,
-                    ),
-                ),
-            ),
         ),
         selectors = Components.Selectors(
-            state = Components.Selectors.State(
-                selected = Components.Selectors.State.Selected(
-                    color = Components.Selectors.State.Selected.Color(
-                        text = Components.Selectors.State.Selected.Color.Text(
-                            label = base.color.text.base.default,
-                        ),
-                        surface = Components.Selectors.State.Selected.Color.Surface(
-                            option = base.color.surface.tone.muted,
-                        ),
-                    ),
-                    typography = Components.Selectors.State.Selected.Typography(
-                        label = Components.Selectors.State.Selected.Typography.Label(
-                            fontFamily = typography.footnote.family,
-                            fontWeight = typography.weight.semibold,
-                            fontSize = typography.footnote.size,
-                            lineHeight = typography.footnote.lineHeight,
-                            letterSpacing = typography.footnote.letterSpacing,
-                        ),
-                    ),
-                ),
-                unselected = Components.Selectors.State.Unselected(
-                    typography = Components.Selectors.State.Unselected.Typography(
-                        label = Components.Selectors.State.Unselected.Typography.Label(
-                            fontFamily = typography.footnote.family,
-                            fontWeight = typography.weight.regular,
-                            fontSize = typography.footnote.size,
-                            lineHeight = typography.footnote.lineHeight,
-                            letterSpacing = typography.footnote.letterSpacing,
-                        ),
-                    ),
-                    color = Components.Selectors.State.Unselected.Color(
-                        text = Components.Selectors.State.Unselected.Color.Text(
-                            label = base.color.text.muted.default,
-                        ),
-                    ),
-                ),
-            ),
             base = Components.Selectors.Base(
                 color = Components.Selectors.Base.Color(
                     surface = Components.Selectors.Base.Color.Surface(
                         container = base.color.surface.tone.base,
+                    ),
+                ),
+                opacity = Components.Selectors.Base.Opacity(
+                    disabled = base.opacity._40,
+                    pressed = base.opacity._60,
+                ),
+                shape = Components.Selectors.Base.Shape(
+                    radius = Components.Selectors.Base.Shape.Radius(
+                        container = base.radius.large,
+                        option = base.radius.medium,
                     ),
                 ),
                 size = Components.Selectors.Base.Size(
@@ -9981,15 +9954,42 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         ),
                     ),
                 ),
-                shape = Components.Selectors.Base.Shape(
-                    radius = Components.Selectors.Base.Shape.Radius(
-                        container = base.radius.large,
-                        option = base.radius.medium,
+            ),
+            state = Components.Selectors.State(
+                selected = Components.Selectors.State.Selected(
+                    color = Components.Selectors.State.Selected.Color(
+                        surface = Components.Selectors.State.Selected.Color.Surface(
+                            option = base.color.surface.tone.muted,
+                        ),
+                        text = Components.Selectors.State.Selected.Color.Text(
+                            label = base.color.text.base.default,
+                        ),
+                    ),
+                    typography = Components.Selectors.State.Selected.Typography(
+                        label = Components.Selectors.State.Selected.Typography.Label(
+                            fontFamily = typography.footnote.family,
+                            fontSize = typography.footnote.size,
+                            fontWeight = typography.weight.semibold,
+                            letterSpacing = typography.footnote.letterSpacing,
+                            lineHeight = typography.footnote.lineHeight,
+                        ),
                     ),
                 ),
-                opacity = Components.Selectors.Base.Opacity(
-                    disabled = base.opacity._40,
-                    pressed = base.opacity._60,
+                unselected = Components.Selectors.State.Unselected(
+                    color = Components.Selectors.State.Unselected.Color(
+                        text = Components.Selectors.State.Unselected.Color.Text(
+                            label = base.color.text.muted.default,
+                        ),
+                    ),
+                    typography = Components.Selectors.State.Unselected.Typography(
+                        label = Components.Selectors.State.Unselected.Typography.Label(
+                            fontFamily = typography.footnote.family,
+                            fontSize = typography.footnote.size,
+                            fontWeight = typography.weight.regular,
+                            letterSpacing = typography.footnote.letterSpacing,
+                            lineHeight = typography.footnote.lineHeight,
+                        ),
+                    ),
                 ),
             ),
         ),
@@ -9997,35 +9997,36 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
             base = Components.Sliders.Base(
                 color = Components.Sliders.Base.Color(
                     surface = Components.Sliders.Base.Color.Surface(
-                        track = base.color.surface.tone.strong,
                         fill = base.color.surface.static.white,
                         thumb = base.color.surface.tone.inverse,
+                        track = base.color.surface.tone.strong,
                     ),
                     text = Components.Sliders.Base.Color.Text(
-                        value = base.color.text.base.default,
                         unitOfMeasure = base.color.text.subtle.default,
+                        value = base.color.text.base.default,
                     ),
                 ),
-                typography = Components.Sliders.Base.Typography(
-                    value = Components.Sliders.Base.Typography.Value(
-                        fontFamily = typography.footnote.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.footnote.size,
-                        lineHeight = typography.footnote.lineHeight,
-                        letterSpacing = typography.footnote.letterSpacing,
+                effect = Components.Sliders.Base.Effect(
+                    backgroundBlur = base.effect.backgroundBlur,
+                ),
+                opacity = Components.Sliders.Base.Opacity(
+                    fill = base.opacity._20,
+                    thumb = base.opacity._80,
+                    track = base.opacity._5,
+                ),
+                shape = Components.Sliders.Base.Shape(
+                    borderWidth = Components.Sliders.Base.Shape.BorderWidth(
+                        thumb = base.borderWidth.large,
                     ),
-                    unitOfMeasure = Components.Sliders.Base.Typography.UnitOfMeasure(
-                        fontFamily = typography.footnote.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.footnote.size,
-                        lineHeight = typography.footnote.lineHeight,
-                        letterSpacing = typography.footnote.letterSpacing,
+                    radius = Components.Sliders.Base.Shape.Radius(
+                        fill = base.radius.extraLarge,
+                        track = base.radius.extraExtraLarge,
                     ),
                 ),
                 size = Components.Sliders.Base.Size(
                     gap = Components.Sliders.Base.Size.Gap(
-                        valueUnitOfMeasure = base.scale._25,
                         horizontal = base.scale._200,
+                        valueUnitOfMeasure = base.scale._25,
                     ),
                     padding = Components.Sliders.Base.Size.Padding(
                         bar = Components.Sliders.Base.Size.Padding.Bar(
@@ -10038,22 +10039,21 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         ),
                     ),
                 ),
-                shape = Components.Sliders.Base.Shape(
-                    radius = Components.Sliders.Base.Shape.Radius(
-                        track = base.radius.extraExtraLarge,
-                        fill = base.radius.extraLarge,
+                typography = Components.Sliders.Base.Typography(
+                    unitOfMeasure = Components.Sliders.Base.Typography.UnitOfMeasure(
+                        fontFamily = typography.footnote.family,
+                        fontSize = typography.footnote.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.footnote.letterSpacing,
+                        lineHeight = typography.footnote.lineHeight,
                     ),
-                    borderWidth = Components.Sliders.Base.Shape.BorderWidth(
-                        thumb = base.borderWidth.large,
+                    value = Components.Sliders.Base.Typography.Value(
+                        fontFamily = typography.footnote.family,
+                        fontSize = typography.footnote.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.footnote.letterSpacing,
+                        lineHeight = typography.footnote.lineHeight,
                     ),
-                ),
-                effect = Components.Sliders.Base.Effect(
-                    backgroundBlur = base.effect.backgroundBlur,
-                ),
-                opacity = Components.Sliders.Base.Opacity(
-                    track = base.opacity._5,
-                    fill = base.opacity._20,
-                    thumb = base.opacity._80,
                 ),
             ),
         ),
@@ -10061,29 +10061,23 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
             base = Components.Snackbars.Base(
                 color = Components.Snackbars.Base.Color(
                     icon = base.color.icon.onAccent.default,
-                    text = Components.Snackbars.Base.Color.Text(
-                        message = base.color.text.onAccent.default,
-                        buttonLabel = base.color.text.base.default,
-                    ),
                     surface = Components.Snackbars.Base.Color.Surface(
-                        container = base.color.surface.accent.base,
                         button = base.color.surface.action.secondary.default,
+                        container = base.color.surface.accent.base,
+                    ),
+                    text = Components.Snackbars.Base.Color.Text(
+                        buttonLabel = base.color.text.base.default,
+                        message = base.color.text.onAccent.default,
                     ),
                 ),
-                typography = Components.Snackbars.Base.Typography(
-                    message = Components.Snackbars.Base.Typography.Message(
-                        fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
-                        letterSpacing = typography.callout.letterSpacing,
-                    ),
-                    button = Components.Snackbars.Base.Typography.Button(
-                        fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
-                        letterSpacing = typography.callout.letterSpacing,
+                opacity = Components.Snackbars.Base.Opacity(
+                    disabled = base.opacity._40,
+                    pressed = base.opacity._60,
+                ),
+                shape = Components.Snackbars.Base.Shape(
+                    radius = Components.Snackbars.Base.Shape.Radius(
+                        button = base.radius.small,
+                        container = base.radius.extraExtraLarge,
                     ),
                 ),
                 size = Components.Snackbars.Base.Size(
@@ -10092,73 +10086,41 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         textButton = base.scale._100,
                     ),
                     padding = Components.Snackbars.Base.Size.Padding(
-                        container = Components.Snackbars.Base.Size.Padding.Container(
-                            horizontal = base.scale._300,
-                            vertical = base.scale._200,
-                        ),
                         button = Components.Snackbars.Base.Size.Padding.Button(
                             horizontal = base.scale._200,
                             vertical = base.scale._100,
                         ),
+                        container = Components.Snackbars.Base.Size.Padding.Container(
+                            horizontal = base.scale._300,
+                            vertical = base.scale._200,
+                        ),
                     ),
                 ),
-                shape = Components.Snackbars.Base.Shape(
-                    radius = Components.Snackbars.Base.Shape.Radius(
-                        button = base.radius.small,
-                        container = base.radius.extraExtraLarge,
+                typography = Components.Snackbars.Base.Typography(
+                    button = Components.Snackbars.Base.Typography.Button(
+                        fontFamily = typography.callout.family,
+                        fontSize = typography.callout.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.callout.letterSpacing,
+                        lineHeight = typography.callout.lineHeight,
                     ),
-                ),
-                opacity = Components.Snackbars.Base.Opacity(
-                    disabled = base.opacity._40,
-                    pressed = base.opacity._60,
+                    message = Components.Snackbars.Base.Typography.Message(
+                        fontFamily = typography.callout.family,
+                        fontSize = typography.callout.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.callout.letterSpacing,
+                        lineHeight = typography.callout.lineHeight,
+                    ),
                 ),
             ),
         ),
         tags = Components.Tags(
-            type = Components.Tags.Type(
-                neutral = Components.Tags.Type.Neutral(
-                    color = Components.Tags.Type.Neutral.Color(
-                        surface = base.color.surface.status.neutral.strong,
-                        icon = base.color.icon.status.neutral,
-                        text = base.color.text.status.neutral,
-                    ),
-                ),
-                success = Components.Tags.Type.Success(
-                    color = Components.Tags.Type.Success.Color(
-                        surface = base.color.surface.status.success.subtle,
-                        icon = base.color.icon.status.success.subtle,
-                        text = base.color.text.status.success.subtle,
-                    ),
-                ),
-                warning = Components.Tags.Type.Warning(
-                    color = Components.Tags.Type.Warning.Color(
-                        surface = base.color.surface.status.warning.subtle,
-                        icon = base.color.icon.status.warning.subtle,
-                        text = base.color.text.status.warning.subtle,
-                    ),
-                ),
-                error = Components.Tags.Type.Error(
-                    color = Components.Tags.Type.Error.Color(
-                        surface = base.color.surface.status.danger.strong,
-                        icon = base.color.icon.status.danger.base.default,
-                        text = base.color.text.status.danger.base.default,
-                    ),
-                ),
-                high = Components.Tags.Type.High(
-                    color = Components.Tags.Type.High.Color(
-                        surface = base.color.surface.status.neutral.strong,
-                        icon = base.color.icon.status.neutral,
-                        text = base.color.text.status.neutral,
-                    ),
-                ),
-            ),
             base = Components.Tags.Base(
-                typography = Components.Tags.Base.Typography(
-                    fontFamily = typography.footnote.family,
-                    fontWeight = typography.weight.medium,
-                    fontSize = typography.footnote.size,
-                    lineHeight = typography.footnote.lineHeight,
-                    letterSpacing = typography.footnote.letterSpacing,
+                opacity = Components.Tags.Base.Opacity(
+                    container = base.opacity._10,
+                ),
+                shape = Components.Tags.Base.Shape(
+                    radius = base.radius.extraExtraLarge,
                 ),
                 size = Components.Tags.Base.Size(
                     gap = base.scale._50,
@@ -10176,64 +10138,78 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         ),
                     ),
                 ),
-                shape = Components.Tags.Base.Shape(
-                    radius = base.radius.extraExtraLarge,
+                typography = Components.Tags.Base.Typography(
+                    fontFamily = typography.footnote.family,
+                    fontSize = typography.footnote.size,
+                    fontWeight = typography.weight.medium,
+                    letterSpacing = typography.footnote.letterSpacing,
+                    lineHeight = typography.footnote.lineHeight,
                 ),
-                opacity = Components.Tags.Base.Opacity(
-                    container = base.opacity._10,
+            ),
+            type = Components.Tags.Type(
+                error = Components.Tags.Type.Error(
+                    color = Components.Tags.Type.Error.Color(
+                        icon = base.color.icon.status.danger.base.default,
+                        surface = base.color.surface.status.danger.strong,
+                        text = base.color.text.status.danger.base.default,
+                    ),
+                ),
+                high = Components.Tags.Type.High(
+                    color = Components.Tags.Type.High.Color(
+                        icon = base.color.icon.status.neutral,
+                        surface = base.color.surface.status.neutral.strong,
+                        text = base.color.text.status.neutral,
+                    ),
+                ),
+                neutral = Components.Tags.Type.Neutral(
+                    color = Components.Tags.Type.Neutral.Color(
+                        icon = base.color.icon.status.neutral,
+                        surface = base.color.surface.status.neutral.strong,
+                        text = base.color.text.status.neutral,
+                    ),
+                ),
+                success = Components.Tags.Type.Success(
+                    color = Components.Tags.Type.Success.Color(
+                        icon = base.color.icon.status.success.subtle,
+                        surface = base.color.surface.status.success.subtle,
+                        text = base.color.text.status.success.subtle,
+                    ),
+                ),
+                warning = Components.Tags.Type.Warning(
+                    color = Components.Tags.Type.Warning.Color(
+                        icon = base.color.icon.status.warning.subtle,
+                        surface = base.color.surface.status.warning.subtle,
+                        text = base.color.text.status.warning.subtle,
+                    ),
                 ),
             ),
         ),
         textFields = Components.TextFields(
             base = Components.TextFields.Base(
                 color = Components.TextFields.Base.Color(
+                    icon = Components.TextFields.Base.Color.Icon(
+                        clear = base.color.icon.muted.default,
+                    ),
                     surface = Components.TextFields.Base.Color.Surface(
                         container = base.color.surface.tone.muted,
                     ),
                     text = Components.TextFields.Base.Color.Text(
+                        counter = base.color.text.muted.default,
                         input = base.color.text.base.default,
                         placeholder = base.color.text.subtle.default,
                         supporting = base.color.text.muted.default,
-                        counter = base.color.text.muted.default,
-                    ),
-                    icon = Components.TextFields.Base.Color.Icon(
-                        clear = base.color.icon.muted.default,
                     ),
                 ),
-                typography = Components.TextFields.Base.Typography(
-                    input = Components.TextFields.Base.Typography.Input(
-                        fontFamily = typography.body.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.body.size,
-                        lineHeight = typography.body.lineHeight,
-                        letterSpacing = typography.body.letterSpacing,
-                    ),
-                    placeholder = Components.TextFields.Base.Typography.Placeholder(
-                        fontFamily = typography.body.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.body.size,
-                        lineHeight = typography.body.lineHeight,
-                        letterSpacing = typography.body.letterSpacing,
-                    ),
-                    supporting = Components.TextFields.Base.Typography.Supporting(
-                        fontFamily = typography.footnote.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.footnote.size,
-                        lineHeight = typography.footnote.lineHeight,
-                        letterSpacing = typography.footnote.letterSpacing,
-                    ),
-                    counter = Components.TextFields.Base.Typography.Counter(
-                        fontFamily = typography.footnote.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.footnote.size,
-                        lineHeight = typography.footnote.lineHeight,
-                        letterSpacing = typography.footnote.letterSpacing,
-                    ),
+                opacity = Components.TextFields.Base.Opacity(
+                    disabled = base.opacity._40,
+                ),
+                shape = Components.TextFields.Base.Shape(
+                    radius = base.radius.medium,
                 ),
                 size = Components.TextFields.Base.Size(
                     gap = Components.TextFields.Base.Size.Gap(
-                        supportCounter = base.scale._200,
                         labelText = base.scale._25,
+                        supportCounter = base.scale._200,
                     ),
                     icon = Components.TextFields.Base.Size.Icon(
                         clear = base.scale._400,
@@ -10246,33 +10222,38 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         ),
                     ),
                 ),
-                shape = Components.TextFields.Base.Shape(
-                    radius = base.radius.medium,
-                ),
-                opacity = Components.TextFields.Base.Opacity(
-                    disabled = base.opacity._40,
+                typography = Components.TextFields.Base.Typography(
+                    counter = Components.TextFields.Base.Typography.Counter(
+                        fontFamily = typography.footnote.family,
+                        fontSize = typography.footnote.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.footnote.letterSpacing,
+                        lineHeight = typography.footnote.lineHeight,
+                    ),
+                    input = Components.TextFields.Base.Typography.Input(
+                        fontFamily = typography.body.family,
+                        fontSize = typography.body.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.body.letterSpacing,
+                        lineHeight = typography.body.lineHeight,
+                    ),
+                    placeholder = Components.TextFields.Base.Typography.Placeholder(
+                        fontFamily = typography.body.family,
+                        fontSize = typography.body.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.body.letterSpacing,
+                        lineHeight = typography.body.lineHeight,
+                    ),
+                    supporting = Components.TextFields.Base.Typography.Supporting(
+                        fontFamily = typography.footnote.family,
+                        fontSize = typography.footnote.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.footnote.letterSpacing,
+                        lineHeight = typography.footnote.lineHeight,
+                    ),
                 ),
             ),
             state = Components.TextFields.State(
-                error = Components.TextFields.State.Error(
-                    color = Components.TextFields.State.Error.Color(
-                        icon = base.color.icon.status.danger.muted.default,
-                        border = base.color.border.status.error,
-                        text = Components.TextFields.State.Error.Color.Text(
-                            message = base.color.text.status.danger.muted.default,
-                            label = base.color.text.status.danger.muted.default,
-                        ),
-                    ),
-                    typography = Components.TextFields.State.Error.Typography(
-                        message = Components.TextFields.State.Error.Typography.Message(
-                            fontFamily = typography.footnote.family,
-                            fontWeight = typography.weight.regular,
-                            fontSize = typography.footnote.size,
-                            lineHeight = typography.footnote.lineHeight,
-                            letterSpacing = typography.footnote.letterSpacing,
-                        ),
-                    ),
-                ),
                 default = Components.TextFields.State.Default(
                     color = Components.TextFields.State.Default.Color(
                         border = base.color.border.muted.default,
@@ -10280,17 +10261,46 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                             label = base.color.text.base.default,
                         ),
                     ),
+                    shape = Components.TextFields.State.Default.Shape(
+                        borderWidth = base.borderWidth.small,
+                    ),
                     typography = Components.TextFields.State.Default.Typography(
                         label = Components.TextFields.State.Default.Typography.Label(
                             fontFamily = typography.body.family,
-                            fontWeight = typography.weight.regular,
                             fontSize = typography.body.size,
-                            lineHeight = typography.body.lineHeight,
+                            fontWeight = typography.weight.regular,
                             letterSpacing = typography.body.letterSpacing,
+                            lineHeight = typography.body.lineHeight,
                         ),
                     ),
-                    shape = Components.TextFields.State.Default.Shape(
-                        borderWidth = base.borderWidth.small,
+                ),
+                empty = Components.TextFields.State.Empty(
+                    size = Components.TextFields.State.Empty.Size(
+                        padding = Components.TextFields.State.Empty.Size.Padding(
+                            field = Components.TextFields.State.Empty.Size.Padding.Field(
+                                horizontal = base.scale._200,
+                                vertical = 19.0f,
+                            ),
+                        ),
+                    ),
+                ),
+                error = Components.TextFields.State.Error(
+                    color = Components.TextFields.State.Error.Color(
+                        border = base.color.border.status.error,
+                        icon = base.color.icon.status.danger.muted.default,
+                        text = Components.TextFields.State.Error.Color.Text(
+                            label = base.color.text.status.danger.muted.default,
+                            message = base.color.text.status.danger.muted.default,
+                        ),
+                    ),
+                    typography = Components.TextFields.State.Error.Typography(
+                        message = Components.TextFields.State.Error.Typography.Message(
+                            fontFamily = typography.footnote.family,
+                            fontSize = typography.footnote.size,
+                            fontWeight = typography.weight.regular,
+                            letterSpacing = typography.footnote.letterSpacing,
+                            lineHeight = typography.footnote.lineHeight,
+                        ),
                     ),
                 ),
                 floating = Components.TextFields.State.Floating(
@@ -10302,29 +10312,19 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                     typography = Components.TextFields.State.Floating.Typography(
                         label = Components.TextFields.State.Floating.Typography.Label(
                             fontFamily = typography.subheadline.family,
-                            fontWeight = typography.weight.regular,
                             fontSize = typography.subheadline.size,
-                            lineHeight = typography.subheadline.lineHeight,
+                            fontWeight = typography.weight.regular,
                             letterSpacing = typography.subheadline.letterSpacing,
+                            lineHeight = typography.subheadline.lineHeight,
                         ),
                     ),
                 ),
                 focused = Components.TextFields.State.Focused(
-                    shape = Components.TextFields.State.Focused.Shape(
-                        borderWidth = base.borderWidth.medium,
-                    ),
                     color = Components.TextFields.State.Focused.Color(
                         border = base.color.border.base.focus,
                     ),
-                ),
-                empty = Components.TextFields.State.Empty(
-                    size = Components.TextFields.State.Empty.Size(
-                        padding = Components.TextFields.State.Empty.Size.Padding(
-                            field = Components.TextFields.State.Empty.Size.Padding.Field(
-                                horizontal = base.scale._200,
-                                vertical = 19.0f,
-                            ),
-                        ),
+                    shape = Components.TextFields.State.Focused.Shape(
+                        borderWidth = base.borderWidth.medium,
                     ),
                 ),
                 populated = Components.TextFields.State.Populated(
@@ -10340,23 +10340,6 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
             ),
         ),
         tiles = Components.Tiles(
-            state = Components.Tiles.State(
-                default = Components.Tiles.State.Default(
-                    color = Components.Tiles.State.Default.Color(
-                        surface = base.color.surface.action.secondary.emphasized.default,
-                    ),
-                ),
-                selected = Components.Tiles.State.Selected(
-                    color = Components.Tiles.State.Selected.Color(
-                        border = base.color.border.base.focus,
-                    ),
-                ),
-                hover = Components.Tiles.State.Hover(
-                    color = Components.Tiles.State.Hover.Color(
-                        surface = base.color.surface.action.secondary.default,
-                    ),
-                ),
-            ),
             base = Components.Tiles.Base(
                 color = Components.Tiles.Base.Color(
                     icon = base.color.icon.accent.emphasized.default,
@@ -10364,12 +10347,13 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         label = base.color.text.base.default,
                     ),
                 ),
-                typography = Components.Tiles.Base.Typography(
-                    fontFamily = typography.footnote.family,
-                    fontWeight = typography.weight.semibold,
-                    fontSize = typography.footnote.size,
-                    lineHeight = typography.footnote.lineHeight,
-                    letterSpacing = typography.footnote.letterSpacing,
+                opacity = Components.Tiles.Base.Opacity(
+                    disabled = base.opacity._40,
+                    pressed = base.opacity._60,
+                ),
+                shape = Components.Tiles.Base.Shape(
+                    borderWidth = base.borderWidth.medium,
+                    radius = base.radius.large,
                 ),
                 size = Components.Tiles.Base.Size(
                     icon = base.scale._300,
@@ -10381,13 +10365,29 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         vertical = base.scale._100,
                     ),
                 ),
-                shape = Components.Tiles.Base.Shape(
-                    radius = base.radius.large,
-                    borderWidth = base.borderWidth.medium,
+                typography = Components.Tiles.Base.Typography(
+                    fontFamily = typography.footnote.family,
+                    fontSize = typography.footnote.size,
+                    fontWeight = typography.weight.semibold,
+                    letterSpacing = typography.footnote.letterSpacing,
+                    lineHeight = typography.footnote.lineHeight,
                 ),
-                opacity = Components.Tiles.Base.Opacity(
-                    disabled = base.opacity._40,
-                    pressed = base.opacity._60,
+            ),
+            state = Components.Tiles.State(
+                default = Components.Tiles.State.Default(
+                    color = Components.Tiles.State.Default.Color(
+                        surface = base.color.surface.action.secondary.emphasized.default,
+                    ),
+                ),
+                hover = Components.Tiles.State.Hover(
+                    color = Components.Tiles.State.Hover.Color(
+                        surface = base.color.surface.action.secondary.default,
+                    ),
+                ),
+                selected = Components.Tiles.State.Selected(
+                    color = Components.Tiles.State.Selected.Color(
+                        border = base.color.border.base.focus,
+                    ),
                 ),
             ),
         ),
@@ -10396,94 +10396,85 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                 color = Components.Tooltips.Base.Color(
                     icon = base.color.icon.onAccent.default,
                     pointer = base.color.surface.accent.base,
-                    text = Components.Tooltips.Base.Color.Text(
-                        title = base.color.text.onAccent.default,
-                        message = base.color.text.onAccent.default,
-                        buttonLabel = base.color.text.base.default,
-                    ),
                     surface = Components.Tooltips.Base.Color.Surface(
-                        container = base.color.surface.accent.base,
                         button = base.color.surface.action.secondary.default,
+                        container = base.color.surface.accent.base,
                     ),
-                ),
-                typography = Components.Tooltips.Base.Typography(
-                    title = Components.Tooltips.Base.Typography.Title(
-                        fontFamily = typography.body.family,
-                        fontWeight = typography.weight.semibold,
-                        fontSize = typography.body.size,
-                        lineHeight = typography.body.lineHeight,
-                        letterSpacing = typography.body.letterSpacing,
-                    ),
-                    message = Components.Tooltips.Base.Typography.Message(
-                        fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
-                        letterSpacing = typography.callout.letterSpacing,
-                    ),
-                    button = Components.Tooltips.Base.Typography.Button(
-                        fontFamily = typography.callout.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.callout.size,
-                        lineHeight = typography.callout.lineHeight,
-                        letterSpacing = typography.callout.letterSpacing,
-                    ),
-                ),
-                size = Components.Tooltips.Base.Size(
-                    icon = base.scale._400,
-                    gap = Components.Tooltips.Base.Size.Gap(
-                        titleBody = base.scale._100,
-                        textButton = base.scale._200,
-                        textClose = base.scale._100,
-                    ),
-                    padding = Components.Tooltips.Base.Size.Padding(
-                        container = Components.Tooltips.Base.Size.Padding.Container(
-                            horizontal = base.scale._300,
-                            vertical = base.scale._200,
-                        ),
-                        button = Components.Tooltips.Base.Size.Padding.Button(
-                            horizontal = base.scale._200,
-                            vertical = base.scale._100,
-                        ),
-                    ),
-                ),
-                shape = Components.Tooltips.Base.Shape(
-                    radius = Components.Tooltips.Base.Shape.Radius(
-                        container = base.radius.extraExtraLarge,
-                        button = base.radius.small,
+                    text = Components.Tooltips.Base.Color.Text(
+                        buttonLabel = base.color.text.base.default,
+                        message = base.color.text.onAccent.default,
+                        title = base.color.text.onAccent.default,
                     ),
                 ),
                 opacity = Components.Tooltips.Base.Opacity(
                     disabled = base.opacity._40,
                     pressed = base.opacity._60,
                 ),
+                shape = Components.Tooltips.Base.Shape(
+                    radius = Components.Tooltips.Base.Shape.Radius(
+                        button = base.radius.small,
+                        container = base.radius.extraExtraLarge,
+                    ),
+                ),
+                size = Components.Tooltips.Base.Size(
+                    icon = base.scale._400,
+                    gap = Components.Tooltips.Base.Size.Gap(
+                        textButton = base.scale._200,
+                        textClose = base.scale._100,
+                        titleBody = base.scale._100,
+                    ),
+                    padding = Components.Tooltips.Base.Size.Padding(
+                        button = Components.Tooltips.Base.Size.Padding.Button(
+                            horizontal = base.scale._200,
+                            vertical = base.scale._100,
+                        ),
+                        container = Components.Tooltips.Base.Size.Padding.Container(
+                            horizontal = base.scale._300,
+                            vertical = base.scale._200,
+                        ),
+                    ),
+                ),
+                typography = Components.Tooltips.Base.Typography(
+                    button = Components.Tooltips.Base.Typography.Button(
+                        fontFamily = typography.callout.family,
+                        fontSize = typography.callout.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.callout.letterSpacing,
+                        lineHeight = typography.callout.lineHeight,
+                    ),
+                    message = Components.Tooltips.Base.Typography.Message(
+                        fontFamily = typography.callout.family,
+                        fontSize = typography.callout.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.callout.letterSpacing,
+                        lineHeight = typography.callout.lineHeight,
+                    ),
+                    title = Components.Tooltips.Base.Typography.Title(
+                        fontFamily = typography.body.family,
+                        fontSize = typography.body.size,
+                        fontWeight = typography.weight.semibold,
+                        letterSpacing = typography.body.letterSpacing,
+                        lineHeight = typography.body.lineHeight,
+                    ),
+                ),
             ),
         ),
         uploaders = Components.Uploaders(
             base = Components.Uploaders.Base(
                 color = Components.Uploaders.Base.Color(
-                    icon = base.color.icon.accent.emphasized.default,
                     border = base.color.border.accent.default,
+                    icon = base.color.icon.accent.emphasized.default,
                     text = Components.Uploaders.Base.Color.Text(
                         label = base.color.text.accent.emphasized.default,
                         supportingText = base.color.text.accent.emphasized.default,
                     ),
                 ),
-                typography = Components.Uploaders.Base.Typography(
-                    label = Components.Uploaders.Base.Typography.Label(
-                        fontFamily = typography.body.family,
-                        fontWeight = typography.weight.medium,
-                        fontSize = typography.body.size,
-                        lineHeight = typography.body.lineHeight,
-                        letterSpacing = typography.body.letterSpacing,
-                    ),
-                    supporting = Components.Uploaders.Base.Typography.Supporting(
-                        fontFamily = typography.footnote.family,
-                        fontWeight = typography.weight.regular,
-                        fontSize = typography.footnote.size,
-                        lineHeight = typography.footnote.lineHeight,
-                        letterSpacing = typography.footnote.letterSpacing,
-                    ),
+                opacity = Components.Uploaders.Base.Opacity(
+                    disabled = base.opacity._40,
+                ),
+                shape = Components.Uploaders.Base.Shape(
+                    borderWidth = base.borderWidth.small,
+                    radius = base.radius.medium,
                 ),
                 size = Components.Uploaders.Base.Size(
                     icon = base.scale._300,
@@ -10503,12 +10494,21 @@ fun componentsValue(base: Base, primitives: Primitives, typography: Typography):
                         ),
                     ),
                 ),
-                shape = Components.Uploaders.Base.Shape(
-                    radius = base.radius.medium,
-                    borderWidth = base.borderWidth.small,
-                ),
-                opacity = Components.Uploaders.Base.Opacity(
-                    disabled = base.opacity._40,
+                typography = Components.Uploaders.Base.Typography(
+                    label = Components.Uploaders.Base.Typography.Label(
+                        fontFamily = typography.body.family,
+                        fontSize = typography.body.size,
+                        fontWeight = typography.weight.medium,
+                        letterSpacing = typography.body.letterSpacing,
+                        lineHeight = typography.body.lineHeight,
+                    ),
+                    supporting = Components.Uploaders.Base.Typography.Supporting(
+                        fontFamily = typography.footnote.family,
+                        fontSize = typography.footnote.size,
+                        fontWeight = typography.weight.regular,
+                        letterSpacing = typography.footnote.letterSpacing,
+                        lineHeight = typography.footnote.lineHeight,
+                    ),
                 ),
             ),
         ),

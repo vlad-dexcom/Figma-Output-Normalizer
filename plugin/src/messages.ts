@@ -44,6 +44,8 @@ export type PluginErrorCode =
 /** Messages the plugin sandbox (`code.ts`) posts to the UI iframe (`ui.ts`). */
 export type PluginToUIMessage =
   | ({ type: "selection-changed" } & SelectionSummary)
+  /** Which file this plugin instance is attached to; the bridge shows it as connection status. */
+  | { type: "file-info"; fileKey: string; fileName: string }
   | { type: "ir-result"; ir: ExtractionResult; source: ExportSource }
   | {
       type: "token-result";
@@ -51,8 +53,12 @@ export type PluginToUIMessage =
       source: TokenExportSourceInfo;
       /** Counts for the panel's summary line, not part of the exported artifact. */
       summary: { variableCount: number; skippedCollections: { name: string; reason: string }[] };
+      /** Echoed from the request; only set for bridge-initiated extractions. */
+      requestId?: string;
+      /** Canonical serialization of `tokens`; only set for bridge-initiated extractions. */
+      json?: string;
     }
-  | { type: "error"; message: string; code: PluginErrorCode };
+  | { type: "error"; message: string; code: PluginErrorCode; requestId?: string };
 
 /** Messages the UI iframe (`ui.ts`) posts to the plugin sandbox (`code.ts`). */
 export type UIToPluginMessage =
@@ -67,5 +73,5 @@ export type UIToPluginMessage =
    */
   | { type: "export"; source: ExportSource }
   /** Requests a file-scoped design-token export (see extractor/tokenExport.ts). */
-  | { type: "extract-tokens" }
+  | { type: "extract-tokens"; requestId?: string }
   | { type: "export-tokens"; source: TokenExportSourceInfo };

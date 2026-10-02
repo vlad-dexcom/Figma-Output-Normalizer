@@ -38,6 +38,7 @@ mappings/   # Figma component set -> design system component map,
             # collection/branch exclusion policy
 fixtures/   # captured real-screen node data + expected IR snapshots, used
             # in tests
+bridge/     # local WebSocket bridge + `tokens:sync` (plugin -> tokens -> Kotlin)
 codegen/tokens/  # TypeScript generator that turns a *.tokens.json document
             # into Kotlin data classes + factory functions (CLI: codegen-tokens)
 scripts/    # repo-wide checks (verify-generated.mjs)
@@ -48,10 +49,12 @@ scripts/    # repo-wide checks (verify-generated.mjs)
 End-to-end, from a Figma file to generated Kotlin:
 
 1. **Build and install the plugin.**
+
    ```bash
    npm install
    npm run build --workspace=plugin
    ```
+
    In Figma desktop: **Plugins → Development → Import plugin from manifest…**,
    pick `plugin/manifest.json`. See `plugin/README.md` for details.
 
@@ -64,12 +67,14 @@ End-to-end, from a Figma file to generated Kotlin:
    in the plugin rather than downstream.
 
 3. **Generate Kotlin from the exported document.**
+
    ```bash
    npm run cli --workspace=@figma-normalizator/codegen-tokens -- \
      --input path/to/{fileKey}_{version}.tokens.json \
      --output path/to/output/dir \
      --package com.example.tokens
    ```
+
    This writes one `.kt` file per collection (`Primitives.kt`, `Base.kt`,
    …), each with a nested data class and one factory function per mode. Add
    `--layout legacy` if the consuming app still expects the old
@@ -83,6 +88,11 @@ End-to-end, from a Figma file to generated Kotlin:
    free bundle once with `npm run bundle --workspace=@figma-normalizator/codegen-tokens`
    and invoke `node codegen/tokens/dist/codegen-tokens.cjs <same flags>` —
    see "Building a standalone bundle" in `codegen/tokens/README.md`.
+
+   **Skip steps 2–3 with the bridge:** with the plugin open in Figma,
+   `npm run tokens:sync -- --config bridge/tokens-sync.config.json` fetches
+   the tokens over a local WebSocket and runs the generator in one go — see
+   `bridge/README.md`.
 
 4. **Wire the generated data classes into the app.** v1 emits one file per
    collection only — there is no root aggregator by default (see "Status:

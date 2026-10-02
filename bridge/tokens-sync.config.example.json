@@ -1,0 +1,8 @@
+{
+  "fileKey": "gPHx1sqQHIfMs8706VDGM1",
+  "output": "../Android_Stelo/tokens/src/main/kotlin",
+  "package": "com.dexcom.tokens",
+  "excludeMode": "[iI][oO][sS]",
+  "onUnresolved": { "unsupported-value": "warn" },
+  "tokensJson": "figma.tokens.json"
+}

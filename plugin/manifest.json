@@ -8,7 +8,9 @@
   "capabilities": ["inspect"],
   "documentAccess": "dynamic-page",
   "networkAccess": {
-    "allowedDomains": ["none"]
+    "allowedDomains": ["none"],
+    "devAllowedDomains": ["ws://localhost:8765"],
+    "reasoning": "Development builds talk to the local tokens:sync bridge (bridge/) over a localhost WebSocket."
   },
   "enablePrivatePluginApi": true
 }

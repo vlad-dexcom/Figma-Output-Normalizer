@@ -8,7 +8,7 @@ export interface PropertyTreeNode {
   name: string;
   /** Set when a token exists at exactly this path. */
   token?: Token;
-  /** Child segments, in first-inserted order. */
+  /** Child segments, sorted alphabetically. */
   children: Map<string, PropertyTreeNode>;
 }
 
@@ -68,6 +68,7 @@ export function buildPropertyTree(
     insertToken(root, sanitizePath(token.path), token);
   }
   resolveOwnValueCollisions(root);
+  sortChildren(root);
   return root;
 }
 
@@ -85,13 +86,25 @@ function resolveOwnValueCollisions(node: PropertyTreeNode): void {
     const valueNode = newNode(OWN_VALUE_KEY);
     valueNode.token = node.token;
     node.token = undefined;
-    // Insert first so `value` appears before the branch's own other children.
     const rest = new Map(node.children);
     node.children.clear();
     node.children.set(OWN_VALUE_KEY, valueNode);
     for (const [key, child] of rest) node.children.set(key, child);
   }
   for (const child of node.children.values()) resolveOwnValueCollisions(child);
+}
+
+/**
+ * Orders every node's children alphabetically (by code point, locale-independent)
+ * so generated output doesn't change when Figma merely re-orders variables.
+ */
+function sortChildren(node: PropertyTreeNode): void {
+  const sorted = [...node.children].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+  node.children.clear();
+  for (const [key, child] of sorted) {
+    node.children.set(key, child);
+    sortChildren(child);
+  }
 }
 
 /** Direct children that are pure leaves (a token, no further nesting). */

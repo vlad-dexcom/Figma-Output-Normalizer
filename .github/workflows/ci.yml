@@ -49,3 +49,9 @@ jobs:
             --exclude-mode "[iI][oO][sS]" \
             --on-unresolved unsupported-value=warn \
             --check
+      # The IDE plugin runs this bundle in `serve` mode; make sure it builds
+      # and starts (listening status, clean shutdown) on a plain node.
+      - name: tokens-sync standalone bundle smoke test
+        run: |
+          npm run bundle --workspace=@figma-normalizator/bridge
+          echo '{"cmd":"shutdown"}' | node bridge/dist/tokens-sync.cjs serve --port 38999 | grep '"bridge":"listening"'

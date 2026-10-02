@@ -330,6 +330,14 @@ degraded file at exit code 0; running the generator with that override in
 CI is what turns "Figma changed a shape" into a build failure instead of
 `null`s landing in the app.
 
+**G16. Token re-generation still needs a human-attended Figma session.**
+`bridge/` (`npm run tokens:sync`) removes the download/CLI/flag steps, but
+Figma desktop must be open with the plugin running. Follow-ups: (a) plugin
+pushes tokens.json to GitHub and CI opens the app PR; (b) fully headless via
+the REST Variables API behind an adapter for `FigmaVariablesAPI` (Figma
+Enterprise, `file_variables:read`; watch extended-collection and remote
+variable parity); (c) a thin MCP server over the bridge (`regenerate_tokens`).
+
 ## 🟡 Качество и производительность
 
 **Q1. ✅ (исправлено) `structuralSignature` — O(n²) по поддереву.** Раньше для

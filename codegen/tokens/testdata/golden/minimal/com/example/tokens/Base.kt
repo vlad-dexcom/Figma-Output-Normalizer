@@ -27,16 +27,6 @@ data class Base(
     )
 }
 
-fun baseLight(primitives: Primitives): Base =
-    Base(
-        color = Base.Color(
-            surface = primitives.color.red,
-        ),
-        layout = Base.Layout(
-            `is` = true,
-        ),
-    )
-
 fun baseDark(primitives: Primitives): Base =
     Base(
         color = Base.Color(
@@ -44,5 +34,15 @@ fun baseDark(primitives: Primitives): Base =
         ),
         layout = Base.Layout(
             `is` = false,
+        ),
+    )
+
+fun baseLight(primitives: Primitives): Base =
+    Base(
+        color = Base.Color(
+            surface = primitives.color.red,
+        ),
+        layout = Base.Layout(
+            `is` = true,
         ),
     )

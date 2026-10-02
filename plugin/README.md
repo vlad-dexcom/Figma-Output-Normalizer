@@ -178,6 +178,15 @@ decided) when a rule confidently derives one.
   variable's own `(collection, name)` — never an inner primitive it aliases
   through. Alias resolution only ever affects `value`/`modes`.
 
+## Bridge (automated token export)
+
+In development builds the UI iframe connects to `ws://localhost:8765` (see
+`manifest.json` `devAllowedDomains` and `src/ui/bridgeClient.ts`) and
+answers `extract-tokens` requests from the `bridge/` package, so
+`npm run tokens:sync` can pull tokens without any button clicks. Bridge
+results are tagged with a `requestId` and never touch the panel's own
+state. See `bridge/README.md`.
+
 ## Token export (file-scoped)
 
 Alongside the selection-scoped IR export, the plugin can export the file's

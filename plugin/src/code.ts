@@ -13,7 +13,7 @@ import {
   type FigmaNode,
 } from "./extractor/index.js";
 import { findSymbolPath } from "./extractor/mixed.js";
-import { extractTokens } from "./extractor/tokenExport.js";
+import { extractTokens, serializeTokenDocument } from "./extractor/tokenExport.js";
 import { VariableBudgetExceededError } from "./extractor/budget.js";
 import type { TokenExportFigmaAPI } from "./extractor/types.js";
 import type { PluginToUIMessage, SelectionSummary, UIToPluginMessage } from "./messages.js";
@@ -29,6 +29,7 @@ export interface ExtractFigmaAPI {
     getLocalVariableCollectionsAsync?: () => Promise<unknown[]>;
   };
   fileKey?: string;
+  root?: { name: string };
   notify(message: string): void;
   showUI(html: string, options?: { visible?: boolean; width?: number; height?: number }): void;
   closePlugin(message?: string): void;
@@ -181,13 +182,14 @@ async function handleExtract(api: ExtractFigmaAPI): Promise<void> {
  * `getLocalVariableCollectionsAsync` must surface as a readable panel
  * message, not an uncaught rejection that leaves the UI spinning.
  */
-async function handleExtractTokens(api: ExtractFigmaAPI): Promise<void> {
+async function handleExtractTokens(api: ExtractFigmaAPI, requestId?: string): Promise<void> {
   if (typeof api.variables.getLocalVariableCollectionsAsync !== "function") {
     api.ui.postMessage({
       type: "error",
       message:
         "This Figma version cannot enumerate local variable collections, so tokens can't be exported.",
       code: "variables-api-unavailable",
+      ...(requestId !== undefined ? { requestId } : {}),
     });
     return;
   }
@@ -206,14 +208,27 @@ async function handleExtractTokens(api: ExtractFigmaAPI): Promise<void> {
         variableCount: result.variableCount,
         skippedCollections: result.skippedCollections,
       },
+      ...(requestId !== undefined
+        ? { requestId, json: serializeTokenDocument(result.document) }
+        : {}),
     });
   } catch (error) {
     if (error instanceof VariableBudgetExceededError) {
-      api.ui.postMessage({ type: "error", message: error.message, code: "token-budget-exceeded" });
+      api.ui.postMessage({
+        type: "error",
+        message: error.message,
+        code: "token-budget-exceeded",
+        ...(requestId !== undefined ? { requestId } : {}),
+      });
       return;
     }
     const message = error instanceof Error ? error.message : "Unknown error during token export.";
-    api.ui.postMessage({ type: "error", message, code: "unknown" });
+    api.ui.postMessage({
+      type: "error",
+      message,
+      code: "unknown",
+      ...(requestId !== undefined ? { requestId } : {}),
+    });
   }
 }
 
@@ -274,7 +289,7 @@ export async function handleUIMessage(
       handleExport(api);
       return;
     case "extract-tokens":
-      await handleExtractTokens(api);
+      await handleExtractTokens(api, message.requestId);
       return;
     case "export-tokens":
       handleExportTokens(api);
@@ -291,6 +306,11 @@ export function initializePlugin(api: ExtractFigmaAPI): void {
   const html = typeof __html__ !== "undefined" ? __html__ : "";
   api.showUI(html, { width: 360, height: 560 });
 
+  api.ui.postMessage({
+    type: "file-info",
+    fileKey: api.fileKey ?? "",
+    fileName: api.root?.name ?? "",
+  });
   postSelectionChanged(api, api.currentPage.selection);
   api.on("selectionchange", () => postSelectionChanged(api, api.currentPage.selection));
   api.ui.on("message", (message) => void handleUIMessage(api, message));

@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "@figma-normalizator/mappings": "*",
-    "@figma-normalizator/schema": "*"
+    "@figma-normalizator/schema": "*",
+    "@figma-normalizator/bridge": "*"
   },
   "devDependencies": {
     "@figma/plugin-typings": "^1.100.0",
